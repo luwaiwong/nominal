@@ -1,11 +1,10 @@
 import { View, Text } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
-import UserData from "./UserData";
+import UserData from "../data/UserData";
 
-export default function TestLaunchData() {
-  let userData = new UserData();
-  
+export default function TestLaunchData(data) {
+  let userData = data.data;
   let [launchData, setLaunchData] = useState<any>([]);
 
   useEffect(() => {

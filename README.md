@@ -4,6 +4,6 @@ Using [TheSpaceDevs](https://thespacedevs.com/llapi) API
 
 Commands
 ```
-// To run preview
+// To run expo preview
 npm start
 ```
