@@ -10,6 +10,30 @@ export async function getUpcomingLaunches(){
     })
     .then((data) => {
         console.log("Response Recieved");
-        return data;
+        console.log(data);
+        return processLaunchData(data.results);
     })
+}
+
+function processLaunchData(data: any){
+    let processedData = data.map((launch: any) => {
+        return {
+            // Dashboard Launch Data
+            id: launch.id,
+            sd_id: launch.id,
+            name: launch.name,
+            net: launch.net,
+            launch_provider: launch.launch_service_provider,
+            mission: launch.mission,
+            window_start: launch.window_start,
+            window_end: launch.window_end,
+            image: launch.image,
+        }
+    });
+    return processedData;
+}
+
+function convertTime(time: string){
+    let date = new Date(time);
+    return date.toLocaleString();
 }

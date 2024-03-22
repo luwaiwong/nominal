@@ -21,36 +21,56 @@ export default function TestLaunchData(data) {
 
   return (
     <View>
-        <View style={styles.topbar}>
-            <Text style={styles.title}>Launches</Text>
-        </View>
+      <View style={styles.topSection}>
+          <Text style={styles.titleText}>Launches</Text>
+      </View>
+      {/* Pinned Section */}
 
-      {launchData.map((launch: any) => {
-        return (
-          <LaunchInfo key={launch.id} data={launch} />
-        );
+      {/* Upcoming Section */}
+      <View style={styles.contentSection}>
+        <Text style={styles.contentHeader}>Upcoming </Text>
+        {launchData.map((launch: any) => {
+          return (
+            <LaunchInfo key={launch.id} data={launch} />
+          );
       })}
+      </View>
     </View>
   );
-
 }
 
-
 const styles = StyleSheet.create({
-    topbar: {
-        width: '100%',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: colors.BACKGROUND,
-        padding: 10,
+  // Header Bar Section
+    topSection: {
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.BACKGROUND,
+      padding: 10,
+      height: 60,
     },
-    title: {
-        flex: 1,
-        color: colors.FOREGROUND,
-        // position: 'absolute',
-        alignItems: 'center',
-        justifyContent: 'center',
-        top: 0,
+    titleText: {
+      fontSize: 24,
+      flex: 1,
+      color: colors.FOREGROUND,
+      // position: 'absolute',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    menuButton:{},
+    immersiveButton:{},
+
+    // Content Section
+    contentSection: {
+      display: 'flex',
+      backgroundColor: colors.BACKGROUND,
+      height: '100%',
+    },
+    contentHeader: {
+      fontSize: 32,
+      color: colors.FOREGROUND,
+      
+      marginLeft: 8,
+      marginBottom: 10,
     },
 });
