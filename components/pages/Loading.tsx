@@ -6,35 +6,11 @@ import LaunchInfo from "../styled/LaunchInfo";
 
 import * as colors from "../styles";
 
-export default function TestLaunchData(data) {
-  let userData = data.data;
-  let [launchData, setLaunchData] = useState<any>([]);
-
-  useEffect(() => {
-    async function fetchData() {
-      await userData.getUpcomingLaunches().then((data) => {
-        setLaunchData(data);
-      })
-    }
-    fetchData();
-  }, []);
+export default function Loading() {
 
   return (
     <View>
-      <View style={styles.topSection}>
-          <Text style={styles.titleText}>Launches</Text>
-      </View>
-      {/* Pinned Section */}
-
-      {/* Upcoming Section */}
-      <View style={styles.contentSection}>
-        <Text style={styles.contentHeader}>Upcoming </Text>
-        {launchData.map((launch: any) => {
-          return (
-            <LaunchInfo key={launch.id} data={launch} />
-          );
-      })}
-      </View>
+      <Text>Loading...</Text>
     </View>
   );
 }

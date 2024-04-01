@@ -2,7 +2,7 @@ import { StyleSheet, View, Text, Image } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
 
-import * as colors from "../colors";
+import * as colors from "../styles";
 
 export default function TestLaunchData(data) {
     let launchInfo = data.data;  
