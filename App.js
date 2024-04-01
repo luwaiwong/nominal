@@ -24,7 +24,6 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Dashboard data={userData} />
-      <StatusBar style="auto" />
     </View>
   );
 }

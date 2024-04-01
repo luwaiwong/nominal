@@ -5,6 +5,7 @@ export default class UserData {
     this.name = "User Data";
     this.launchdata = Object;
     this.APIHandler = SDApi;
+    this.pinned = [];
   }
 
   // PUBLIC METHODS
@@ -27,6 +28,27 @@ export default class UserData {
   async getLaunchProvider(id) {}
   async getLaunchVehicle(id) {}
 
+  addPinned(launchInfo) {
+    console.log(this.pinned);
+    this.pinned.push(launchInfo);
+  }
+  removePinned(launchInfo) {
+    let index = this.pinned.indexOf(launchInfo);
+    if (index > -1) {
+      this.pinned.splice(index, 1);
+    }
+  }
+  togglePinned(launchInfo) {
+    console.log(this.pinned);
+    if (this.pinned.includes(launchInfo)) {
+      this.removePinned(launchInfo);
+      return false;
+    } else {
+      this.addPinned(launchInfo);
+      return true;
+    }
+  }
+
   // PRIVATE METHODS FOR SORTING DATA
   #getUpcomingLaunches() {
     let curTime = new Date().getTime();
@@ -45,5 +67,9 @@ export default class UserData {
       console.log(data);
       return data;
     });
+  }
+
+  getPinned() {
+    return this.pinned;
   }
 }

@@ -15,6 +15,20 @@ export async function getUpcomingLaunches(){
     })
 }
 
+export async function getPreviousLaunches(){
+
+    return await fetch(API_URL+"launch/previous/")
+    .then((response) => {
+        console.log("Getting Response");
+        return response.json();
+    })
+    .then((data) => {
+        console.log("Response Recieved");
+        console.log(data);
+        return processLaunchData(data.results);
+    })
+}
+
 function processLaunchData(data: any){
     let processedData = data.map((launch: any) => {
         return {

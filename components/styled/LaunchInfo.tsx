@@ -1,25 +1,28 @@
 import { StyleSheet, View, Text, Image } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
+import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 
 import * as colors from "../styles";
+import UserData from "../data/UserData";
 
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 export default function TestLaunchData(data) {
-    let launchInfo = data.data;  
-  let [launchTime, setLaunchTime] = useState<any>([]);
-  useEffect(() => {
-    async function calculateTminus() {
-      console.log(launchInfo.net);
-    }
-    calculateTminus();
-  }, []);
+  let launchInfo = data.data;  
+  let [launchTime, setLaunchTime] = useState<any>(new Date(launchInfo.net));
+  let [pinned, setPinned] = useState<any>(data.user.pinned.includes(launchInfo.id));
+  const togglePinned = () => {
+    setPinned(data.user.togglePinned(launchInfo.id));
+  };
+  
   return (
     <View style={styles.background}>
       {/* Header, Holds the title and t -  countdown */}
       <View style={styles.headerSection}>
-        <Text style={styles.titleText}>{launchInfo.mission.name}</Text>
+        <Text style={styles.titleText} onPress={()=>togglePinned()} >{launchInfo.mission.name} </Text>
         <View style={styles.timeSection}>
-          <Text style={styles.timeText}>T - 000000</Text>
+          <Text style={styles.timeText}>T - {calculateTminus(launchInfo.net)}</Text>
         </View>
       </View>
       {/* Body, Holds the launch info on left and image on right */}
@@ -27,9 +30,12 @@ export default function TestLaunchData(data) {
         <View style={styles.infoSection}>
           <Text style={styles.mediumText}>Status</Text>
           <Text style={styles.mediumText}>Rocket Name</Text>
-          <Text style={styles.mediumText}>Date</Text>
+          <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
           <Text style={styles.smallText}>{launchInfo.launch_provider.name}</Text>
         </View>
+        {pinned ? 
+          <MaterialCommunityIcons name="bell-ring"  style={styles.notificationIconActive} onPress={()=>togglePinned()} /> : 
+          <MaterialCommunityIcons name="bell-outline"  style={styles.notificationIcon} onPress={()=>togglePinned()} />}
         <Image style={styles.image} source={{uri: launchInfo.image}} /> 
       </View>
     </View>
@@ -37,6 +43,23 @@ export default function TestLaunchData(data) {
 
 }
 
+function calculateTminus(launchTime: Date){
+  let currentTime = new Date();
+  let launchDate = new Date(launchTime);
+  let timeDifference = launchDate.getTime() - currentTime.getTime();
+  let days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+  let hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  let minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+  let seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+  if (days <= 0 && hours <= 0){
+    return minutes + "m ";
+  }
+  if (days <= 0){
+    return hours + "h, " + minutes + "m ";
+  }
+  
+  return days + "d, " + hours + "h ";
+}
 
 const styles = StyleSheet.create({
 // Sections
@@ -70,6 +93,7 @@ text: {
     color: colors.FOREGROUND,
     alignItems: 'center',
     justifyContent: 'center',
+    fontFamily: colors.FONT,
 },
 // Header Section Stuff
 timeSection:{
@@ -79,6 +103,7 @@ timeSection:{
   width: 500,
   height: 30,
   justifyContent: 'center',
+    fontFamily: colors.FONT,
 },
 timeText: {
   position: 'absolute', 
@@ -86,6 +111,7 @@ timeText: {
   color: colors.FOREGROUND,
   alignItems: 'center',
   justifyContent: 'center',
+    fontFamily: colors.FONT,
 },
 titleText: {
     flex: 1,
@@ -94,15 +120,39 @@ titleText: {
     alignItems: 'center',
     justifyContent: 'center',
     height: 50,
+    fontFamily: colors.FONT,
 },
 // Info Section Stuff
 smallText: {
   fontSize: 14,
   color: colors.FOREGROUND,
+    fontFamily: colors.FONT,
 },
 mediumText:{
   fontSize: 16,
   color: colors.FOREGROUND,
 
-}
+    fontFamily: colors.FONT,
+},
+//
+  notificationIcon:{
+    position: 'absolute',
+    top:6,
+    right: 6,
+
+    color: colors.FOREGROUND,
+    fontSize: 28,
+    zIndex: 1
+  },
+  notificationIconActive:{
+    position: 'absolute',
+    top:6,
+    right: 6,
+    transform: [{rotate: '20deg'}],
+
+    color: colors.FOREGROUND,
+    fontSize: 28,
+    zIndex: 1
+  },
+
 });
