@@ -29,6 +29,19 @@ export async function getPreviousLaunches(){
     })
 }
 
+export async function getRocketFamilies(){
+    return await fetch(API_URL+"config/")
+    .then((response) => {
+        console.log("Getting Response");
+        return response.json();
+    })
+    .then((data) => {
+        console.log("Response Recieved");
+        console.log(data);
+        return processLaunchData(data.results);
+    })
+}
+
 function processLaunchData(data: any){
     let processedData = data.map((launch: any) => {
         return {
@@ -37,7 +50,9 @@ function processLaunchData(data: any){
             sd_id: launch.id,
             name: launch.name,
             net: launch.net,
+            rocket: launch.rocket,
             launch_provider: launch.launch_service_provider,
+            launch_pad: launch.pad,
             mission: launch.mission,
             window_start: launch.window_start,
             window_end: launch.window_end,
