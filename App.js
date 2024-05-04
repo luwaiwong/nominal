@@ -7,6 +7,7 @@ import React, { useState } from "react";
 
 import TestLaunchData from "./components/pages/TestLaunchData";
 import Dashboard from "./components/pages/Dashboard";
+import MenuBar from "./components/styled/MenuBar";
 import Loading from "./components/pages/Loading";
 
 import UserData from "./components/data/UserData";
@@ -15,6 +16,8 @@ import * as colors from "./components/styles";
 
 export default function App() {
   let userData = new UserData();
+  let [page, setPage] = useState("dashboard");
+
   const [fontsLoaded] = useFonts({
     SpaceGrotesk_500Medium,
   });
@@ -23,7 +26,8 @@ export default function App() {
   }
   return (
     <View style={styles.container}>
-      <Dashboard data={userData} />
+      {page == "dashboard" && <Dashboard data={userData} />}
+      <MenuBar page={page} setPage={setPage} />
     </View>
   );
 }

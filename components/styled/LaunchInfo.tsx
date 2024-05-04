@@ -22,7 +22,7 @@ export default function TestLaunchData(data) {
       <View style={styles.headerSection}>
         <Text style={styles.titleText} onPress={()=>togglePinned()} >{launchInfo.mission.name} </Text>
         <View style={styles.timeSection}>
-          <Text style={styles.timeText}>T - {calculateTminus(launchInfo.net)}</Text>
+          <Text style={styles.timeText}>T {calculateTminus(launchInfo.net)}</Text>
         </View>
       </View>
       {/* Body, Holds the launch info on left and image on right */}
@@ -51,14 +51,18 @@ function calculateTminus(launchTime: Date){
   let hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   let minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
   let seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+  if (minutes < 0){
+    return "+ " + Math.abs(minutes) + "m ";
+  }
   if (days <= 0 && hours <= 0){
-    return minutes + "m ";
+    return "-"+ minutes + "m ";
   }
   if (days <= 0){
-    return hours + "h, " + minutes + "m ";
+    return "-"+hours + "h, " + minutes + "m ";
   }
   
-  return days + "d, " + hours + "h ";
+  return "-"+days + "d, " + hours + "h ";
 }
 
 const styles = StyleSheet.create({

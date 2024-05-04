@@ -1,16 +1,17 @@
-const API_URL = "https://lldev.thespacedevs.com/2.2.0/";
+const DEV_API_URL = "https://lldev.thespacedevs.com/2.2.0/";
+const PROD_API_URL = "https://ll.thespacedevs.com/2.2.0/";
+const API_URL = DEV_API_URL;
+
+
 
 
 export async function getUpcomingLaunches(){
-
     return await fetch(API_URL+"launch/upcoming/")
     .then((response) => {
-        console.log("Getting Response");
         return response.json();
     })
     .then((data) => {
-        console.log("Response Recieved");
-        console.log(data);
+        console.log("API Response Recieved, Upcoming Launches:",data);
         return processLaunchData(data.results);
     })
 }
@@ -19,12 +20,10 @@ export async function getPreviousLaunches(){
 
     return await fetch(API_URL+"launch/previous/")
     .then((response) => {
-        console.log("Getting Response");
         return response.json();
     })
     .then((data) => {
-        console.log("Response Recieved");
-        console.log(data);
+        console.log("API Response Recieved, Previous Launches:",data);
         return processLaunchData(data.results);
     })
 }

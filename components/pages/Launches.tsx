@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, ScrollView } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
@@ -6,7 +6,6 @@ import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 import LaunchInfo from "../styled/LaunchInfo";
 
 import * as colors from "../styles";
-import Tags from "./Tags";
 
 export default function Dashboard(data) {
   let userData = data.data;
@@ -15,8 +14,7 @@ export default function Dashboard(data) {
   let [previousLaunches, setPreviousLaunches] = useState<any>([]);
 
   // App State
-  let [tagsShown, setTagsShown] = useState<any>(false);
-  let [immersiveShown, setImmersiveShown] = useState<any>(false);
+  let [tagsShown, setTagsShown] = useState<any>(true);
   let [pinnedShown, setPinnedShown] = useState<any>(true);
   let [previousShown, setPreviousShown] = useState<any>(true);
   let [upcomingShown, setUpcomingShown] = useState<any>(true);
@@ -34,80 +32,54 @@ export default function Dashboard(data) {
     fetchData();
   }, []);
 
-  function toggleTags(){
-    setTagsShown(!tagsShown);
-    // #TODO: Reload upcoming launches data when switching back to launches page
-  }
-
-  function RegularMode(){
-    return (
-      <ScrollView>  
-        
-        {/* Pinned Section */}
-
-        {/* Upcoming Section */}
-        <View style={styles.contentHeaderSection} >
-          <Text style={styles.contentHeaderText} onPress={()=>setUpcomingShown(!upcomingShown)}>Upcoming </Text>
-          <MaterialIcons 
-            name="arrow-forward-ios" 
-            style={upcomingShown?styles.contentHeaderIcon:styles.contentHeaderIconHidden} 
-            onPress={()=>setUpcomingShown(!upcomingShown)}
-          />
-        </View>
-        <View style={styles.contentSeperator}></View>
-
-        <View style={[styles.contentSection,{height:upcomingShown?"100%":0}]}>
-          {upcomingLaunches.map((launch: any) => {
-            return (
-              <LaunchInfo key={launch.id} data={launch} user={userData}/>
-            );
-        })}
-        
-        </View>
-        {/* Past Launches */}
-        <View style={styles.contentHeaderSection} >
-          <Text style={styles.contentHeaderText} onPress={()=>setPreviousShown(!previousShown)}>Previous </Text>
-          <MaterialIcons 
-            name="arrow-forward-ios" 
-            style={previousShown?styles.contentHeaderIcon:styles.contentHeaderIconHidden}
-            onPress={()=>setPreviousShown(!previousShown)}
-          />
-        </View>
-        <View style={styles.contentSeperator}></View>
-
-        <View style={[styles.contentSection,{height:previousShown?"100%":0}]}>
-          {previousLaunches.map((launch: any) => {
-            return (
-              <LaunchInfo key={launch.id} data={launch} user={userData}/>
-            );
-        })}
-        
-        </View>
-      </ScrollView>);
-  }
-
-  function ImmersiveMode(){
-    return (
-      <ScrollView>
-
-      </ScrollView>
-    )
-  }
-
   return (
-    <View>
+    <ScrollView>
       <View style={styles.topSection}>
-        <TouchableOpacity onPress={()=>toggleTags()}>
           <MaterialIcons name="menu" style={styles.menuButton} />
-        </TouchableOpacity>
-        <Text style={styles.titleText}>Launches</Text>
-        <TouchableOpacity onPress={()=>setImmersiveShown(!immersiveShown)}>
-          <MaterialCommunityIcons name="space-station"  style={styles.menuButton} />    
-        </TouchableOpacity>
+          <Text style={styles.titleText}>Launches</Text>
+          <MaterialCommunityIcons name="space-station"  style={styles.menuButton} />
       </View>
-      <Tags shown={tagsShown} userData={userData}/>
-      {immersiveShown?ImmersiveMode():RegularMode()}
+      {/* Pinned Section */}
+
+      {/* Upcoming Section */}
+      <View style={styles.contentHeaderSection} >
+        <Text style={styles.contentHeaderText} onPress={()=>setUpcomingShown(!upcomingShown)}>Upcoming </Text>
+        <MaterialIcons 
+          name="arrow-forward-ios" 
+          style={upcomingShown?styles.contentHeaderIcon:styles.contentHeaderIconHidden} 
+          onPress={()=>setUpcomingShown(!upcomingShown)}
+        />
       </View>
+      <View style={styles.contentSeperator}></View>
+
+      <View style={[styles.contentSection,{height:upcomingShown?"100%":0}]}>
+        {upcomingLaunches.map((launch: any) => {
+          return (
+            <LaunchInfo key={launch.id} data={launch} user={userData}/>
+          );
+      })}
+      
+      </View>
+      {/* Past Launches */}
+      <View style={styles.contentHeaderSection} >
+        <Text style={styles.contentHeaderText} onPress={()=>setPreviousShown(!previousShown)}>Previous </Text>
+        <MaterialIcons 
+          name="arrow-forward-ios" 
+          style={previousShown?styles.contentHeaderIcon:styles.contentHeaderIconHidden}
+          onPress={()=>setPreviousShown(!previousShown)}
+        />
+      </View>
+      <View style={styles.contentSeperator}></View>
+
+      <View style={[styles.contentSection,{height:previousShown?"100%":0}]}>
+        {previousLaunches.map((launch: any) => {
+          return (
+            <LaunchInfo key={launch.id} data={launch} user={userData}/>
+          );
+      })}
+      
+      </View>
+    </ScrollView>
   );
 }
 
@@ -124,7 +96,6 @@ const styles = StyleSheet.create({
       backgroundColor: colors.BACKGROUND,
       padding: 10,
       height: 60,
-      zIndex: 110,
     },
     titleText: {
       fontSize: 24,
@@ -139,10 +110,7 @@ const styles = StyleSheet.create({
       color: colors.ACCENT,
       fontSize: 32,
     },
-    immersiveButton:{
-      color: colors.ACCENT,
-      fontSize: 32,
-    },
+    immersiveButton:{},
 
     // Content Section
     contentSection: {
