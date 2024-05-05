@@ -1,18 +1,20 @@
-import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import { SpaceGrotesk_500Medium } from "@expo-google-fonts/space-grotesk";
 
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 
 import TestLaunchData from "./components/pages/TestLaunchData";
-import Dashboard from "./components/pages/Dashboard";
+import Dashboard from "./components/pages/Dashboard/Dashboard";
 import MenuBar from "./components/styled/MenuBar";
 import Loading from "./components/pages/Loading";
 
 import UserData from "./components/data/UserData";
 
 import * as colors from "./components/styles";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function App() {
   let userData = new UserData();
@@ -25,10 +27,13 @@ export default function App() {
     return <Loading />;
   }
   return (
-    <View style={styles.container}>
-      {page == "dashboard" && <Dashboard data={userData} />}
-      <MenuBar page={page} setPage={setPage} />
-    </View>
+    <GestureHandlerRootView>
+      <SafeAreaView style={styles.container}>
+        <StatusBar style="light" />
+        {page == "dashboard" && <Dashboard data={userData} />}
+        <MenuBar page={page} setPage={setPage} />
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
 

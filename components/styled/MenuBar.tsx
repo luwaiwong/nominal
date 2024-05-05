@@ -28,19 +28,22 @@ function MenuButton({icon, onPress, label, active}){
 
 const styles = StyleSheet.create({
     menuBar: {
-        position: "absolute",
+        display: "flex",
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center",
         backgroundColor: colors.BACKGROUND_HIGHLIGHT,
         padding: 6,
 
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
 
         width: "100%",
+        position: "absolute",
         bottom: 0,
-        left: 0,
+        left:0,
+
+        zIndex: 100,
     },
     titleText: {
         fontSize: 20,

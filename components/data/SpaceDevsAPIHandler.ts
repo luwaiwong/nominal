@@ -2,16 +2,13 @@ const DEV_API_URL = "https://lldev.thespacedevs.com/2.2.0/";
 const PROD_API_URL = "https://ll.thespacedevs.com/2.2.0/";
 const API_URL = DEV_API_URL;
 
-
-
-
 export async function getUpcomingLaunches(){
     return await fetch(API_URL+"launch/upcoming/")
     .then((response) => {
         return response.json();
     })
     .then((data) => {
-        console.log("API Response Recieved, Upcoming Launches:",data);
+        // console.log("API Response Recieved, Upcoming Launches:",data);
         return processLaunchData(data.results);
     })
 }
@@ -23,21 +20,20 @@ export async function getPreviousLaunches(){
         return response.json();
     })
     .then((data) => {
-        console.log("API Response Recieved, Previous Launches:",data);
+        // console.log("API Response Recieved, Previous Launches:",data);
         return processLaunchData(data.results);
     })
 }
 
+
 export async function getRocketFamilies(){
-    return await fetch(API_URL+"config/")
+    return await fetch(API_URL+"launcher/")
     .then((response) => {
-        console.log("Getting Response");
         return response.json();
     })
     .then((data) => {
-        console.log("Response Recieved");
         console.log(data);
-        return processLaunchData(data.results);
+        return data;
     })
 }
 
@@ -55,6 +51,7 @@ function processLaunchData(data: any){
             mission: launch.mission,
             window_start: launch.window_start,
             window_end: launch.window_end,
+            status: launch.status,
             image: launch.image,
         }
     });

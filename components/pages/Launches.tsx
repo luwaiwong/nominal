@@ -33,7 +33,7 @@ export default function Dashboard(data) {
   }, []);
 
   return (
-    <ScrollView>
+    <>
       <View style={styles.topSection}>
           <MaterialIcons name="menu" style={styles.menuButton} />
           <Text style={styles.titleText}>Launches</Text>
@@ -41,6 +41,7 @@ export default function Dashboard(data) {
       </View>
       {/* Pinned Section */}
 
+    <ScrollView>
       {/* Upcoming Section */}
       <View style={styles.contentHeaderSection} >
         <Text style={styles.contentHeaderText} onPress={()=>setUpcomingShown(!upcomingShown)}>Upcoming </Text>
@@ -80,6 +81,7 @@ export default function Dashboard(data) {
       
       </View>
     </ScrollView>
+    </>
   );
 }
 

@@ -1,4 +1,5 @@
 import * as SDApi from "./SpaceDevsAPIHandler";
+import Tags from "./Tags";
 
 export default class UserData {
   constructor() {
@@ -6,7 +7,10 @@ export default class UserData {
     this.launchdata = undefined;
     this.APIHandler = SDApi;
     this.pinned = [];
-    this.tags = { launchProvider: [] };
+    this.tags = {
+      launchProviders: [],
+    };
+    this.systemTags = Tags;
 
     this.apiCallTimes = 0;
   }
@@ -23,7 +27,7 @@ export default class UserData {
     }
 
     // DATA HAS NOT BEEN FETCHED
-    // Fetch the data and return the top 10 upcoming launches
+    // Fetch the data and return the upcoming launches
     return await this.getUpcomingData().then((data) => {
       return this.#getUpcomingFilteredLaunches();
     });
@@ -45,10 +49,24 @@ export default class UserData {
       return this.#getPrevious10Launches();
     });
   }
+  async getPinnedLaunches() {
+    let pinned = [];
+    for (let i = 0; i < this.launchdata.upcoming.length; i++) {
+      if (this.pinned.includes(this.launchdata.upcoming[i].id)) {
+        pinned.push(this.launchdata.upcoming[i]);
+      }
+    }
+    return pinned;
+  }
 
-  async getLaunch(id) {}
-  async getLaunchProvider(id) {}
-  async getLaunchVehicle(id) {}
+  getTags() {
+    return this.tags;
+  }
+  setTags() {}
+
+  getSystemTags() {
+    return this.#getSystemTags();
+  }
 
   addPinned(launchInfo) {
     this.pinned.push(launchInfo);
@@ -68,6 +86,9 @@ export default class UserData {
       return true;
     }
   }
+  getPinned() {
+    return this.pinned;
+  }
 
   // PRIVATE METHODS FOR SORTING DATA
   #getUpcoming10Launches() {
@@ -83,6 +104,7 @@ export default class UserData {
     let curTime = new Date().getTime();
     let cutoffTime = curTime + 2628000000;
     let launches = [];
+
     for (let i = 0; i < this.launchdata.upcoming.length; i++) {
       let launch = this.launchdata.upcoming[i];
 
@@ -93,39 +115,37 @@ export default class UserData {
       }
 
       // Check if the launch is pinned
-      if (this.pinned.includes(launch)) {
+      if (this.pinned.includes(launch.id)) {
         continue;
       }
 
       // Check if the launch fufills the tags
-      if (this.tags.launchProvider.length > 0) {
-        if (!this.tags.launchProvider.includes(launch.launch_provider.name)) {
+      if (this.tags.launchProviders.length > 0) {
+        if (!this.tags.launchProviders.includes(launch.launch_provider.name)) {
           continue;
         }
       }
+
       launches.push(launch);
     }
-    // console.log(this.launchdata.upcoming.length);
     return launches;
   }
 
-  #getLaunchProviders() {}
+  #getSystemTags() {
+    return this.systemTags;
+  }
 
   async getUpcomingData() {
     this.apiCallTimes += 1;
-    console.log("API Calls: " + this.apiCallTimes);
+    console.log("Getting Upcoming, API Calls: " + this.apiCallTimes);
 
     return await this.APIHandler.getUpcomingLaunches().then((data) => {
       data.lastCalledTime = new Date().getTime();
       // TODO - Store data in local storage
       // TODO - Instead of overwriting the data, merge the new data with the old data
-      if (
-        this.launchdata === undefined ||
-        this.launchdata.upcoming === undefined
-      ) {
-        this.launchdata = {};
-        this.launchdata.upcoming = [];
-      }
+      if (this.launchdata === undefined) this.launchdata = {};
+      if (this.launchdata.upcoming === undefined) this.launchdata.upcoming = [];
+
       this.launchdata.upcoming = data;
 
       return this.launchdata;
@@ -133,24 +153,15 @@ export default class UserData {
   }
   async getPreviousData() {
     this.apiCallTimes += 1;
-    console.log("API Calls: " + this.apiCallTimes);
+    console.log("Getting Previous, API Calls: " + this.apiCallTimes);
 
     return await this.APIHandler.getPreviousLaunches().then((data) => {
-      if (
-        this.launchdata === undefined ||
-        this.launchdata.previous === undefined
-      ) {
-        this.launchdata = {};
-        this.launchdata.previous = [];
-      }
+      if (this.launchdata === undefined) this.launchdata = {};
+      if (this.launchdata.previous === undefined) this.launchdata.previous = [];
 
       this.launchdata.previous = data;
 
       return this.launchdata;
     });
-  }
-
-  getPinned() {
-    return this.pinned;
   }
 }
