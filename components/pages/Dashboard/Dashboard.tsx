@@ -10,6 +10,7 @@ import ImmersivePage from "../../styled/ImmersivePage";
 
 import * as colors from "../../styles";
 import Tags from "../Tags";
+import Loading from "../Loading";
 
 export default function Dashboard(data) {
   let userData = data.data;
@@ -23,6 +24,7 @@ export default function Dashboard(data) {
   let [pinnedShown, setPinnedShown] = useState<any>(true);
   let [previousShown, setPreviousShown] = useState<any>(true);
   let [upcomingShown, setUpcomingShown] = useState<any>(true);
+  let [loading, setLoading] = useState<any>(true);
 
   function Title (){
     let currentScreen = "Launches";
@@ -39,30 +41,28 @@ export default function Dashboard(data) {
   }
 
   useEffect(() => {
-    async function fetchData() {
-      await userData.getUpcomingLaunches().then((data) => {
-        setUpcomingLaunches(data);
-      })
-      await userData.getPreviousLaunches().then((data) => {
-        setPreviousLaunches(data);
-      });
-      await userData.getPinnedLaunches().then((data) => {
-        setPinnedLaunches(data);
-      });
-    }
     fetchData();
   }, []);
 
+  async function fetchData() {
+    setLoading(true);
+    await userData.getUpcomingLaunches().then((data) => {
+      setUpcomingLaunches(data);
+      setLoading(false);
+    })
+    await userData.getPreviousLaunches().then((data) => {
+      setPreviousLaunches(data);
+    });
+    await userData.getPinnedLaunches().then((data) => {
+      setPinnedLaunches(data);
+    });
+    
+  }
   async function toggleTags(){
     setTagsShown(!tagsShown);
 
     if (tagsShown){
-      await userData.getUpcomingLaunches().then((data) => {
-        setUpcomingLaunches(data);
-      })
-      await userData.getPreviousLaunches().then((data) => {
-        setPreviousLaunches(data);
-      });
+      fetchData();
     }
     // #TODO: Reload upcoming launches data when switching back to launches page
   }
@@ -76,6 +76,7 @@ export default function Dashboard(data) {
     })
   }
 
+  
   function RegularMode(){
     return (
       <ScrollView >  
@@ -158,6 +159,18 @@ export default function Dashboard(data) {
       </PagerView>
     )
   }
+  function CurrentScreen(){
+    if (loading){
+      return (<Loading/>
+      );
+    }
+    if (immersiveShown){
+      return ImmersiveMode();
+    }
+    else{
+      return RegularMode();
+    }
+  }
 
   return (
     <View>
@@ -172,7 +185,7 @@ export default function Dashboard(data) {
       </View>
       <View style={styles.topPadding}></View>
       <Tags shown={tagsShown} userData={userData}/>
-      {immersiveShown?ImmersiveMode():RegularMode()}
+      <CurrentScreen/>
     </View>
   );
 }

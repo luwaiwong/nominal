@@ -1,54 +1,82 @@
-import { StyleSheet, View, Text } from "react-native";
-import React from "react";
+import { StyleSheet, View, Text, Image, Animated } from "react-native";
+import React, { useRef } from "react";
 import { useEffect, useState } from "react";
-
-import LaunchInfo from "../styled/LaunchInfo";
+import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 
 import * as colors from "../styles";
+import UserData from "../data/UserData";
 
 export default function Loading() {
-
+    const opacity = useRef(new Animated.Value(1)).current;
+    useEffect(() => {
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(opacity, {
+                    toValue: 0,
+                    duration: 1000,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(opacity, {
+                    toValue: 1,
+                    duration: 1000,
+                    useNativeDriver: true,
+                }),
+            ])
+        ).start();
+    }, []);
+  
   return (
-    <View>
-      <Text>Loading...</Text>
-    </View>
+    <Animated.View style={[styles.page, {opacity:opacity}]}>
+        <View style={styles.loadingShort}></View>
+        <View style={styles.loadingLong}></View>
+        <View style={styles.loadingLong}></View>
+        <View style={styles.loadingShort}></View>
+        <View style={styles.padding}></View>
+        <View style={styles.loadingShort}></View>
+        <View style={styles.loadingLong}></View>
+        <View style={styles.loadingLong}></View>
+        <View style={styles.loadingShort}></View>
+        <View style={styles.padding}></View>
+        <View style={styles.loadingShort}></View>
+        <View style={styles.loadingLong}></View>
+        <View style={styles.loadingLong}></View>
+        <View style={styles.loadingShort}></View>
+        <View style={styles.padding}></View>
+        <View style={styles.loadingShort}></View>
+        <View style={styles.loadingLong}></View>
+        <View style={styles.loadingLong}></View>
+        <View style={styles.loadingShort}></View>
+        <View style={styles.padding}></View>
+    </Animated.View>
   );
+
 }
 
+
 const styles = StyleSheet.create({
-  // Header Bar Section
-    topSection: {
-      width: '100%',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: colors.BACKGROUND,
-      padding: 10,
-      height: 60,
+    page:{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        width: "100%",
+        height: "100%",
+        overflow: "hidden",
     },
-    titleText: {
-      fontSize: 24,
-      flex: 1,
-      color: colors.FOREGROUND,
-      // position: 'absolute',
-      alignItems: 'center',
-      justifyContent: 'center',
-
-      fontFamily: "SpaceGrotesk_500Medium",
+    loadingShort:{
+        backgroundColor: colors.BACKGROUND_HIGHLIGHT,
+        width:"60%",
+        height: 20,
+        margin: 10,
+        borderRadius: 10,
     },
-    menuButton:{},
-    immersiveButton:{},
-
-    // Content Section
-    contentSection: {
-      display: 'flex',
-      backgroundColor: colors.BACKGROUND,
-      height: '100%',
+    loadingLong:{
+        backgroundColor: colors.BACKGROUND_HIGHLIGHT,
+        width:"90%",
+        height: 20,
+        margin: 10,
+        borderRadius: 10,
     },
-    contentHeader: {
-      fontSize: 32,
-      color: colors.FOREGROUND,
-      
-      marginLeft: 8,
-      marginBottom: 10,
-    },
+    padding:{
+        margin: 10,
+    }
 });

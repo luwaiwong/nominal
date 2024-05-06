@@ -39,12 +39,15 @@ export default function TestLaunchData(data) {
   };
 
   const toggle = () => {
+    setPinned(data.user.togglePinned(launchInfo.id));
     
     Animated.timing(scale, {
       toValue: 0,
       duration: 150,
+      delay:100,
       useNativeDriver: true, // Add this to improve performance
-    }).start(()=>togglePinned());
+    }).start(()=>
+    data.updatePinned());
   }
 
 
@@ -57,6 +60,21 @@ export default function TestLaunchData(data) {
   tap.onEnd(()=>toggle());
   tap.numberOfTaps(2);
   
+  let status = launchInfo.status.name;
+  if (status === "To Be Confirmed"){
+    status = "TBC";
+  }
+  if (status === "To Be Determined"){
+    status = "TBD";
+  }
+  else if (status === "Go for Launch"){
+    status = "GO";
+  }
+  else if (status === "Launch Successful"){
+    status = "Launched";
+  }
+  
+
   return (
     <GestureDetector gesture={tap} >
       
@@ -69,20 +87,20 @@ export default function TestLaunchData(data) {
         <View style={styles.bodySection}>
           <View style={styles.infoSection}>
             <View style={styles.horizontalInfoContainer}>
-                <Text style={styles.mediumText}>{launchInfo.status.name}</Text>
+                <Text style={styles.mediumText}>{status}</Text>
                 <Text style={styles.mediumText}>T {calculateTminus(launchInfo.net)}</Text>
             </View>
             <View style={styles.smallSpacer}></View>
-            <Text style={styles.mediumText}>{launchInfo.launch_provider.name}</Text>
-            <Text style={styles.mediumText}>{launchInfo.rocket.configuration.full_name}</Text>
+            <Text style={styles.smallText}>{launchInfo.launch_provider.name}</Text>
+            <Text style={styles.smallText}>{launchInfo.rocket.configuration.full_name}</Text>
+            <Text style={styles.smallText}>{launchInfo.launch_pad.name}</Text>
             <View style={styles.smallSpacer}></View>
-            <Text style={styles.mediumText}>{launchInfo.launch_pad.name}</Text>
             <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
           </View>
           {/* Pinned Icon */}
-          {/* {pinned ? 
+          {pinned ? 
             <MaterialCommunityIcons name="bell-ring"  style={styles.notificationIconActive}  /> : 
-            <MaterialCommunityIcons name="bell-outline"  style={styles.notificationIcon}  />} */}
+            <MaterialCommunityIcons name="bell-outline"  style={styles.notificationIcon}  />}
           <Image style={styles.image} source={{uri: launchInfo.image}} /> 
         </View>
       </Animated.View>
@@ -178,12 +196,18 @@ horizontalInfoContainer:{
 
 },
 smallText: {
-  fontSize: 14,
+  fontSize: 16,
   color: colors.FOREGROUND,
     fontFamily: colors.FONT,
 },
 mediumText:{
-  fontSize: 16,
+  fontSize: 18,
+  color: colors.FOREGROUND,
+
+    fontFamily: colors.FONT,
+},
+LargeText:{
+  fontSize: 20,
   color: colors.FOREGROUND,
 
     fontFamily: colors.FONT,
