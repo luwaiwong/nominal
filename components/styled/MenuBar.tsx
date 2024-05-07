@@ -3,25 +3,35 @@ import { View, Text , StyleSheet} from 'react-native';
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons'; 
 
 import * as colors from '../styles';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 
 
 
 export default function MenuBar({page, setPage}){
     return (
         <View style={styles.menuBar}>
-            <MenuButton icon="home" onPress={()=>{}} label="dashboard" active={page == "dashboard"} />
-            <MenuButton icon="rocket-launch" onPress={()=>{}} label="launches" active={false} />
-            <MenuButton icon="settings" onPress={()=>{}} label="settings" active={false} />
+            <MenuButton icon="home" setPage={()=>setPage("dashboard")} label="dashboard" active={page == "dashboard"} />
+            <MenuButton icon="rocket-launch" setPage={()=>setPage("launches")} label="launches" active={page == "launches"} />
+            <MenuButton icon="settings" setPage={()=>setPage("settings")} label="settings" active={page=="settings"} />
         </View>
     );
 }
 
-function MenuButton({icon, onPress, label, active}){
+function MenuButton({icon, setPage, label, active}){
+    function onPressed(){
+        console.log("Changing Page "+label);
+        setPage();
+    }
+    let tap = Gesture.Tap();
+    tap.onFinalize(()=>onPressed());
+    
     return (
-        <View style={active?styles.buttonContainerActive:styles.buttonContainer}>
-            <MaterialIcons name={icon} style={active?styles.buttonIconActive:styles.buttonIcon} />
-            <Text style={styles.buttonText}>{label}</Text>
-        </View>
+        <GestureDetector gesture={tap}>
+            <View style={active?styles.buttonContainerActive:styles.buttonContainer}>
+                <MaterialIcons name={icon} style={active?styles.buttonIconActive:styles.buttonIcon} />
+                <Text style={styles.buttonText}>{label}</Text>
+            </View>
+        </GestureDetector>
     );
 
 }

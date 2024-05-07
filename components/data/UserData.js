@@ -13,6 +13,7 @@ export default class UserData {
     this.systemTags = Tags;
 
     this.apiCallTimes = 0;
+    console.log("Creating User Data");
   }
 
   // PUBLIC METHODS
@@ -30,6 +31,22 @@ export default class UserData {
     // Fetch the data and return the upcoming launches
     return await this.getUpcomingData().then((data) => {
       return this.#getUpcomingFilteredLaunches();
+    });
+  }
+  async getAllUpcomingLaunches() {
+    // Check if data has been fetched
+    if (
+      this.launchdata !== undefined &&
+      this.launchdata.upcoming !== undefined
+    ) {
+      // If data has been fetched, return the top 10 upcoming launches
+      return this.#getUpcomingFilteredLaunches();
+    }
+
+    // DATA HAS NOT BEEN FETCHED
+    // Fetch the data and return the upcoming launches
+    return await this.getUpcomingData().then((data) => {
+      return this.#getAllUpcomingLaunches();
     });
   }
 
@@ -130,7 +147,9 @@ export default class UserData {
     }
     return launches;
   }
-
+  #getAllUpcomingLaunches() {
+    return this.launchdata.upcoming;
+  }
   #getSystemTags() {
     return this.systemTags;
   }

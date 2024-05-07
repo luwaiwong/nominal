@@ -40,13 +40,18 @@ export default function TestLaunchData(data) {
 
   const toggle = () => {
     setPinned(data.user.togglePinned(launchInfo.id));
-    
+    Animated.sequence([
     Animated.timing(scale, {
-      toValue: 0,
+      toValue: 0.8,
       duration: 150,
       delay:100,
       useNativeDriver: true, // Add this to improve performance
-    }).start(()=>
+    }),Animated.timing(scale, {
+      toValue: 1,
+      duration: 150,
+      delay:100,
+      useNativeDriver: true, // Add this to improve performance
+    })]).start(()=>
     data.updatePinned());
   }
 
@@ -68,10 +73,18 @@ export default function TestLaunchData(data) {
     status = "TBD";
   }
   else if (status === "Go for Launch"){
-    status = "GO";
+    status = "Go for Launch";
   }
   else if (status === "Launch Successful"){
     status = "Launched";
+  }
+
+  let tminus = calculateTminus(launchInfo.net, status);
+  if (status === "TBC" || status === "TBD"){
+    tminus = "T "+tminus;
+  }
+  else {
+    tminus = "T "+tminus;
   }
   
 
@@ -87,8 +100,8 @@ export default function TestLaunchData(data) {
         <View style={styles.bodySection}>
           <View style={styles.infoSection}>
             <View style={styles.horizontalInfoContainer}>
-                <Text style={styles.mediumText}>{status}</Text>
-                <Text style={styles.mediumText}>T {calculateTminus(launchInfo.net)}</Text>
+                <Text style={styles.smallText}>{status}</Text>
+                <Text style={styles.smallText}>{tminus}</Text>
             </View>
             <View style={styles.smallSpacer}></View>
             <Text style={styles.smallText}>{launchInfo.launch_provider.name}</Text>
@@ -109,7 +122,7 @@ export default function TestLaunchData(data) {
 
 }
 
-function calculateTminus(launchTime: Date){
+function calculateTminus(launchTime: Date, status: string = "TBC"){
   let currentTime = new Date();
   let launchDate = new Date(launchTime);
   let timeDifference = launchDate.getTime() - currentTime.getTime();
@@ -118,17 +131,23 @@ function calculateTminus(launchTime: Date){
   let minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
   let seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
 
+  let prefix = "- ";
+  if (status === "TBC" || status === "TBD"){
+    prefix = "~ ";
+  }
+
+
   if (minutes < 0){
     return "+ " + Math.abs(minutes) + "m ";
   }
   if (days <= 0 && hours <= 0){
-    return "- "+ minutes + "m ";
+    return prefix+ minutes + "m ";
   }
   if (days <= 0){
-    return "- "+hours + "h, " + minutes + "m ";
+    return prefix+hours + "h, " + minutes + "m ";
   }
   
-  return "- "+days + "d, " + hours + "h ";
+  return prefix+days + "d, " + hours + "h ";
 }
 
 const styles = StyleSheet.create({
@@ -193,6 +212,12 @@ horizontalInfoContainer:{
   justifyContent: 'space-between',
   width: '100%',
   // backgroundColor: colors.FOREGROUND,
+
+},
+smallerText:{
+  fontSize: 14,
+  color: colors.FOREGROUND,
+    fontFamily: colors.FONT,
 
 },
 smallText: {
