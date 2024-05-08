@@ -10,8 +10,9 @@ import ImmersivePage from "../styled/ImmersivePage";
 
 import * as colors from "../styles";
 import Tags from "./Tags";
-import Loading from "./Loading";
+import Loading from "../styled/Loading";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Dashboard(data) {
   let userData = data.data;
@@ -55,6 +56,7 @@ export default function Dashboard(data) {
     
   }
   async function toggleTags(){
+    console.log("Toggling Tags");
     setTagsShown(!tagsShown);
 
     if (tagsShown){
@@ -119,56 +121,81 @@ export default function Dashboard(data) {
     }
 
     return (
-      <View>
-        <View style={styles.topSelectionContainer}>
-          <GestureDetector gesture={upcoming}>
-            <Text style={styles.topSelectionText}>Upcoming</Text> 
-          </GestureDetector>
-          <GestureDetector gesture={previous}>
-            <Text style={styles.topSelectionText}>Previous</Text> 
-          </GestureDetector>
-        </View>
-        <Animated.View style={[styles.topSelectionBar, {marginLeft:animatedBarMargin}]}></Animated.View>
-          {/* Upcoming Section */}
+      <SafeAreaView>
+        <View>
+          {/* Top Menu Section */}  
+          <View style={styles.topSection}>
+            <Pressable onPress={()=>toggleTags()}>
+              <MaterialIcons name="menu" style={immersiveShown?styles.immersiveButton:styles.menuButton} />
+            </Pressable>
+            <Title/>
+            <Pressable onPress={()=>setImmersiveShown(!immersiveShown)}>
+              <MaterialCommunityIcons name="space-station"  style={immersiveShown?styles.immersiveButton:styles.menuButton} />    
+            </Pressable>
+          </View>
+          <View style={styles.topPadding}></View>
+          {/* Upcoming and Previous button */}
+          <View style={styles.topSelectionContainer}>
+            <GestureDetector gesture={upcoming}>
+              <Text style={styles.topSelectionText}>Upcoming</Text> 
+            </GestureDetector>
+            <GestureDetector gesture={previous}>
+              <Text style={styles.topSelectionText}>Previous</Text> 
+            </GestureDetector>
+          </View>
+          {/* Animated Bar */}
+          <Animated.View style={[styles.topSelectionBar, {marginLeft:animatedBarMargin}]}></Animated.View>
+          {/* Content Section */}
           <Animated.View style={[styles.contentContainer, {marginLeft:animatedPageMargin}]}>
+            {/* Upcoming Section */}
             <View style={[styles.contentSection]}>
               <ScrollView >  
-            {upcomingLoading && <Loading/>}  
-              {upcomingLaunches.map((launch: any) => {
-                return (
-                  <LaunchInfo key={launch.id} data={launch} user={userData} updatePinned={updatePinned}/>
-                );
-            })}
-        </ScrollView>
+              {upcomingLoading && <Loading/>}  
+                {upcomingLaunches.map((launch: any) => {
+                  return (
+                    <LaunchInfo key={launch.id} data={launch} user={userData} updatePinned={updatePinned}/>
+                  );
+              })}
+              </ScrollView>
             </View>
+            {/* Previous Section */}
             <View style={[styles.contentSection]}>
               <ScrollView >  
-            {previousLoading && <Loading/>}
-              {previousLaunches.map((launch: any) => {
-                return (
-                  <LaunchInfo key={launch.id} data={launch} user={userData} updatePinned={updatePinned}/>
-                );
-            })}
-        </ScrollView>
-            </View>
+                {previousLoading && <Loading/>}
+                  {previousLaunches.map((launch: any) => {
+                    return (
+                      <LaunchInfo key={launch.id} data={launch} user={userData} updatePinned={updatePinned}/>
+                    );
+                })}
+              </ScrollView>
+            </View> 
           </Animated.View>
-      </View>
+        </View>
+      </SafeAreaView>
       );
   }
 
   function ImmersiveMode(){
     return (
-      // <Text>Immersive Mode</Text>
-        // <View key="1" style={iStyles.immersivePage}>
-        //   <Text style={iStyles.immersivePageTitle}>First page</Text>
-        // </View>
-      <PagerView style={istyles.immersiveSection} initialPage={0} orientation="vertical" >
-        {upcomingLaunches.map((launch: any) => {
-            return (
-              <ImmersivePage key={launch.id} data={launch} user={userData}/>
-            );
-        })}
+      <View>
+        <View style={styles.topSection}>
+          <Pressable onPress={()=>toggleTags()}>
+            <MaterialIcons name="menu" style={immersiveShown?styles.immersiveButton:styles.menuButton} />
+          </Pressable>
+          <Title/>
+          <Pressable onPress={()=>setImmersiveShown(!immersiveShown)}>
+            <MaterialCommunityIcons name="space-station"  style={immersiveShown?styles.immersiveButton:styles.menuButton} />    
+          </Pressable>
+        </View>
+        <View style={styles.topPadding}></View>
+        <PagerView style={istyles.immersiveSection} initialPage={0} orientation="vertical" >
+          {upcomingLaunches.map((launch: any) => {
+              return (
+                <ImmersivePage key={launch.id} data={launch} user={userData}/>
+              );
+          })}
       </PagerView>
+      </View>
     )
   }
 
@@ -183,16 +210,6 @@ export default function Dashboard(data) {
 
   return (
     <View>
-      <View style={styles.topSection}>
-        <Pressable onPress={()=>toggleTags()}>
-          <MaterialIcons name="menu" style={immersiveShown?styles.immersiveButton:styles.menuButton} />
-        </Pressable>
-        <Title/>
-        <Pressable onPress={()=>setImmersiveShown(!immersiveShown)}>
-          <MaterialCommunityIcons name="space-station"  style={immersiveShown?styles.immersiveButton:styles.menuButton} />    
-        </Pressable>
-      </View>
-      <View style={styles.topPadding}></View>
       <Tags shown={tagsShown} userData={userData}/>
       <CurrentScreen/>
     </View>

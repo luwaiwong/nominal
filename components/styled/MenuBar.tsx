@@ -19,7 +19,6 @@ export default function MenuBar({page, setPage}){
 
 function MenuButton({icon, setPage, label, active}){
     function onPressed(){
-        console.log("Changing Page "+label);
         setPage();
     }
     let tap = Gesture.Tap();

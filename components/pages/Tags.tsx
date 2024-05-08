@@ -12,6 +12,7 @@ export default function Tags(props){
     const userData = props.userData;
     const tags = userData.getSystemTags();
     const tagState = userData.getTags();
+
     return (
         <View style={props.shown?styles.tagsPage:styles.tagsPageHidden}>
             <ScrollView>
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
         
         position: "absolute",
-        top: 0,
+        top: 100,
         width: "100%",
         height: "100%",
 

@@ -8,7 +8,7 @@ import UserData from "../data/UserData";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-export default function TestLaunchData(data) {
+export default function ImmersivePage(data) {
   let launchInfo = data.data;  
   let [launchTime, setLaunchTime] = useState<any>(new Date(launchInfo.net));
   let [pinned, setPinned] = useState<any>(data.user.pinned.includes(launchInfo.id));
@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
     title:{
         fontSize: 20,
         color: colors.FOREGROUND,
+        fontFamily: colors.FONT,
     },
     image:{
         position: "absolute",

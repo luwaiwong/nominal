@@ -11,6 +11,7 @@ export default class UserData {
       launchProviders: [],
     };
     this.systemTags = Tags;
+    this.immersive = false;
 
     this.apiCallTimes = 0;
     console.log("Creating User Data");

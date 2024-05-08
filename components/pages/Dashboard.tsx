@@ -5,12 +5,13 @@ import PagerView from 'react-native-pager-view';
 
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 
-import LaunchInfo from "../../styled/LaunchInfo";
-import ImmersivePage from "../../styled/ImmersivePage";
+import LaunchInfo from "../styled/LaunchInfo";
+import ImmersivePage from "../styled/ImmersivePage";
 
-import * as colors from "../../styles";
-import Tags from "../Tags";
-import Loading from "../Loading";
+import * as colors from "../styles";
+import Tags from "./Tags";
+import Loading from "../styled/Loading";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Dashboard(data) {
   let userData = data.data;
@@ -76,72 +77,94 @@ export default function Dashboard(data) {
     })
   }
 
+  function setImmersive(shown: boolean){
+    userData.immersive = shown;
+    setImmersiveShown(shown);
+  }
   
   function RegularMode(){
     return (
-      <ScrollView >  
-        {pinnedLaunches.length>0 && 
-          <View>
-            <Pressable onPress={()=>setPinnedShown(!pinnedShown)}>
-              <View style={styles.contentHeaderSection} >
-                <Text style={styles.contentHeaderText}>Pinned </Text>
-                <MaterialIcons 
-                  name="arrow-forward-ios" 
-                  style={pinnedShown?styles.contentHeaderIcon:styles.contentHeaderIconHidden} 
-                />
-              </View>
+      <SafeAreaView>
+        <View>
+          {/* Top Bar */}
+          <View style={styles.topSection}>
+            <Pressable onPress={()=>toggleTags()}>
+              <MaterialIcons name="menu" style={immersiveShown?styles.immersiveButton:styles.menuButton} />
             </Pressable>
-            <View style={styles.contentSeperator}></View>
-
-            <View style={[styles.contentSection,{height:pinnedShown?"auto":0}]}>
-              {pinnedLaunches.map((launch: any) => {
-                return (
-                  <LaunchInfo key={launch.id} data={launch} user={userData} updatePinned={updatePinned}/>
-                );
-            })}
-            </View> 
+            <Title/>
+            <Pressable onPress={()=>setImmersive(!immersiveShown)}>
+              <MaterialCommunityIcons name="space-station"  style={immersiveShown?styles.immersiveButton:styles.menuButton} />    
+            </Pressable>
           </View>
-        }
+          <View style={styles.topPadding}></View>
+          {/* Scolling Area */}
+          <ScrollView >   
+          {/* Pinned Launches */}
+          {pinnedLaunches.length>0 && 
+            <View>
+              <Pressable onPress={()=>setPinnedShown(!pinnedShown)}>
+                <View style={styles.contentHeaderSection} >
+                  <Text style={styles.contentHeaderText}>Pinned </Text>
+                  <MaterialIcons 
+                    name="arrow-forward-ios" 
+                    style={pinnedShown?styles.contentHeaderIcon:styles.contentHeaderIconHidden} 
+                  />
+                </View>
+              </Pressable>
+              <View style={styles.contentSeperator}></View>
 
-        {/* Upcoming Section */}
-        <View style={styles.contentHeaderSection} >
-          <Text style={styles.contentHeaderText} onPress={()=>setUpcomingShown(!upcomingShown)}>Upcoming </Text>
-          <MaterialIcons 
-            name="arrow-forward-ios" 
-            style={upcomingShown?styles.contentHeaderIcon:styles.contentHeaderIconHidden} 
-            onPress={()=>setUpcomingShown(!upcomingShown)}
-          />
-        </View>
-        <View style={styles.contentSeperator}></View>
+              <View style={[styles.contentSection,{height:pinnedShown?"auto":0}]}>
+                {pinnedLaunches.map((launch: any) => {
+                  return (
+                    <LaunchInfo key={launch.id} data={launch} user={userData} updatePinned={updatePinned}/>
+                  );
+              })}
+              </View> 
+            </View>
+          }
 
-        <View style={[styles.contentSection,{height:upcomingShown?"auto":0}]}>
-          {upcomingLaunches.map((launch: any) => {
-            return (
-              <LaunchInfo key={launch.id} data={launch} user={userData} updatePinned={updatePinned}/>
-            );
-        })}
-        
-        </View>
-        {/* Past Launches */}
-        <View style={styles.contentHeaderSection} >
-          <Text style={styles.contentHeaderText} onPress={()=>setPreviousShown(!previousShown)}>Previous </Text>
-          <MaterialIcons 
-            name="arrow-forward-ios" 
-            style={previousShown?styles.contentHeaderIcon:styles.contentHeaderIconHidden}
-            onPress={()=>setPreviousShown(!previousShown)}
-          />
-        </View>
-        <View style={styles.contentSeperator}></View>
+          {/* Upcoming Section */}
+          <View style={styles.contentHeaderSection} >
+            <Text style={styles.contentHeaderText} onPress={()=>setUpcomingShown(!upcomingShown)}>Upcoming </Text>
+            <MaterialIcons 
+              name="arrow-forward-ios" 
+              style={upcomingShown?styles.contentHeaderIcon:styles.contentHeaderIconHidden} 
+              onPress={()=>setUpcomingShown(!upcomingShown)}
+            />
+          </View>
+          <View style={styles.contentSeperator}></View>
 
-        <View style={[styles.contentSection,{height:previousShown?"auto":0, marginBottom:125 }]}>
-          {previousLaunches.map((launch: any) => {
-            return (
-              <LaunchInfo key={launch.id} data={launch} user={userData} updatePinned={updatePinned}/>
-            );
-        })}
-        
+          <View style={[styles.contentSection,{height:upcomingShown?"auto":0}]}>
+            {upcomingLaunches.map((launch: any) => {
+              return (
+                <LaunchInfo key={launch.id} data={launch} user={userData} updatePinned={updatePinned}/>
+              );
+          })}
+          
+          </View>
+          {/* Past Launches */}
+          <View style={styles.contentHeaderSection} >
+            <Text style={styles.contentHeaderText} onPress={()=>setPreviousShown(!previousShown)}>Previous </Text>
+            <MaterialIcons 
+              name="arrow-forward-ios" 
+              style={previousShown?styles.contentHeaderIcon:styles.contentHeaderIconHidden}
+              onPress={()=>setPreviousShown(!previousShown)}
+            />
+          </View>
+          <View style={styles.contentSeperator}></View>
+
+          <View style={[styles.contentSection,{height:previousShown?"auto":0, marginBottom:125 }]}>
+            {previousLaunches.map((launch: any) => {
+              return (
+                <LaunchInfo key={launch.id} data={launch} user={userData} updatePinned={updatePinned}/>
+              );
+          })}
+          
+          </View>
+        </ScrollView>
         </View>
-      </ScrollView>);
+      </SafeAreaView>
+      );
   }
 
   function ImmersiveMode(){
@@ -160,10 +183,6 @@ export default function Dashboard(data) {
     )
   }
   function CurrentScreen(){
-    if (loading){
-      return (<Loading/>
-      );
-    }
     if (immersiveShown){
       return ImmersiveMode();
     }
@@ -174,16 +193,6 @@ export default function Dashboard(data) {
 
   return (
     <View>
-      <View style={styles.topSection}>
-        <Pressable onPress={()=>toggleTags()}>
-          <MaterialIcons name="menu" style={immersiveShown?styles.immersiveButton:styles.menuButton} />
-        </Pressable>
-        <Title/>
-        <Pressable onPress={()=>setImmersiveShown(!immersiveShown)}>
-          <MaterialCommunityIcons name="space-station"  style={immersiveShown?styles.immersiveButton:styles.menuButton} />    
-        </Pressable>
-      </View>
-      <View style={styles.topPadding}></View>
       <Tags shown={tagsShown} userData={userData}/>
       <CurrentScreen/>
     </View>
