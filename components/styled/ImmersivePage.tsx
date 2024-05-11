@@ -5,6 +5,7 @@ import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 
 import * as colors from "../styles";
 import UserData from "../data/UserData";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -19,7 +20,10 @@ export default function ImmersivePage(data) {
   return (
     <View style={styles.page}>
         <Image style={styles.image} source={{uri: launchInfo.image}} />
-        <Text style={styles.title} onPress={()=>togglePinned()} >{launchInfo.mission.name} </Text>
+        <SafeAreaView style={{flex: 1}} >
+          <Text style={styles.title} onPress={()=>togglePinned()} >{launchInfo.mission.name} </Text>
+
+        </SafeAreaView>
     </View>
   );
 

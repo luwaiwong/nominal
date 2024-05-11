@@ -16,9 +16,14 @@ import UserData from "./components/data/UserData";
 
 import * as colors from "./components/styles";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import TitleBar from "./components/styled/Titlebar";
 
 export default function App() {
+  // App State Variables
   let [userData, setUserData] = useState(null);
+  let [immersive, setImmersive] = useState(false);
+  let [upcomingLaunches, setUpcomingLaunches] = useState < any > [];
+  let [previousLaunches, setPreviousLaunches] = useState < any > [];
   let [page, setPage] = useState("dashboard");
 
   // Called only once when the app is mounted
@@ -27,7 +32,20 @@ export default function App() {
     // Create a new user data object
     // This way the user data isn't reset every time the app is re-rendered
     setUserData(new UserData());
+    fetchData();
   }, []);
+
+  // Function to fetch data
+  async function fetchData() {
+    await userData.getAllUpcomingLaunches().then((data) => {
+      setUpcomingLaunches(data);
+      setUpcomingLoading(false);
+    });
+    await userData.getPreviousLaunches().then((data) => {
+      setPreviousLaunches(data);
+      setPreviousLoading(false);
+    });
+  }
 
   const [fontsLoaded] = useFonts({
     SpaceGrotesk_500Medium,
@@ -35,12 +53,23 @@ export default function App() {
   if (!fontsLoaded || userData == null) {
     return <Loading />;
   }
+
+  // Data object fed into all pages
+  // Includes current state of app
+  data = {
+    userData: userData,
+    immersive: immersive,
+    upcoming: upcomingLaunches,
+    previous: previousLaunches,
+  };
+
   return (
     <GestureHandlerRootView>
       <View style={styles.container}>
         <StatusBar style="light" />
-        {page == "dashboard" && <Dashboard data={userData} />}
-        {page == "launches" && <Launches data={userData} />}
+        <TitleBar />
+        {page == "dashboard" && <Dashboard data={data} />}
+        {page == "launches" && <Launches data={data} />}
         <MenuBar page={page} setPage={setPage} />
       </View>
     </GestureHandlerRootView>

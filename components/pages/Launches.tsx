@@ -14,9 +14,8 @@ import Loading from "../styled/Loading";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function Dashboard(data) {
-  let userData = data.data;
-  let [pinnedLaunches, setPinnedLaunches] = useState<any>([]);
+export default function Launches(props) {
+  let userData = props.data.uderData;
   let [upcomingLaunches, setUpcomingLaunches] = useState<any>([]);
   let [previousLaunches, setPreviousLaunches] = useState<any>([]);
 

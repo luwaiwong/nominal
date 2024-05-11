@@ -3,14 +3,19 @@ import Tags from "./Tags";
 
 export default class UserData {
   constructor() {
+    // INFO
     this.name = "User Data";
     this.launchdata = undefined;
     this.APIHandler = SDApi;
+    this.systemTags = Tags;
+
+    // USER DATA
     this.pinned = [];
     this.tags = {
       launchProviders: [],
     };
-    this.systemTags = Tags;
+
+    // FRONTEND STATE
     this.immersive = false;
 
     this.apiCallTimes = 0;
@@ -18,6 +23,8 @@ export default class UserData {
   }
 
   // PUBLIC METHODS
+  async returnHighlight() {}
+
   async getUpcomingLaunches() {
     // Check if data has been fetched
     if (

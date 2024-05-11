@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text , StyleSheet} from 'react-native'; 
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons'; 
 
-import * as colors from '../styles';
+import {COLORS, FONT, BOTTOM_BAR_HEIGHT} from '../styles';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 
 
@@ -41,13 +41,14 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center",
-        backgroundColor: colors.BACKGROUND_HIGHLIGHT,
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         padding: 6,
 
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
 
         width: "100%",
+        height: BOTTOM_BAR_HEIGHT,
         position: "absolute",
         bottom: 0,
         left:0,
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
     },
     titleText: {
         fontSize: 20,
-        color: colors.FOREGROUND,
+        color: COLORS.FOREGROUND,
     },
 
     // Button
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: colors.BACKGROUND_HIGHLIGHT,
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         padding: 0,
         flex: 1,
     },
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: colors.ACCENT,
+        backgroundColor: COLORS.ACCENT,
         padding: 0,
         flex: 1,
 
@@ -81,16 +82,16 @@ const styles = StyleSheet.create({
     },
     buttonIcon: {
         fontSize: 35,
-        color: colors.FOREGROUND,
+        color: COLORS.FOREGROUND,
     },
     buttonIconActive: {
         fontSize: 35,
-        color: colors.FOREGROUND,
+        color: COLORS.FOREGROUND,
     },
     buttonText: {
         fontSize: 16,
-        fontFamily: colors.FONT,
-        color: colors.FOREGROUND,
+        fontFamily: FONT,
+        color: COLORS.FOREGROUND,
 
         marginTop:-8,
         marginBottom: 4,
