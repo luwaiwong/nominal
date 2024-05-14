@@ -144,6 +144,6 @@ const styles = StyleSheet.create({
       backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
     },
     bottomBuffer:{
-        height: BOTTOM_BAR_HEIGHT,
+        height: BOTTOM_BAR_HEIGHT+140,
     }
 });
