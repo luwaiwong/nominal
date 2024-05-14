@@ -1,11 +1,13 @@
 import React from "react"
-import { StyleSheet, View, Text,Pressable } from "react-native"
+import { StyleSheet, View, Text,Pressable, StatusBar } from "react-native"
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 
-import { COLORS, FONT } from "../styles";
+import { COLORS, FONT, TOP_BAR_HEIGHT } from "../styles";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TitleBar(){
     return (
+      <SafeAreaView>
         <View style={styles.topSection}>
             <Pressable >
                 <MaterialIcons name="menu" style={styles.menuButton} /> 
@@ -15,6 +17,7 @@ export default function TitleBar(){
                 <MaterialCommunityIcons name="space-station"  style={styles.menuButton} />    
             </Pressable>
         </View>
+      </SafeAreaView>
     );
 }
 
@@ -31,16 +34,12 @@ const styles = StyleSheet.create({
       position: 'absolute',
       top: 0,
 
-
+      marginTop: StatusBar.currentHeight-10,
       width: '100%',
       // backgroundColor: colors.BACKGROUND,
-      padding: 10,
-      height: 55,
+      paddingHorizontal: 10,
+      height: TOP_BAR_HEIGHT,
       zIndex: 110,
-    },
-    topPadding:{
-      height: 60,
-      width: "100%",
     },
     titleText: {
       fontSize: 24,

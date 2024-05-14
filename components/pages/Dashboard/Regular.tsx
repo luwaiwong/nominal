@@ -23,10 +23,10 @@ export default function Regular(props) {
       return (
         <SafeAreaView>
             <View>
-                {/* Scolling Area */}
-                <ScrollView >   
                     {/* Padding for title bar */}
                     <View style={styles.topPadding}/>
+                {/* Scolling Area */}
+                <ScrollView >   
 
                     {/* Highlight Launch */}
                     {upcomingLaunches[0] != undefined && <HighlightLaunchInfo data={upcomingLaunches[0]}  />}
@@ -44,13 +44,13 @@ export default function Regular(props) {
                         </Pressable>
                         <View style={styles.contentSeperator}></View>
 
-                        <View style={[styles.contentSection,{height:pinnedShown?"auto":0}]}>
+                        {/* <View style={[styles.contentSection,{height:pinnedShown?"auto":0}]}>
                             {pinnedLaunches.map((launch: any) => {
                             return (
                                 <LaunchInfo key={launch.id} data={launch} user={userData} />
                             );
                         })}
-                        </View> 
+                        </View>  */}
                     </View>
                     
 

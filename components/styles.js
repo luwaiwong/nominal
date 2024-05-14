@@ -13,4 +13,4 @@ export const ACCENT = "#5E81AC";
 export const FONT = "SpaceGrotesk_500Medium";
 
 export const BOTTOM_BAR_HEIGHT = 65;
-export const TOP_BAR_HEIGHT = 65;
+export const TOP_BAR_HEIGHT = 55;

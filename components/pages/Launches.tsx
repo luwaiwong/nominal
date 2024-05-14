@@ -15,7 +15,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Launches(props) {
-  let userData = props.data.uderData;
+  let userData = props.data.userData;
   let [upcomingLaunches, setUpcomingLaunches] = useState<any>([]);
   let [previousLaunches, setPreviousLaunches] = useState<any>([]);
 
@@ -122,16 +122,6 @@ export default function Launches(props) {
     return (
       <SafeAreaView>
         <View>
-          {/* Top Menu Section */}  
-          <View style={styles.topSection}>
-            <Pressable onPress={()=>toggleTags()}>
-              <MaterialIcons name="menu" style={immersiveShown?styles.immersiveButton:styles.menuButton} />
-            </Pressable>
-            <Title/>
-            <Pressable onPress={()=>setImmersiveShown(!immersiveShown)}>
-              <MaterialCommunityIcons name="space-station"  style={immersiveShown?styles.immersiveButton:styles.menuButton} />    
-            </Pressable>
-          </View>
           <View style={styles.topPadding}></View>
           {/* Upcoming and Previous button */}
           <View style={styles.topSelectionContainer}>
@@ -235,7 +225,7 @@ const styles = StyleSheet.create({
       zIndex: 110,
     },
     topPadding:{
-      height: 60,
+      height: colors.TOP_BAR_HEIGHT,
       width: "100%",
     },
     titleText: {
