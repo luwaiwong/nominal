@@ -5,19 +5,23 @@ import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 import { COLORS, FONT, TOP_BAR_HEIGHT } from "../styles";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function TitleBar(){
+export default function TitleBar(props){
+    const immersive = props.immersive;
+    const setImmersive = props.setImmersive;
+    // console.log(immersive);
     return (
-      <SafeAreaView>
         <View style={styles.topSection}>
             <Pressable >
                 <MaterialIcons name="menu" style={styles.menuButton} /> 
             </Pressable>
             <Text style={styles.titleText}>Launches</Text>
-            <Pressable >
+            <Pressable 
+              onPress={()=>{
+                setImmersive(!immersive);
+              }}>
                 <MaterialCommunityIcons name="space-station"  style={styles.menuButton} />    
             </Pressable>
         </View>
-      </SafeAreaView>
     );
 }
 

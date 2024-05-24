@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import { View, Text, Pressable, ScrollView, StyleSheet} from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet, StatusBar} from 'react-native';
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -21,7 +21,6 @@ export default function Regular(props) {
 
     function Content(){
       return (
-        <SafeAreaView>
             <View>
                     {/* Padding for title bar */}
                     <View style={styles.topPadding}/>
@@ -84,7 +83,6 @@ export default function Regular(props) {
                     <View style={styles.bottomBuffer}/>
                 </ScrollView>
             </View>
-        </SafeAreaView>
       );
         
     }
@@ -98,7 +96,7 @@ export default function Regular(props) {
 
 const styles = StyleSheet.create({
     topPadding:{
-      height: TOP_BAR_HEIGHT,
+      height: TOP_BAR_HEIGHT+StatusBar.currentHeight,
       width: "100%",
     },
     // Content Section

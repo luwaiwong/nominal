@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import { StyleSheet, View, Text, Animated, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, Animated, ScrollView, StatusBar } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -63,7 +63,6 @@ export default function RegularLaunches(props){
     }
 
     return (
-      <SafeAreaView style={{flex:1}}>
         <View>
           <View style={styles.topPadding}></View>
           {/* Upcoming and Previous button */}
@@ -103,14 +102,13 @@ export default function RegularLaunches(props){
             </View> 
           </Animated.View>
         </View>
-      </SafeAreaView>
       );
 }
 
 
 const styles = StyleSheet.create({
     topPadding:{
-      height: TOP_BAR_HEIGHT,
+      height: TOP_BAR_HEIGHT+StatusBar.currentHeight,
       width: "100%",
     },
 

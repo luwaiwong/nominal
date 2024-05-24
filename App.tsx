@@ -25,7 +25,8 @@ export default function App() {
   let [immersive, setImmersive] = useState(false);
   let [upcomingLaunches, setUpcomingLaunches] = useState([]);
   let [previousLaunches, setPreviousLaunches] = useState([]);
-  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  let [initialPage, setInitialPage] = useState(0);
+  let currentPage = useRef(0);
   const pagerRef = useRef(null);
 
   // Called only once when the app is mounted
@@ -50,6 +51,7 @@ export default function App() {
     });
   }
 
+  // Checks if font is loaded, if the font is not loaded yet, just show a loading screen
   const [fontsLoaded] = useFonts({
     SpaceGrotesk_500Medium,
   });
@@ -67,23 +69,32 @@ export default function App() {
     previous: previousLaunches,
   };
 
+  // Page Change Handling
+  // Use to change current page when button pressed
   function setPage(page){
+    console.log("Setting Page to:", page);
     pagerRef.current.setPage(page);
   }
+
+  // Called when the page is scrolling
+  // Use to handle animations while page is scrolling (e.g. bottom sliding animation)
   const onPageScrollStateChanged = (state) => {
     // Handle page scroll state changes (e.g., idle, settling, dragging)
     // Example: Log the state change
     // console.log('Page scroll state:', state);
+    // Can be 
   };
 
+  // Called when the page is changed
   const onPageSelected = (event) => {
     // Handle page selection
     const { position } = event.nativeEvent;
 
     console.log('Page changed to:', position);
+    currentPage.current = position;
   };
 
-
+  // Returns current page
   function CurrentPage(){
     if (upcomingLaunches.length == 0) {
       return <Loading />;
@@ -92,7 +103,7 @@ export default function App() {
       return (
         <PagerView 
           style={styles.pagerView} 
-          initialPage={0} 
+          initialPage={currentPage.current} 
           orientation="horizontal" 
           ref={pagerRef} 
           onPageScrollStateChanged={onPageScrollStateChanged}
@@ -105,11 +116,13 @@ export default function App() {
     }
 
   }
+
+  // Main App View
   return (
     <GestureHandlerRootView>
       <View style={styles.container}>
         <StatusBar style="light" />
-        <TitleBar />
+        <TitleBar immersive={immersive} setImmersive={setImmersive} />
         <CurrentPage/>
         <MenuBar page={null} setPage={setPage} />
       </View>
