@@ -12,9 +12,9 @@ export default function Tags(props){
     const userData = props.userData;
     const tags = userData.getSystemTags();
     const tagState = userData.getTags();
-
+    const open = props.open;
     return (
-        <View style={props.shown?styles.tagsPage:styles.tagsPageHidden}>
+        <View style={open?styles.tagsPage:styles.tagsPageHidden}>
             <ScrollView>
                 <View style={styles.topPadding}></View>
                 <Text style={styles.tagSectionTitle}>Launch Providers</Text>
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
         height: "100%",
 
         backgroundColor: colors.BACKGROUND,
-        zIndex: 50,
+        zIndex: 2000,
         left: "0%",
     },
     tagsPageHidden: {
@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
         left: "-100%",
     },
     topPadding:{
-        height: 60,
         width: "100%",
         backgroundColor: colors.BACKGROUND,
     

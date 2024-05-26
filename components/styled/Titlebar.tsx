@@ -8,10 +8,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function TitleBar(props){
     const immersive = props.immersive;
     const setImmersive = props.setImmersive;
+    const tagsOpen = props.tagsOpen;
+    const setTagsOpen = props.setTagsOpen;
     // console.log(immersive);
     return (
         <View style={styles.topSection}>
-            <Pressable >
+            <Pressable 
+              onPress={()=>{
+                setTagsOpen(!tagsOpen);
+              }}>
                 <MaterialIcons name="menu" style={styles.menuButton} /> 
             </Pressable>
             <Text style={styles.titleText}>Launches</Text>

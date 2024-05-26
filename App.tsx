@@ -18,14 +18,18 @@ import * as colors from "./components/styles";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import TitleBar from "./components/styled/Titlebar";
 import PagerView from "react-native-pager-view";
+import Tags from "./components/pages/Tags";
 
 export default function App() {
-  // App State Variables
+  // App Data Variables
   let [userData, setUserData] = useState(null);
   let [immersive, setImmersive] = useState(false);
   let [upcomingLaunches, setUpcomingLaunches] = useState([]);
   let [previousLaunches, setPreviousLaunches] = useState([]);
-  let [initialPage, setInitialPage] = useState(0);
+
+  // App State Variables
+  let [tagsOpen, setTagsOpen] = useState(false);
+  // Holds variable for use, without re-rendering the app when it changes
   let currentPage = useRef(0);
   const pagerRef = useRef(null);
 
@@ -122,7 +126,8 @@ export default function App() {
     <GestureHandlerRootView>
       <View style={styles.container}>
         <StatusBar style="light" />
-        <TitleBar immersive={immersive} setImmersive={setImmersive} />
+        <TitleBar immersive={immersive} setImmersive={setImmersive} tagsOpen={tagsOpen} setTagsOpen={setTagsOpen}/>
+        <Tags userData={userData} open={tagsOpen} setOpen={setTagsOpen} />
         <CurrentPage/>
         <MenuBar page={null} setPage={setPage} />
       </View>
