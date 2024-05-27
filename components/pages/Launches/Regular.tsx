@@ -84,7 +84,7 @@ export default function RegularLaunches(props){
               {upcomingLaunches.length == 0  && <Loading/>}  
                 {upcomingLaunches.map((launch: any) => {
                   return (
-                    <LaunchInfo key={launch.id} data={launch} user={userData} updatePinned={()=>{}}/>
+                    <LaunchInfo key={launch.id} data={launch} user={userData}/>
                   );
               })}
               </ScrollView>
@@ -95,7 +95,7 @@ export default function RegularLaunches(props){
                 {previousLaunches.length == 0 && <Loading/>}
                   {previousLaunches.map((launch: any) => {
                     return (
-                      <LaunchInfo key={launch.id} data={launch} user={userData} updatePinned={()=>{}}/>
+                      <LaunchInfo key={launch.id} data={launch} user={userData}/>
                     );
                 })}
               </ScrollView>

@@ -13,19 +13,25 @@ export default function TitleBar(props){
     // console.log(immersive);
     return (
         <View style={styles.topSection}>
+<<<<<<< Updated upstream
             <Pressable 
               onPress={()=>{
                 setTagsOpen(!tagsOpen);
               }}>
+=======
+            {/* <Pressable >
+>>>>>>> Stashed changes
                 <MaterialIcons name="menu" style={styles.menuButton} /> 
-            </Pressable>
+            </Pressable> */}
+
             <Text style={styles.titleText}>Launches</Text>
-            <Pressable 
+
+            {/* <Pressable 
               onPress={()=>{
                 setImmersive(!immersive);
               }}>
                 <MaterialCommunityIcons name="space-station"  style={styles.menuButton} />    
-            </Pressable>
+            </Pressable> */}
         </View>
     );
 }
@@ -38,7 +44,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       alignItems: 'center',
       alignContent: 'center',
-      justifyContent: 'space-between',
+      justifyContent: 'center',
 
       position: 'absolute',
       top: 0,
@@ -56,6 +62,9 @@ const styles = StyleSheet.create({
       // position: 'absolute',
       alignItems: 'center',
       justifyContent: 'center',
+      textAlign: 'center',
+      
+      width: "100%",
 
       fontFamily: FONT,
     },

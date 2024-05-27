@@ -25,7 +25,7 @@ export default function Launches(props) {
   }, []);
 
   async function fetchData() {
-    await userData.getAllUpcomingLaunches().then((data) => {
+    await userData.getUpcomingLaunches().then((data) => {
       setUpcomingLaunches(data);
     })
     await userData.getPreviousLaunches().then((data) => {

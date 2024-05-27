@@ -23,8 +23,40 @@ export default class UserData {
   }
 
   // PUBLIC METHODS
+  // Data Functions
+  // Returns all required data
+  async getData() {
+    // Check if data has been fetched
+    if (this.launchdata !== undefined) {
+      // If data has been fetched, return the top 10 upcoming launches
+      return this.#getData();
+    }
+
+    // Fetch the data and return the upcoming launches
+    return await this.getUpcomingData().then((data) => {
+      return this.getPreviousData().then((data) => {
+        return this.#getData();
+      });
+    });
+  }
   async returnHighlight() {}
 
+  async getDashboardFiltered() {
+    // Check if data has been fetched
+    if (
+      this.launchdata !== undefined &&
+      this.launchdata.upcoming !== undefined
+    ) {
+      // If data has been fetched, return the top 10 upcoming launches
+      return this.#getDashboardFilteredLaunches();
+    }
+
+    // DATA HAS NOT BEEN FETCHED
+    // Fetch the data and return the upcoming launches
+    return await this.getUpcomingData().then((data) => {
+      return this.#getDashboardFilteredLaunches();
+    });
+  }
   async getUpcomingLaunches() {
     // Check if data has been fetched
     if (
@@ -32,29 +64,13 @@ export default class UserData {
       this.launchdata.upcoming !== undefined
     ) {
       // If data has been fetched, return the top 10 upcoming launches
-      return this.#getUpcomingFilteredLaunches();
+      return this.#getUpcomingLaunches();
     }
 
     // DATA HAS NOT BEEN FETCHED
     // Fetch the data and return the upcoming launches
     return await this.getUpcomingData().then((data) => {
-      return this.#getUpcomingFilteredLaunches();
-    });
-  }
-  async getAllUpcomingLaunches() {
-    // Check if data has been fetched
-    if (
-      this.launchdata !== undefined &&
-      this.launchdata.upcoming !== undefined
-    ) {
-      // If data has been fetched, return the top 10 upcoming launches
-      return this.#getUpcomingFilteredLaunches();
-    }
-
-    // DATA HAS NOT BEEN FETCHED
-    // Fetch the data and return the upcoming launches
-    return await this.getUpcomingData().then((data) => {
-      return this.#getAllUpcomingLaunches();
+      return this.#getUpcomingLaunches();
     });
   }
 
@@ -65,34 +81,46 @@ export default class UserData {
       this.launchdata.previous !== undefined
     ) {
       // If data has been fetched, return the top 10 upcoming launches
-      return this.#getPrevious10Launches();
+      return this.#getPreviousLaunches();
     }
 
     // DATA HAS NOT BEEN FETCHED
     // Fetch the data and return the previous 10 launches
     return await this.getPreviousData().then((data) => {
-      return this.#getPrevious10Launches();
+      return this.#getPreviousLaunches();
     });
   }
   async getPinnedLaunches() {
     let pinned = [];
     for (let i = 0; i < this.launchdata.upcoming.length; i++) {
-      if (this.pinned.includes(this.launchdata.upcoming[i].id)) {
+      if (
+        this.pinned.includes(this.launchdata.upcoming[i].id) &&
+        !pinned.includes(this.launchdata.upcoming[i])
+      ) {
         pinned.push(this.launchdata.upcoming[i]);
+      }
+    }
+    for (let i = 0; i < this.launchdata.previous.length; i++) {
+      if (
+        this.pinned.includes(this.launchdata.previous[i].id) &&
+        !pinned.includes(this.launchdata.previous[i])
+      ) {
+        pinned.push(this.launchdata.previous[i]);
       }
     }
     return pinned;
   }
 
+  // Tags Functions
   getTags() {
     return this.tags;
   }
   setTags() {}
-
   getSystemTags() {
-    return this.#getSystemTags();
+    return this.systemTags;
   }
 
+  // Pinned Functions
   addPinned(launchInfo) {
     this.pinned.push(launchInfo);
   }
@@ -116,14 +144,34 @@ export default class UserData {
   }
 
   // PRIVATE METHODS FOR SORTING DATA
-  #getUpcoming10Launches() {
-    let curTime = new Date().getTime();
-    return this.launchdata.upcoming.slice(0, 10);
+  // Returns all data used in app
+  #getData() {
+    data = {
+      foryou: [],
+      pinned: [],
+      dashboardFiltered: [],
+      dashboardRecent: [],
+      upcoming: [],
+      previous: [],
+    };
+
+    data.upcoming = this.#getUpcomingLaunches();
+    data.previous = this.#getPreviousLaunches();
+    data.pinned = this.getPinnedLaunches();
+    data.dashboardFiltered = this.#getDashboardFilteredLaunches();
+    data.dashboardRecent = this.#getDashboardRecentLaunches();
+    data.foryou = this.#getForYouData();
+
+    return data;
   }
-  #getPrevious10Launches() {
+  #getForYouData() {
+    return this.launchdata.upcoming;
+  }
+  #getDashboardRecentLaunches() {
     return this.launchdata.previous.slice(0, 10);
   }
-  #getUpcomingFilteredLaunches() {
+
+  #getDashboardFilteredLaunches() {
     // Filter the launches based on the tags
     // Cutoff at launches that are more than 1 month away
     let curTime = new Date().getTime();
@@ -155,13 +203,15 @@ export default class UserData {
     }
     return launches;
   }
-  #getAllUpcomingLaunches() {
+
+  #getUpcomingLaunches() {
     return this.launchdata.upcoming;
   }
-  #getSystemTags() {
-    return this.systemTags;
+  #getPreviousLaunches() {
+    return this.launchdata.previous;
   }
 
+  // Data fetching functions
   async getUpcomingData() {
     this.apiCallTimes += 1;
     console.log("Getting Upcoming, API Calls: " + this.apiCallTimes);
@@ -178,6 +228,7 @@ export default class UserData {
       return this.launchdata;
     });
   }
+
   async getPreviousData() {
     this.apiCallTimes += 1;
     console.log("Getting Previous, API Calls: " + this.apiCallTimes);

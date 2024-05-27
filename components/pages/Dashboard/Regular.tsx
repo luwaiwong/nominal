@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import { View, Text, Pressable, ScrollView, StyleSheet, StatusBar} from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet, StatusBar, RefreshControl} from 'react-native';
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -14,24 +14,35 @@ export default function Regular(props) {
     let [previousShown, setPreviousShown] = useState<any>(true);
     let [upcomingShown, setUpcomingShown] = useState<any>(true);
 
+    let setPinned = props.setPinned
     let pinnedLaunches = props.pinnedLaunches;
     let upcomingLaunches = props.upcomingLaunches;
     let previousLaunches = props.previousLaunches;
     let userData = props.userData;
 
+
+    async function fetchPinned(){
+      await userData.getPinnedLaunches().then((data)=>{
+        setPinned(data)
+      })
+    }
+    
     function Content(){
       return (
             <View>
-                    {/* Padding for title bar */}
-                    <View style={styles.topPadding}/>
+                {/* Padding for title bar */}
+                <View style={styles.topPadding}/>
                 {/* Scolling Area */}
-                <ScrollView >   
-
+                <ScrollView 
+                  refreshControl={
+                    <RefreshControl refreshing={false} onRefresh={()=>{fetchPinned()}} />
+                  }
+                >
                     {/* Highlight Launch */}
                     {upcomingLaunches[0] != undefined && <HighlightLaunchInfo data={upcomingLaunches[0]}  />}
 
                     {/* Pinned Launches */}
-                    <View>
+                    {/* <View>
                         <Pressable onPress={()=>setPinnedShown(!pinnedShown)}>
                             <View style={styles.contentHeaderSection} >
                             <Text style={styles.contentHeaderText}>Pinned </Text>
@@ -43,14 +54,14 @@ export default function Regular(props) {
                         </Pressable>
                         <View style={styles.contentSeperator}></View>
 
-                        {/* <View style={[styles.contentSection,{height:pinnedShown?"auto":0}]}>
+                        <View style={[styles.contentSection,{height:pinnedShown?"auto":0}]}>
                             {pinnedLaunches.map((launch: any) => {
                             return (
                                 <LaunchInfo key={launch.id} data={launch} user={userData} />
                             );
                         })}
-                        </View>  */}
-                    </View>
+                        </View> 
+                    </View> */}
                     
 
                     {/* Upcoming Section */}

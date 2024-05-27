@@ -10,6 +10,7 @@ import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 export default function MenuBar({page, setPage}){
     return (
         <View style={styles.menuBar}>
+            <MenuButton icon="home" setPage={()=>setPage(0)} label="for you" active={page == "for you"} />
             <MenuButton icon="home" setPage={()=>setPage(0)} label="dashboard" active={page == "dashboard"} />
             <MenuButton icon="rocket-launch" setPage={()=>setPage(1)} label="launches" active={page == "launches"} />
             <MenuButton icon="settings" setPage={()=>setPage("settings")} label="settings" active={page=="settings"} />

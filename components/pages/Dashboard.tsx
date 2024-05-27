@@ -13,6 +13,8 @@ export default function Dashboard(props) {
   let immersiveShown = props.data.immersive
   let upcomingLaunches = props.data.upcoming
   let previousLaunches = props.data.previous
+  let pinnedLaunches = props.data.pinned
+  let setPinned = props.data.setPinned
 
 
   function CurrentScreen(){
@@ -20,7 +22,7 @@ export default function Dashboard(props) {
       return <Immersive upcomingLaunches={upcomingLaunches} userData={userData}/>
     }
     else{
-      return (<Regular userData={userData} pinnedLaunches={undefined} upcomingLaunches={upcomingLaunches} previousLaunches={previousLaunches}/>)
+      return (<Regular userData={userData} pinnedLaunches={pinnedLaunches} setPinned={setPinned} upcomingLaunches={upcomingLaunches} previousLaunches={previousLaunches}/>)
     }
   }
 

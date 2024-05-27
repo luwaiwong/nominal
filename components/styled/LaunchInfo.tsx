@@ -11,11 +11,13 @@ const MONTHS = ["January", "February", "March", "April", "May", "June", "July", 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 export default function TestLaunchData(data) {
   let launchInfo = data.data;  
+  let userData = data.user;
   let [launchTime, setLaunchTime] = useState<any>(new Date(launchInfo.net));
-  let [pinned, setPinned] = useState<any>(data.user.pinned.includes(launchInfo.id));
+  let [pinned, setPinned] = useState<any>(userData.getPinned().includes(launchInfo.id));
   const togglePinned = () => {
-    setPinned(data.user.togglePinned(launchInfo.id));
-    data.updatePinned();
+    let pinnedStatus = userData.togglePinned(launchInfo.id)
+    setPinned(pinnedStatus);
+
   };
 
   // ANIMATIONS
@@ -39,7 +41,7 @@ export default function TestLaunchData(data) {
   };
 
   const toggle = () => {
-    setPinned(data.user.togglePinned(launchInfo.id));
+    togglePinned()
     Animated.sequence([
     Animated.timing(scale, {
       toValue: 0.8,
@@ -51,11 +53,10 @@ export default function TestLaunchData(data) {
       duration: 150,
       delay:100,
       useNativeDriver: true, // Add this to improve performance
-    })]).start(()=>
-    data.updatePinned());
+    })]).start()
   }
 
-
+  // Gestures
   const tap = Gesture.Tap();
 
   tap.onTouchesDown(()=>animateIn());
@@ -65,6 +66,7 @@ export default function TestLaunchData(data) {
   tap.onEnd(()=>toggle());
   tap.numberOfTaps(2);
   
+  // Status name
   let status = launchInfo.status.name;
   if (status === "To Be Confirmed"){
     status = "TBC";
@@ -87,7 +89,7 @@ export default function TestLaunchData(data) {
     tminus = "T "+tminus;
   }
   
-
+  // HTML
   return (
     <GestureDetector gesture={tap} >
       

@@ -18,18 +18,27 @@ import * as colors from "./components/styles";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import TitleBar from "./components/styled/Titlebar";
 import PagerView from "react-native-pager-view";
+<<<<<<< Updated upstream
 import Tags from "./components/pages/Tags";
+=======
+import ForYou from "./components/pages/ForYou";
+>>>>>>> Stashed changes
 
 export default function App() {
   // App Data Variables
   let [userData, setUserData] = useState(null);
   let [immersive, setImmersive] = useState(false);
+<<<<<<< Updated upstream
   let [upcomingLaunches, setUpcomingLaunches] = useState([]);
   let [previousLaunches, setPreviousLaunches] = useState([]);
 
   // App State Variables
   let [tagsOpen, setTagsOpen] = useState(false);
   // Holds variable for use, without re-rendering the app when it changes
+=======
+  let [launchData, setLaunchData]= useState(null)
+  let [pinnedLaunches, setPinnedLaunches] = useState([])
+>>>>>>> Stashed changes
   let currentPage = useRef(0);
   const pagerRef = useRef(null);
 
@@ -43,16 +52,19 @@ export default function App() {
     fetchData(userData);
   }, []);
 
-
   // Function to fetch data
   async function fetchData(userData) {
     console.log("Fetching Data");
-    await userData.getAllUpcomingLaunches().then((data) => {
-      setUpcomingLaunches(data);
-    });
-    await userData.getPreviousLaunches().then((data) => {
-      setPreviousLaunches(data);
-    });
+    await userData.getData().then((data)=> {
+      setLaunchData(data);
+      console.log("Data ", launchData)
+      setPinnedLaunches(data.pinned)
+    })
+  }
+
+  // Reload function called with pull down reload gesture
+  async function reloadData(userData){
+
   }
 
   // Checks if font is loaded, if the font is not loaded yet, just show a loading screen
@@ -63,15 +75,6 @@ export default function App() {
     return <Loading />;
   }
 
-  // Data object fed into all pages
-  // Includes current state of app
-  let data = {
-    userData: userData,
-    immersive: immersive,
-    pinned: [],
-    upcoming: upcomingLaunches,
-    previous: previousLaunches,
-  };
 
   // Page Change Handling
   // Use to change current page when button pressed
@@ -100,10 +103,22 @@ export default function App() {
 
   // Returns current page
   function CurrentPage(){
-    if (upcomingLaunches.length == 0) {
+    if (launchData == null) {
       return <Loading />;
     }
     else{
+      // Data object fed into all pages
+      // Includes current state of app
+      let data = {
+        userData: userData,
+        immersive: immersive,
+        launchData: launchData, 
+        upcoming: launchData.upcoming,
+        previous: launchData.previous,
+        pinned: launchData.pinned,
+        setPinned: setPinnedLaunches,
+        refresh: fetchData,
+      };
       return (
         <PagerView 
           style={styles.pagerView} 
@@ -113,12 +128,12 @@ export default function App() {
           onPageScrollStateChanged={onPageScrollStateChanged}
           onPageSelected={onPageSelected}
         >
+            <ForYou data = {data}/>
             <Dashboard data={data} />
             <Launches data={data} />
         </PagerView>
       )
     }
-
   }
 
   // Main App View
