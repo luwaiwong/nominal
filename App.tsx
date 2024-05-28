@@ -44,7 +44,6 @@ export default function App() {
     console.log("Fetching Data");
     await userData.getData().then((data)=> {
       setLaunchData(data);
-      console.log("Data ", launchData)
       setPinnedLaunches(data.pinned)
     }).catch((error)=>{
       console.log("Error Fetching Data", error)
@@ -52,8 +51,9 @@ export default function App() {
   }
 
   // Reload function called with pull down reload gesture
-  async function reloadData(userData){
-
+  async function reloadData(){
+    console.log("Refreshing Page")
+    await fetchData(userData).catch((error)=>{console.log("Error Reloading Page", error)})
   }
 
   // Checks if font is loaded, if the font is not loaded yet, just show a loading screen
@@ -106,7 +106,7 @@ export default function App() {
         previous: launchData.previous,
         pinned: launchData.pinned,
         setPinned: setPinnedLaunches,
-        refresh: fetchData,
+        reloadData: reloadData,
       };
       return (
         <PagerView 

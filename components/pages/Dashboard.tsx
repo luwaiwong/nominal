@@ -11,20 +11,22 @@ import Loading from "../styled/Loading";
 
 export default function Dashboard(props) {
   let userData = props.data.userData;
-  let immersiveShown = props.data.immersive
+
+  let recentlyLaunched = props.data.launchData.dashboardRecent
+  let upcomingFiltered = props.data.launchData.dashboardFiltered
+  let highlights = props.data.launchData.dashboardHighlights
+
   let upcomingLaunches = props.data.upcoming
   let previousLaunches = props.data.previous
-  let pinnedLaunches = props.data.pinned
-  let setPinned = props.data.setPinned
+  let pinnedLaunches = props.data.launchData.pinned._j // I DON'T KNOW WHY _J IS REQUIRED
 
   // Page State
   let [pinnedShown, setPinnedShown] = useState<any>(true);
   let [upcomingShown, setUpcomingShown] = useState<any>(true);
+  let [recentShown, setRecentShown] = useState<any>(true);
 
-    async function fetchPinned(){
-      await userData.getPinnedLaunches().then((data)=>{
-        setPinned(data)
-      })
+    async function refreshData(){
+      props.data.reloadData()
     }
     
     function Content(){
@@ -34,58 +36,70 @@ export default function Dashboard(props) {
                 <View style={styles.topPadding}/>
                 {/* Scolling Area */}
                 <ScrollView 
+                  // Refresh Control
                   refreshControl={
-                    <RefreshControl refreshing={false} onRefresh={()=>{fetchPinned()}} />
+                    <RefreshControl refreshing={false} onRefresh={()=>{refreshData()}} />
                   }
                 >
                     {/* Highlight Launch */}
-                    {upcomingLaunches[0] != undefined && <HighlightLaunchInfo data={upcomingLaunches[0]}  />}
+                    {highlights[0] != undefined && <HighlightLaunchInfo data={highlights[0]}  />}
 
                     {/* Pinned Launches */}
-                    {/* <View>
-                        <Pressable onPress={()=>setPinnedShown(!pinnedShown)}>
-                            <View style={styles.contentHeaderSection} >
-                            <Text style={styles.contentHeaderText}>Pinned </Text>
-                            <MaterialIcons 
-                                name="arrow-forward-ios" 
-                                style={pinnedShown?styles.contentHeaderIcon:styles.contentHeaderIconHidden} 
-                            />
-                            </View>
-                        </Pressable>
-                        <View style={styles.contentSeperator}></View>
-
-                        <View style={[styles.contentSection,{height:pinnedShown?"auto":0}]}>
-                            {pinnedLaunches.map((launch: any) => {
-                            return (
-                                <LaunchInfo key={launch.id} data={launch} user={userData} />
-                            );
-                        })}
-                        </View> 
-                    </View> */}
+                    {pinnedLaunches != undefined && pinnedLaunches.length > 0 && 
+                    <View>
+                      {/* Pinned Header */}
+                      <View style={styles.contentHeaderSection} >
+                          <Text style={styles.contentHeaderText}>Pinned </Text>
+                          <MaterialIcons 
+                              name="arrow-forward-ios" 
+                              style={styles.contentHeaderIcon} 
+                          />
+                      </View>
+                      <View style={styles.contentSeperator}></View>
+                      
+                      {/* Pinned Launches */}
+                      <View style={[styles.contentSection]}>
+                          {pinnedLaunches.map((launch: any) => {
+                          return (
+                              <LaunchInfo key={launch.id} data={launch} user={userData} />
+                          );
+                      })}
+                      </View> 
+                    </View>
+                    }
                     
-
-                    {/* Upcoming Section */}
+                    {/* Recently Launched */}
                     <View style={styles.contentHeaderSection} >
-                        <Text style={styles.contentHeaderText} onPress={()=>setUpcomingShown(!upcomingShown)}>Filtered </Text>
+                        <Text style={styles.contentHeaderText} >Recently Launched </Text>
                         <MaterialIcons 
                         name="arrow-forward-ios" 
-                        style={upcomingShown?styles.contentHeaderIcon:styles.contentHeaderIconHidden} 
-                        onPress={()=>setUpcomingShown(!upcomingShown)}
+                        style={styles.contentHeaderIcon} 
                         />
                     </View>
                     <View style={styles.contentSeperator}></View>
 
-                    {/* Previous Launches */}
+                    {/* Recent Launches */}
                     <View style={[styles.contentSection]}>
-                        {previousLaunches.map((launch: any) => {
+                        {recentlyLaunched.map((launch: any) => {
                         return (
                             <LaunchInfo key={launch.id} data={launch} user={userData}/>
                         );
                     })}
                     </View>
+
+                    {/* Upcoming Section */}
+                    <View style={styles.contentHeaderSection} >
+                        <Text style={styles.contentHeaderText}>Upcoming </Text>
+                        <MaterialIcons 
+                        name="arrow-forward-ios" 
+                        style={styles.contentHeaderIcon} 
+                        />
+                    </View>
+                    <View style={styles.contentSeperator}></View>
+
                     {/* Upcoming Launches */}
                     <View style={[styles.contentSection]}>
-                        {upcomingLaunches.map((launch: any) => {
+                        {upcomingFiltered.map((launch: any) => {
                         return (
                             <LaunchInfo key={launch.id} data={launch} user={userData} />
                         );

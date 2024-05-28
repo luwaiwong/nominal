@@ -39,7 +39,6 @@ export default class UserData {
       });
     });
   }
-  async returnHighlight() {}
 
   async getDashboardFiltered() {
     // Check if data has been fetched
@@ -149,6 +148,7 @@ export default class UserData {
     data = {
       foryou: [],
       pinned: [],
+      dashboardHighlights: [],
       dashboardFiltered: [],
       dashboardRecent: [],
       upcoming: [],
@@ -158,6 +158,7 @@ export default class UserData {
     data.upcoming = this.#getUpcomingLaunches();
     data.previous = this.#getPreviousLaunches();
     data.pinned = this.getPinnedLaunches();
+    data.dashboardHighlights = this.#getDashboardHighlightLaunches();
     data.dashboardFiltered = this.#getDashboardFilteredLaunches();
     data.dashboardRecent = this.#getDashboardRecentLaunches();
     data.foryou = this.#getForYouData();
@@ -167,8 +168,15 @@ export default class UserData {
   #getForYouData() {
     return this.launchdata.upcoming;
   }
+
+  // FOR DASHBOARD
+  #getDashboardHighlightLaunches() {
+    return [this.launchdata.upcoming[0]];
+  }
+  // Return last 3 recently launched
+  // #TODO Change to return recently launched from last week?
   #getDashboardRecentLaunches() {
-    return this.launchdata.previous.slice(0, 10);
+    return this.launchdata.previous.slice(0, 3);
   }
 
   #getDashboardFilteredLaunches() {
