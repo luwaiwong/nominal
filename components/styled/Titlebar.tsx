@@ -13,14 +13,10 @@ export default function TitleBar(props){
     // console.log(immersive);
     return (
         <View style={styles.topSection}>
-<<<<<<< Updated upstream
-            <Pressable 
+            {/* <Pressable 
               onPress={()=>{
                 setTagsOpen(!tagsOpen);
               }}>
-=======
-            {/* <Pressable >
->>>>>>> Stashed changes
                 <MaterialIcons name="menu" style={styles.menuButton} /> 
             </Pressable> */}
 

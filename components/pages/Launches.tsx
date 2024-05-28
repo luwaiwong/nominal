@@ -15,10 +15,6 @@ export default function Launches(props) {
   let [upcomingLaunches, setUpcomingLaunches] = useState<any>([]);
   let [previousLaunches, setPreviousLaunches] = useState<any>([]);
 
-  // App State
-  let [tagsShown, setTagsShown] = useState<any>(false);
-  let [immersiveShown, setImmersiveShown] = useState<any>(false);
-
 
   useEffect(() => {
     fetchData();
@@ -33,34 +29,15 @@ export default function Launches(props) {
     });
     
   }
-  async function toggleTags(){
-    console.log("Toggling Tags");
-    setTagsShown(!tagsShown);
-
-    if (tagsShown){
-      fetchData();
-    }
-    // #TODO: Reload upcoming launches data when switching back to launches page
-  }
 
   function updatePinned(){
   }
 
-  
 
-  function CurrentScreen(){
-    if (immersiveShown){
-      return <Immersive userData={userData} upcomingLaunches={upcomingLaunches}/>
-    }
-    else{
-      return <Regular userData={userData} upcomingLaunches={upcomingLaunches} previousLaunches={previousLaunches}/>;
-    }
-  }
 
   return (
     <View style={{flex: 1}}>
-      <Tags shown={tagsShown} userData={userData}/>
-      <CurrentScreen/>
+      <Regular userData={userData} upcomingLaunches={upcomingLaunches} previousLaunches={previousLaunches}/>
     </View>
   );
 }
