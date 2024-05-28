@@ -46,6 +46,8 @@ export default function App() {
       setLaunchData(data);
       console.log("Data ", launchData)
       setPinnedLaunches(data.pinned)
+    }).catch((error)=>{
+      console.log("Error Fetching Data", error)
     })
   }
 
@@ -84,7 +86,7 @@ export default function App() {
     // Handle page selection
     const { position } = event.nativeEvent;
 
-    console.log('Page changed to:', position);
+    // console.log('Page changed to:', position);
     currentPage.current = position;
   };
 
@@ -144,6 +146,7 @@ const styles = StyleSheet.create({
   },
   pagerView: {
     flex: 1,
+    zIndex: 100,
   },
 
 });

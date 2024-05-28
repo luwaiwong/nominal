@@ -35,13 +35,14 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     
 
-    marginTop: -60,
+    // marginTop: 60,
 
     width: '100%',
     height: '100%',
 
     backgroundColor: COLORS.FOREGROUND,
-  
+
+    zIndex: -1000
   },
   immersivePage: {
     display: 'flex',

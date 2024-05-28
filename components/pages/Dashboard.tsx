@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, ScrollView, RefreshControl, StatusBar } from "react-native";
+import { StyleSheet, View, Text, ScrollView, RefreshControl, StatusBar, Dimensions } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
@@ -29,7 +29,7 @@ export default function Dashboard(props) {
     
     function Content(){
       return (
-            <View>
+            <View style={styles.container}>
                 {/* Padding for title bar */}
                 <View style={styles.topPadding}/>
                 {/* Scolling Area */}
@@ -106,6 +106,9 @@ export default function Dashboard(props) {
 }
 
 const styles = StyleSheet.create({
+    container: {
+      height: Dimensions.get('window').height-BOTTOM_BAR_HEIGHT+TOP_BAR_HEIGHT,
+    },
     topPadding:{
       height: TOP_BAR_HEIGHT+StatusBar.currentHeight,
       width: "100%",
