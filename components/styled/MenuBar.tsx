@@ -10,10 +10,11 @@ import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 export default function MenuBar({page, setPage}){
     return (
         <View style={styles.menuBar}>
-            <MenuButtonCommunity icon="space-station" setPage={()=>setPage(0)} label="for you" active={page == "for you"} />
-            <MenuButton icon="home" setPage={()=>setPage(0)} label="dashboard" active={page == "dashboard"} />
+            <MenuButton icon="settings" setPage={()=>setPage(0)} label="settings" active={page=="settings"} />
             <MenuButton icon="rocket-launch" setPage={()=>setPage(1)} label="launches" active={page == "launches"} />
-            <MenuButton icon="settings" setPage={()=>setPage("settings")} label="settings" active={page=="settings"} />
+            <MenuButton icon="home" setPage={()=>setPage(2)} label="for you" active={page == "dashboard"} />
+            <MenuButtonCommunity icon="space-station" setPage={()=>setPage(3)} label="dashboard" active={page == "for you"} />
+            <MenuButtonCommunity icon="newspaper-variant" setPage={()=>setPage(4)} label="news" active={page == "news"} />
         </View>
     );
 }
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-around",
         alignItems: "center",
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-        padding: 6,
+        // padding: 6,
 
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
@@ -109,11 +110,11 @@ const styles = StyleSheet.create({
         color: COLORS.FOREGROUND,
     },
     buttonText: {
-        fontSize: 16,
+        fontSize: 14,
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
 
-        marginTop:-8,
+        // marginTop:-8,
         marginBottom: 4,
     },
 });

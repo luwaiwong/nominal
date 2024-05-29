@@ -12,9 +12,10 @@ import Loading from "../styled/Loading";
 export default function Dashboard(props) {
   let userData = props.data.userData;
 
-  let recentlyLaunched = props.data.launchData.dashboardRecent
-  let upcomingFiltered = props.data.launchData.dashboardFiltered
-  let highlights = props.data.launchData.dashboardHighlights
+  let launchData = props.data.launchData
+  let recentlyLaunched = launchData.dashboardRecent
+  let upcomingFiltered = launchData.dashboardFiltered
+  let highlights = launchData.dashboardHighlights
 
   let upcomingLaunches = props.data.upcoming
   let previousLaunches = props.data.previous
@@ -105,14 +106,13 @@ export default function Dashboard(props) {
                         );
                     })}
                     </View>
-                    <View style={styles.bottomBuffer}/>
                 </ScrollView>
             </View>
       );
         
     }
 
-    if (upcomingLaunches === undefined){
+    if (launchData === undefined){
       return <Loading/>
     }
     return <Content/>;

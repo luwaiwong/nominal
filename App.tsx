@@ -3,22 +3,26 @@ import { SpaceGrotesk_500Medium } from "@expo-google-fonts/space-grotesk";
 
 import { Platform, StyleSheet, Text, View } from "react-native";
 import React, { useState, useRef, useEffect } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import PagerView from "react-native-pager-view";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+// Components
 import TestLaunchData from "./components/pages/TestLaunchData";
-import Dashboard from "./components/pages/Dashboard";
-import Launches from "./components/pages/Launches";
+import TitleBar from "./components/styled/Titlebar";
 import MenuBar from "./components/styled/MenuBar";
 import Loading from "./components/styled/Loading";
+
+// Pages
+import Settings from "./components/pages/Settings"
+import Launches from "./components/pages/Launches";
+import ForYou from "./components/pages/ForYou";
+import Dashboard from "./components/pages/Dashboard";
+import News from "./components/pages/News"
 
 import UserData from "./components/data/UserData";
 
 import * as colors from "./components/styles";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import TitleBar from "./components/styled/Titlebar";
-import PagerView from "react-native-pager-view";
-import ForYou from "./components/pages/ForYou";
 
 export default function App() {
   // App Data Variables
@@ -26,7 +30,7 @@ export default function App() {
   let [immersive, setImmersive] = useState(false);
   let [launchData, setLaunchData]= useState(null)
   let [pinnedLaunches, setPinnedLaunches] = useState([])
-  let currentPage = useRef(0);
+  let currentPage = useRef(2);
   const pagerRef = useRef(null);
 
   // Called only once when the app is mounted
@@ -117,9 +121,11 @@ export default function App() {
           onPageScrollStateChanged={onPageScrollStateChanged}
           onPageSelected={onPageSelected}
         >
-            <ForYou data = {data}/>
-            <Dashboard data={data} />
-            <Launches data={data} />
+          <Settings/>
+          <Launches data={data} />
+          <ForYou data={data}/>
+          <Dashboard data={data} />
+          <News/>
         </PagerView>
       )
     }
