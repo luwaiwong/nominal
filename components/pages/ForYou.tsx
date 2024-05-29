@@ -5,7 +5,7 @@ import PagerView from "react-native-pager-view";
 import { COLORS, FONT } from "../styles";
 import Loading from "../styled/Loading";
 
-import ImmersivePage from "../styled/ImmersivePage";
+import ForYouItem from "../styled/ForYouItem";
 
 export default function ForYou(props) {
   let userData = props.data.userData;
@@ -19,7 +19,7 @@ export default function ForYou(props) {
       <PagerView style={styles.immersiveSection} initialPage={0} orientation="vertical" >
         {upcomingLaunches.map((launch: any) => {
             return (
-              <ImmersivePage key={launch.id} data={launch} user={userData}/>
+              <ForYouItem key={launch.id} data={launch} user={userData}/>
             );
         })}
       </PagerView>
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 
     backgroundColor: COLORS.FOREGROUND,
 
-    zIndex: -1000
+    // zIndex: -1000
   },
   immersivePage: {
     display: 'flex',

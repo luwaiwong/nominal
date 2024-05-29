@@ -138,7 +138,7 @@ export default function App() {
         <StatusBar style="light" />
         <TitleBar immersive={immersive} setImmersive={setImmersive} />
         <CurrentPage/>
-        <MenuBar page={null} setPage={setPage} />
+        <MenuBar page={currentPage.current} setPage={setPage} />
       </View>
     </GestureHandlerRootView>
   );

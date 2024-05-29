@@ -63,7 +63,7 @@ export default function TestLaunchData(data) {
   tap.onTouchesUp(()=>animateOut());
   // tap.onTouchesMove(()=>animateIn());
   tap.onTouchesCancelled(()=>animateOut());
-  tap.onEnd(()=>toggle());
+  // tap.onEnd(()=>toggle()); // UNCOMMENT TO RESTORE PINNED
   tap.numberOfTaps(2);
   
   // Status name
@@ -113,9 +113,9 @@ export default function TestLaunchData(data) {
             <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
           </View>
           {/* Pinned Icon */}
-          {pinned ? 
+          {/* {pinned ? 
             <MaterialCommunityIcons name="bell-ring"  style={styles.notificationIconActive}  /> : 
-            <MaterialCommunityIcons name="bell-outline"  style={styles.notificationIcon}  />}
+            <MaterialCommunityIcons name="bell-outline"  style={styles.notificationIcon}  />} */}
           <Image style={styles.image} source={{uri: launchInfo.image}} /> 
         </View>
       </Animated.View>

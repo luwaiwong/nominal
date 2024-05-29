@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         left:0,
 
-        zIndex: 50,
+        zIndex: 5000,
     },
     titleText: {
         fontSize: 20,

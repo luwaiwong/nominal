@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image } from "react-native";
+import { StyleSheet, View, Text, Image, StatusBar } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
@@ -20,10 +20,11 @@ export default function ImmersivePage(data) {
   return (
     <View style={styles.page}>
         <Image style={styles.image} source={{uri: launchInfo.image}} />
-        <SafeAreaView style={{flex: 1}} >
+        <View style={styles.contentContainer}>
           <Text style={styles.title} onPress={()=>togglePinned()} >{launchInfo.mission.name} </Text>
+          <View style={styles.infoSection}></View>
+        </View>
 
-        </SafeAreaView>
     </View>
   );
 
@@ -59,14 +60,6 @@ const styles = StyleSheet.create({
         backgroundColor: colors.BACKGROUND,
         width: "100%",
         height: "100%",
-
-
-    paddingTop: 60, 
-    },
-    title:{
-        fontSize: 20,
-        color: colors.FOREGROUND,
-        fontFamily: colors.FONT,
     },
     image:{
         position: "absolute",
@@ -74,5 +67,26 @@ const styles = StyleSheet.create({
         left: 0,
         width: "100%",
         height: "110%",
+    },
+    contentContainer:{
+      width:"100%",
+      height: "100%",
+      padding: 10,
+        paddingTop: StatusBar.currentHeight+colors.TOP_BAR_HEIGHT
+    },
+    title:{
+        fontSize: 30,
+        color: colors.FOREGROUND,
+        fontFamily: colors.FONT,
+    },
+    infoSection:{
+      display: "flex",
+      position: "absolute",
+      bottom: 0,
+
+      width:"100%",
+      height: "25%",
+
+      backgroundColor: "black"
     }
 });
