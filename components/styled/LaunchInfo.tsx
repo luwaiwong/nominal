@@ -138,9 +138,14 @@ function calculateTminus(launchTime: Date, status: string = "TBC"){
     prefix = "~ ";
   }
 
-
+  if (days <= 1){
+    return "+ "+ (-days) + "d, "  + (-hours) + "h ";;
+  }
+  if (hours <= 1){
+    return "+ "+ (-hours) + "h, "  + (-minutes) + "m ";;
+  }
   if (minutes < 0){
-    return "+ " + Math.abs(minutes) + "m ";
+    return "+ "+ minutes + "m ";
   }
   if (days <= 0 && hours <= 0){
     return prefix+ minutes + "m ";

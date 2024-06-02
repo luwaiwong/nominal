@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
     },
     titleText: {
       fontSize: 24,
+      fontFamily: FONT,
       color: COLORS.FOREGROUND,
       // position: 'absolute',
       alignItems: 'center',
@@ -62,10 +63,16 @@ const styles = StyleSheet.create({
       
       width: "100%",
 
-      fontFamily: FONT,
+      
+      textShadowColor: 'rgba(0, 0, 0, 0.1)',
+      textShadowOffset: {width: 0, height: 1},
+      textShadowRadius: 1,
+      elevation: 200,
     },
     menuButton:{
       color: COLORS.ACCENT,
       fontSize: 32,
     },
+
+    
 })

@@ -3,13 +3,15 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 
-import * as colors from "../styles";
+import {BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT} from "../styles";
 import UserData from "../data/UserData";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { BlurView } from "@react-native-community/blur";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-export default function ImmersivePage(data) {
+
+export default function ForYouItem(data) {
   let launchInfo = data.data;  
   let [launchTime, setLaunchTime] = useState<any>(new Date(launchInfo.net));
   let [pinned, setPinned] = useState<any>(data.user.pinned.includes(launchInfo.id));
@@ -21,8 +23,34 @@ export default function ImmersivePage(data) {
     <View style={styles.page}>
         <Image style={styles.image} source={{uri: launchInfo.image}} />
         <View style={styles.contentContainer}>
-          <Text style={styles.title} onPress={()=>togglePinned()} >{launchInfo.mission.name} </Text>
-          <View style={styles.infoSection}></View>
+          <View>
+            <Text style={styles.title} onPress={()=>togglePinned()} >{launchInfo.mission.name} </Text>
+          </View>
+          <View>
+            
+            <Text style={styles.timeText}>{("T ") + calculateTminus(launchTime)}</Text>
+            <BlurView 
+              style={styles.infoSection}
+              // blurType="light"
+              // blurAmount={10}
+              // reducedTransparencyFallbackColor="white"
+            >
+              <Text style={styles.statusText}>Status: {launchInfo.status.name}</Text>
+              
+              <View>
+                <Text style={styles.largeText}>{launchInfo.rocket.configuration.full_name}</Text>
+                <Text style={styles.text}>{launchInfo.launch_provider.name}</Text>
+              </View>
+              <View>
+                <Text style={styles.text}>{launchInfo.launch_pad.name}</Text>
+                <Text style={styles.largeText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
+                <View style= {styles.tagsSecton}>
+                  <Text style={styles.tag}>{launchInfo.mission.type}</Text>
+                  <Text style={styles.tag}>{launchInfo.mission.orbit.name}</Text>
+                </View>
+              </View>
+            </BlurView>
+          </View>
         </View>
 
     </View>
@@ -30,26 +58,26 @@ export default function ImmersivePage(data) {
 
 }
 
-function calculateTminus(launchTime: Date){
+function calculateTminus(launchTime: Date, status: string = "TBC"){
   let currentTime = new Date();
   let launchDate = new Date(launchTime);
   let timeDifference = launchDate.getTime() - currentTime.getTime();
-  let days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+  let days = (Math.floor(timeDifference / (1000 * 60 * 60 * 24)));
   let hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   let minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
   let seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
 
-  if (minutes < 0){
-    return "+ " + Math.abs(minutes) + "m ";
+  let prefix = "- ";
+  if (status === "TBC" || status === "TBD"){
+    prefix = "~ ";
   }
-  if (days <= 0 && hours <= 0){
-    return "-"+ minutes + "m ";
-  }
-  if (days <= 0){
-    return "-"+hours + "h, " + minutes + "m ";
-  }
+
   
-  return "-"+days + "d, " + hours + "h ";
+  return prefix+ formatNumber(days) + " : " + formatNumber(hours) + " : "  + formatNumber(minutes) 
+}
+
+function formatNumber(num: number){
+  return ('0'+num.toString()).slice(-2)
 }
 
 const styles = StyleSheet.create({
@@ -57,7 +85,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         justifyContent: "flex-start",
-        backgroundColor: colors.BACKGROUND,
+        backgroundColor: COLORS.BACKGROUND,
         width: "100%",
         height: "100%",
     },
@@ -71,22 +99,119 @@ const styles = StyleSheet.create({
     contentContainer:{
       width:"100%",
       height: "100%",
-      padding: 10,
-        paddingTop: StatusBar.currentHeight+colors.TOP_BAR_HEIGHT
-    },
-    title:{
-        fontSize: 30,
-        color: colors.FOREGROUND,
-        fontFamily: colors.FONT,
+      paddingBottom: BOTTOM_BAR_HEIGHT,
+      paddingTop: StatusBar.currentHeight+TOP_BAR_HEIGHT-20,
+      
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      
     },
     infoSection:{
       display: "flex",
-      position: "absolute",
-      bottom: 0,
+      flexDirection: "column",
+      justifyContent: "space-between",
 
-      width:"100%",
-      height: "25%",
+      margin: "4%",
+      borderRadius: 10,
+      padding: 5,
 
-      backgroundColor: "black"
-    }
+      width:"92%",
+      height: 250,
+
+      backgroundColor: 'rgba(0, 0, 0, 0.5)'
+      
+    },
+    title:{
+      fontSize: 40,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "600",
+      textAlign: "left",
+
+      textShadowColor: 'rgba(0, 0, 0, 0.4)',
+      textShadowOffset: {width: 0, height: 1},
+      textShadowRadius: 1,
+      elevation: 200,
+      
+      marginHorizontal: "4%",
+      width:"92%",
+
+    },
+    timeText:{
+      fontSize: 30,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+
+      width:"60%",
+      marginHorizontal: "4%",
+      padding: 5,
+      
+      backgroundColor: "rgba(30,30,30,0.5)",
+      borderRadius: 10,
+
+      textShadowColor: 'rgba(0, 0, 0, 0.4)',
+      textShadowOffset: {width: 0, height: 1},
+      textShadowRadius: 1,
+      elevation: 200,
+    },
+    statusText:{
+      fontSize: 25,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+
+      textShadowColor: 'rgba(0, 0, 0, 0.4)',
+      textShadowOffset: {width: 0, height: 1},
+      textShadowRadius: 1,
+      elevation: 200,
+    },
+    smallText:{
+      fontSize: 12,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+    },
+    text:{
+      fontSize: 20,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+    },
+    largeText:{
+      fontSize: 25,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+    
+    },
+    tagsSecton:{
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      flexWrap: "wrap",
+      width: "100%",
+
+      marginTop: 5,
+    },
+    tag:{
+      fontSize: 20,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+      backgroundColor: COLORS.ACCENT,
+      borderRadius: 10,
+
+      marginRight: 5,
+      paddingHorizontal: 5,
+      paddingVertical: 2,
+    },
+    
 });

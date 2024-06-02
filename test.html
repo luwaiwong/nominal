@@ -7,7 +7,7 @@
         <button type="button" onclick="TestAPI()">Click Me!</button>    
     </body>
     <script>
-        let link = "https://lldev.thespacedevs.com"
+        let link = "https://ll.thespacedevs.com"
         
         async function TestAPI(){
             fetch(link+"/2.2.0/launch/upcoming/")
@@ -16,8 +16,17 @@
                 return response.json();
             })
             .then((data) => {
-                console.log(data.results[0].name)
+                console.log(data)
             })
+            
+            fetch(link + "/2.2.0/launch/previous/")
+                .then((response) => {
+                    console.log(response);
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log(data)
+                })
         }
     </script>
 </html>
