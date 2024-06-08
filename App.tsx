@@ -23,6 +23,7 @@ import News from "./components/pages/News"
 import UserData from "./components/data/UserData";
 
 import * as colors from "./components/styles";
+import { useSharedValue } from "react-native-reanimated";
 
 export default function App() {
   // App Data Variables
@@ -31,7 +32,11 @@ export default function App() {
   let [launchData, setLaunchData]= useState(null)
   let [pinnedLaunches, setPinnedLaunches] = useState([])
   let currentPage = useRef(2);
+  let menuBarRef = useRef(null);
+  
   const pagerRef = useRef(null);
+
+  const pageScrollState = useSharedValue(0);
 
   // Called only once when the app is mounted
   useEffect(() => {
@@ -74,6 +79,7 @@ export default function App() {
   function setPage(page){
     console.log("Setting Page to:", page);
     pagerRef.current.setPage(page);
+
   }
 
   // Called when the page is scrolling
@@ -85,6 +91,13 @@ export default function App() {
     // Can be 
   };
 
+  const onPageScroll = (state) => {
+    // Handle page scroll state changes (e.g., idle, settling, dragging)
+    // Example: Log the state change
+    // console.log('Page scroll state:', state["nativeEvent"]);
+    pageScrollState.value = (state["nativeEvent"]["offset"]+state["nativeEvent"]["position"]) * -150 + 300;
+    // Can be 
+  }
   // Called when the page is changed
   const onPageSelected = (event) => {
     // Handle page selection
@@ -92,6 +105,10 @@ export default function App() {
 
     // console.log('Page changed to:', position);
     currentPage.current = position;
+
+    if (menuBarRef.current != null){
+      menuBarRef.current.updatePage();
+    }
   };
 
   // Returns current page
@@ -119,6 +136,7 @@ export default function App() {
           orientation="horizontal" 
           ref={pagerRef} 
           onPageScrollStateChanged={onPageScrollStateChanged}
+          onPageScroll={onPageScroll}
           onPageSelected={onPageSelected}
         >
           <Settings/>
@@ -136,9 +154,9 @@ export default function App() {
     <GestureHandlerRootView>
       <View style={styles.container}>
         <StatusBar style="light" />
-        <TitleBar immersive={immersive} setImmersive={setImmersive} />
+        <TitleBar immersive={immersive} setImmersive={setImmersive} scrollState={pageScrollState}/>
         <CurrentPage/>
-        <MenuBar page={currentPage.current} setPage={setPage} />
+        <MenuBar page={currentPage} setPage={setPage} ref={menuBarRef} />
       </View>
     </GestureHandlerRootView>
   );

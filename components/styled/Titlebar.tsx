@@ -4,38 +4,60 @@ import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 
 import { COLORS, FONT, TOP_BAR_HEIGHT } from "../styles";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Animated from 'react-native-reanimated'
 
 export default function TitleBar(props){
     const immersive = props.immersive;
     const setImmersive = props.setImmersive;
     const tagsOpen = props.tagsOpen;
     const setTagsOpen = props.setTagsOpen;
-    // console.log(immersive);
+    const pageScrollState = props.scrollState;
+    console.log(pageScrollState.value);
     return (
-        <View style={styles.topSection}>
-            {/* <Pressable 
-              onPress={()=>{
-                setTagsOpen(!tagsOpen);
-              }}>
-                <MaterialIcons name="menu" style={styles.menuButton} /> 
-            </Pressable> */}
-
-            <Text style={styles.titleText}>Launches</Text>
-
-            {/* <Pressable 
-              onPress={()=>{
-                setImmersive(!immersive);
-              }}>
-                <MaterialCommunityIcons name="space-station"  style={styles.menuButton} />    
-            </Pressable> */}
+      <View style={styles.centerTopContainer}>
+        <View style={styles.topContainer}>
+          <Animated.View style={[styles.topAnimatedSection, {marginLeft: pageScrollState}]}>
+              <Text style={styles.titleText}>Settings</Text>
+              <Text style={styles.titleText}>Launches</Text>
+              <Text style={styles.titleText}>For You</Text>
+              <Text style={styles.titleText}>Dashboard</Text>
+              <Text style={styles.titleText}>News</Text>
+          </Animated.View>
         </View>
+      </View>
+      
+
     );
 }
 
 
 const styles = StyleSheet.create({
   // Header Bar Section
-    topSection: {
+  centerTopContainer:{
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    width: "100%",
+    height: TOP_BAR_HEIGHT,
+    zIndex: 110,
+  },
+  topContainer:{
+
+    position: 'absolute',
+    top: 0,
+
+    marginTop: StatusBar.currentHeight-10,
+    width: 125,
+    height: TOP_BAR_HEIGHT,
+    zIndex: 110,
+
+    overflow: 'hidden',
+  },
+    topAnimatedSection: {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
@@ -45,12 +67,10 @@ const styles = StyleSheet.create({
       position: 'absolute',
       top: 0,
 
-      marginTop: StatusBar.currentHeight-10,
-      width: '100%',
-      // backgroundColor: colors.BACKGROUND,
-      paddingHorizontal: 10,
+      width: "100%",
       height: TOP_BAR_HEIGHT,
       zIndex: 110,
+
     },
     titleText: {
       fontSize: 24,
@@ -61,11 +81,11 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       textAlign: 'center',
       
-      width: "100%",
+      width: 150,
 
       
-      textShadowColor: 'rgba(0, 0, 0, 0.1)',
-      textShadowOffset: {width: 0, height: 1},
+      textShadowColor: 'rgba(0, 0, 0, 0.6)',
+      textShadowOffset: {width: 0, height: 0.5},
       textShadowRadius: 1,
       elevation: 200,
     },

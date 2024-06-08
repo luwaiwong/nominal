@@ -6,7 +6,7 @@ import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 import {BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT} from "../styles";
 import UserData from "../data/UserData";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { BlurView } from "@react-native-community/blur";
+// import { BlurView } from "@react-native-community/blur";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -29,7 +29,7 @@ export default function ForYouItem(data) {
           <View>
             
             <Text style={styles.timeText}>{("T ") + calculateTminus(launchTime)}</Text>
-            <BlurView 
+            <View 
               style={styles.infoSection}
               // blurType="light"
               // blurAmount={10}
@@ -49,7 +49,7 @@ export default function ForYouItem(data) {
                   <Text style={styles.tag}>{launchInfo.mission.orbit.name}</Text>
                 </View>
               </View>
-            </BlurView>
+            </View>
           </View>
         </View>
 
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
       marginTop: 5,
     },
     tag:{
-      fontSize: 20,
+      fontSize: 16,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "400",
@@ -210,6 +210,8 @@ const styles = StyleSheet.create({
       borderRadius: 10,
 
       marginRight: 5,
+      marginTop: 2,
+      marginBottom: 2,
       paddingHorizontal: 5,
       paddingVertical: 2,
     },
