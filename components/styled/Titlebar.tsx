@@ -12,7 +12,6 @@ export default function TitleBar(props){
     const tagsOpen = props.tagsOpen;
     const setTagsOpen = props.setTagsOpen;
     const pageScrollState = props.scrollState;
-    console.log(pageScrollState.value);
     return (
       <View style={styles.centerTopContainer}>
         <View style={styles.topContainer}>

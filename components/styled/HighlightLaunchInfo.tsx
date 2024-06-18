@@ -4,11 +4,13 @@ import {COLORS, FONT} from '../styles';
 
 export default function HighlightLaunchInfo(props) {
     const data = props.data;
+    const isNext = props.isNext;
     // console.log(data);
     return (
         <View style={styles.container}>
             <Image style={styles.image} blurRadius={10} source={{uri: data.image}} />   
             <View style={styles.infoContainer}>
+                <Text style={styles.typeText}>Next Launch</Text>
                 <Text style={styles.title}>{data.mission.name}</Text>
                 <Text style={styles.rocket}>{data.rocket.configuration.full_name}</Text>
                 <Text style={styles.launchProvider}>{data.launch_provider.name}</Text>
@@ -59,6 +61,11 @@ infoContainer:{
 
     zIndex: 1
 
+},
+typeText:{
+    fontSize: 16,
+    color: COLORS.FOREGROUND,
+    fontFamily: FONT,
 },
 title:{
     fontSize: 26,

@@ -143,7 +143,7 @@ export default function App() {
           <Launches data={data} />
           <ForYou data={data}/>
           <Dashboard data={data} />
-          <News/>
+          <News data={data}/>
         </PagerView>
       )
     }

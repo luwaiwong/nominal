@@ -17,8 +17,6 @@ export default function Dashboard(props) {
   let upcomingFiltered = launchData.dashboardFiltered
   let highlights = launchData.dashboardHighlights
 
-  let upcomingLaunches = props.data.upcoming
-  let previousLaunches = props.data.previous
   let pinnedLaunches = props.data.launchData.pinned._j // I DON'T KNOW WHY _J IS REQUIRED
 
   // Page State
@@ -69,6 +67,16 @@ export default function Dashboard(props) {
                     </View>
                     }
                     
+                    {/* Upcoming Launches */}
+                    <View style={[styles.contentSection]}>
+                        {upcomingFiltered.map((launch: any) => {
+                        return (
+                            <LaunchInfo key={launch.id} data={launch} user={userData} />
+                        );
+                    })}
+                    </View>
+
+                    {/* Show events here */}
                     {/* Recently Launched */}
                     <View style={styles.contentHeaderSection} >
                         <Text style={styles.contentHeaderText} >Recently Launched </Text>
@@ -89,23 +97,15 @@ export default function Dashboard(props) {
                     </View>
 
                     {/* Upcoming Section */}
-                    <View style={styles.contentHeaderSection} >
+                    {/* <View style={styles.contentHeaderSection} >
                         <Text style={styles.contentHeaderText}>Upcoming </Text>
                         <MaterialIcons 
                         name="arrow-forward-ios" 
                         style={styles.contentHeaderIcon} 
                         />
                     </View>
-                    <View style={styles.contentSeperator}></View>
+                    <View style={styles.contentSeperator}></View> */}
 
-                    {/* Upcoming Launches */}
-                    <View style={[styles.contentSection]}>
-                        {upcomingFiltered.map((launch: any) => {
-                        return (
-                            <LaunchInfo key={launch.id} data={launch} user={userData} />
-                        );
-                    })}
-                    </View>
                 </ScrollView>
             </View>
       );

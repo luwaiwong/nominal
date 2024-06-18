@@ -13,12 +13,18 @@ export default function Loading() {
             Animated.sequence([
                 Animated.timing(opacity, {
                     toValue: 0,
-                    duration: 1000,
+                    duration: 200,
                     useNativeDriver: true,
                 }),
                 Animated.timing(opacity, {
                     toValue: 1,
-                    duration: 1000,
+                    duration: 200,
+                    useNativeDriver: true,
+                }),
+                
+                Animated.timing(opacity, {
+                    toValue: 1,
+                    duration: 800,
                     useNativeDriver: true,
                 }),
             ])
@@ -78,6 +84,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     padding:{
-        margin: 10,
+        margin: 5,
     }
 });

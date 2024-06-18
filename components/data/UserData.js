@@ -1,4 +1,4 @@
-import * as SDApi from "./SpaceDevsAPIHandler";
+import * as APIHandler from "./APIHandler";
 import Tags from "./Tags";
 
 export default class UserData {
@@ -6,7 +6,9 @@ export default class UserData {
     // INFO
     this.name = "User Data";
     this.launchdata = undefined;
-    this.APIHandler = SDApi;
+    this.news = undefined;
+    this.events = undefined;
+    this.APIHandler = APIHandler;
     this.systemTags = Tags;
 
     // USER DATA
@@ -33,60 +35,20 @@ export default class UserData {
     }
 
     // Fetch the data and return the upcoming launches
+    // Get current time
+    let curTime = new Date().getTime();
     return await this.getUpcomingData().then((data) => {
       return this.getPreviousData().then((data) => {
-        return this.#getData();
+        return this.getEvents().then((data) => {
+          return this.getNews().then((data) => {
+            console.log("Data Fetched");
+            // How long did it take to fetch data?
+            let fetchTime = new Date().getTime() - curTime;
+            console.log("Data Fetch Time: " + fetchTime + "ms");
+            return this.#getData();
+          });
+        });
       });
-    });
-  }
-
-  async getDashboardFiltered() {
-    // Check if data has been fetched
-    if (
-      this.launchdata !== undefined &&
-      this.launchdata.upcoming !== undefined
-    ) {
-      // If data has been fetched, return the top 10 upcoming launches
-      return this.#getDashboardFilteredLaunches();
-    }
-
-    // DATA HAS NOT BEEN FETCHED
-    // Fetch the data and return the upcoming launches
-    return await this.getUpcomingData().then((data) => {
-      return this.#getDashboardFilteredLaunches();
-    });
-  }
-  async getUpcomingLaunches() {
-    // Check if data has been fetched
-    if (
-      this.launchdata !== undefined &&
-      this.launchdata.upcoming !== undefined
-    ) {
-      // If data has been fetched, return the top 10 upcoming launches
-      return this.#getUpcomingLaunches();
-    }
-
-    // DATA HAS NOT BEEN FETCHED
-    // Fetch the data and return the upcoming launches
-    return await this.getUpcomingData().then((data) => {
-      return this.#getUpcomingLaunches();
-    });
-  }
-
-  async getPreviousLaunches() {
-    // Check if data has been fetched
-    if (
-      this.launchdata !== undefined &&
-      this.launchdata.previous !== undefined
-    ) {
-      // If data has been fetched, return the top 10 upcoming launches
-      return this.#getPreviousLaunches();
-    }
-
-    // DATA HAS NOT BEEN FETCHED
-    // Fetch the data and return the previous 10 launches
-    return await this.getPreviousData().then((data) => {
-      return this.#getPreviousLaunches();
     });
   }
   async getPinnedLaunches() {
@@ -153,6 +115,7 @@ export default class UserData {
       dashboardRecent: [],
       upcoming: [],
       previous: [],
+      news: [],
     };
 
     data.upcoming = this.#getUpcomingLaunches();
@@ -162,9 +125,32 @@ export default class UserData {
     data.dashboardFiltered = this.#getDashboardFilteredLaunches();
     data.dashboardRecent = this.#getDashboardRecentLaunches();
     data.foryou = this.#getForYouData();
-
+    data.news = this.#getNewsData();
+    data.events = this.#getEventsData();
+    data.eventsHighlights = this.#getEventsDataHighlights();
     return data;
   }
+
+  #getUpcomingLaunches() {
+    return this.launchdata.upcoming;
+  }
+  #getPreviousLaunches() {
+    return this.launchdata.previous;
+  }
+  #getNewsData() {
+    return this.news;
+  }
+  #getNewsDataHighlights() {
+    return this.news.slice(0, 1);
+  }
+  #getEventsData() {
+    return this.events;
+  }
+  #getEventsDataHighlights() {
+    return this.events.slice(0, 2);
+  }
+
+  // FOR YOU ALGORITHM
   #getForYouData() {
     return this.launchdata.upcoming;
   }
@@ -176,17 +162,18 @@ export default class UserData {
   // Return last 3 recently launched
   // #TODO Change to return recently launched from last week?
   #getDashboardRecentLaunches() {
-    return this.launchdata.previous.slice(0, 3);
+    return this.launchdata.previous.slice(0, 2);
   }
 
   #getDashboardFilteredLaunches() {
+    // return this.launchdata.upcoming.slice(0, 5);
     // Filter the launches based on the tags
-    // Cutoff at launches that are more than 1 month away
+    // Cutoff at launches that are more than 1 week away
     let curTime = new Date().getTime();
-    let cutoffTime = curTime + 2628000000;
+    let cutoffTime = curTime + 259200000;
     let launches = [];
 
-    for (let i = 0; i < this.launchdata.upcoming.length; i++) {
+    for (let i = 1; i < this.launchdata.upcoming.length; i++) {
       let launch = this.launchdata.upcoming[i];
 
       // Check if the launch is within the cutoff time
@@ -210,13 +197,6 @@ export default class UserData {
       launches.push(launch);
     }
     return launches;
-  }
-
-  #getUpcomingLaunches() {
-    return this.launchdata.upcoming;
-  }
-  #getPreviousLaunches() {
-    return this.launchdata.previous;
   }
 
   // Data fetching functions
@@ -249,5 +229,30 @@ export default class UserData {
 
       return this.launchdata;
     });
+  }
+
+  async getNews() {
+    console.log("Getting News");
+    return await this.APIHandler.getNews()
+      .then((data) => {
+        this.news = data.results;
+        return this.news;
+      })
+      .catch((error) => {
+        console.log("Error getting news: " + error);
+      });
+  }
+
+  async getEvents() {
+    this.apiCallTimes += 1;
+    console.log("Getting Events, API Calls: " + this.apiCallTimes);
+    return await this.APIHandler.getEvents()
+      .then((data) => {
+        this.events = data.results;
+        return this.events;
+      })
+      .catch((error) => {
+        console.log("Error getting events: " + error);
+      });
   }
 }
