@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 
 import {COLORS, FONT, TOP_BAR_HEIGHT,BOTTOM_BAR_HEIGHT}from "../styles";
-import HighlightLaunchInfo from "../styled/HighlightLaunchInfo";
-import LaunchInfo from "../styled/LaunchInfo";
+import HighlightLaunch from "../styled/HighlightLaunch";
+import LaunchInfo from "../styled/Launch";
 import Loading from "../styled/Loading";
+import Event from "../styled/Event";
+import Article from "../styled/Article";
 
 
 export default function Dashboard(props) {
@@ -16,6 +18,10 @@ export default function Dashboard(props) {
   let recentlyLaunched = launchData.dashboardRecent
   let upcomingFiltered = launchData.dashboardFiltered
   let highlights = launchData.dashboardHighlights
+
+  let events = props.data.launchData.dashboardEvents
+  let news = props.data.launchData.dashboardNews
+
 
   let pinnedLaunches = props.data.launchData.pinned._j // I DON'T KNOW WHY _J IS REQUIRED
 
@@ -41,7 +47,7 @@ export default function Dashboard(props) {
                   }
                 >
                     {/* Highlight Launch */}
-                    {highlights[0] != undefined && <HighlightLaunchInfo data={highlights[0]}  />}
+                    {highlights[0] != undefined && <HighlightLaunch data={highlights[0]}  />}
 
                     {/* Pinned Launches */}
                     {pinnedLaunches != undefined && pinnedLaunches.length > 0 && 
@@ -76,6 +82,7 @@ export default function Dashboard(props) {
                     })}
                     </View>
 
+
                     {/* Show events here */}
                     {/* Recently Launched */}
                     <View style={styles.contentHeaderSection} >
@@ -95,16 +102,41 @@ export default function Dashboard(props) {
                         );
                     })}
                     </View>
+                    
 
-                    {/* Upcoming Section */}
-                    {/* <View style={styles.contentHeaderSection} >
-                        <Text style={styles.contentHeaderText}>Upcoming </Text>
+                    
+                    <View style={styles.contentHeaderSection} >
+                        <Text style={styles.contentHeaderText} >Upcoming Events </Text>
                         <MaterialIcons 
                         name="arrow-forward-ios" 
                         style={styles.contentHeaderIcon} 
                         />
                     </View>
-                    <View style={styles.contentSeperator}></View> */}
+                    {/* Events */}
+                    <View style={[styles.contentSection]}>
+                        {events.map((launch: any) => {
+                        return (
+                            <Event key={launch.id} eventData={launch}  />
+                        );
+                    })}
+                    </View>
+                    
+                    <View style={styles.contentHeaderSection} >
+                        <Text style={styles.contentHeaderText} >Articles </Text>
+                        <MaterialIcons 
+                        name="arrow-forward-ios" 
+                        style={styles.contentHeaderIcon} 
+                        />
+                    </View>
+                    {/* Events */}
+                    <View style={[styles.contentSection]}>
+                        {news.map((launch: any) => {
+                        return (
+                            <Article key={launch.id} articleData={launch}  />
+                        );
+                    })}
+                    </View>
+                    
 
                 </ScrollView>
             </View>
@@ -121,7 +153,7 @@ export default function Dashboard(props) {
 
 const styles = StyleSheet.create({
     container: {
-      height: Dimensions.get('window').height-BOTTOM_BAR_HEIGHT+TOP_BAR_HEIGHT,
+      height: Dimensions.get('window').height-BOTTOM_BAR_HEIGHT,
     },
     topPadding:{
       height: TOP_BAR_HEIGHT+StatusBar.currentHeight,

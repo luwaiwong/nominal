@@ -121,10 +121,15 @@ export default class UserData {
     data.upcoming = this.#getUpcomingLaunches();
     data.previous = this.#getPreviousLaunches();
     data.pinned = this.getPinnedLaunches();
+
     data.dashboardHighlights = this.#getDashboardHighlightLaunches();
     data.dashboardFiltered = this.#getDashboardFilteredLaunches();
     data.dashboardRecent = this.#getDashboardRecentLaunches();
+    data.dashboardEvents = this.#getDashboardEvents();
+    data.dashboardNews = this.#getDashboardNews();
+
     data.foryou = this.#getForYouData();
+
     data.news = this.#getNewsData();
     data.events = this.#getEventsData();
     data.eventsHighlights = this.#getEventsDataHighlights();
@@ -147,7 +152,7 @@ export default class UserData {
     return this.events;
   }
   #getEventsDataHighlights() {
-    return this.events.slice(0, 2);
+    return this.events.slice(0, 1);
   }
 
   // FOR YOU ALGORITHM
@@ -170,7 +175,7 @@ export default class UserData {
     // Filter the launches based on the tags
     // Cutoff at launches that are more than 1 week away
     let curTime = new Date().getTime();
-    let cutoffTime = curTime + 259200000;
+    let cutoffTime = curTime + 604800000;
     let launches = [];
 
     for (let i = 1; i < this.launchdata.upcoming.length; i++) {
@@ -197,6 +202,12 @@ export default class UserData {
       launches.push(launch);
     }
     return launches;
+  }
+  #getDashboardEvents() {
+    return this.events.slice(0, 1);
+  }
+  #getDashboardNews() {
+    return this.news.slice(0, 4);
   }
 
   // Data fetching functions

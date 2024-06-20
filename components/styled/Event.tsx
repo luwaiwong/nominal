@@ -1,30 +1,25 @@
 
 import { useState, useRef } from "react";
 import { StyleSheet, View, Image, Text, Animated, Linking} from "react-native";
-import { GestureDetector, Gesture } from "react-native-gesture-handler";
+
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+
 import { COLORS, FONT } from "../styles";
 
-export default function Article(props:{articleData:any}){
-    const articleData = props.articleData;
-    
+export default function Event(props:{eventData:any}){
+    const eventData = props.eventData;
     const [aspectRatio, setAspectRatio] = useState(1);
 
-    const today = new Date();
-    const articleDateData = new Date(articleData.published_at);
-    const timeDiff = today.getTime() - articleDateData.getTime();
+    Image.getSize(eventData.feature_image, (width, height) => {setAspectRatio(width/height);})
 
-    let articleDate = articleDateData.toUTCString().slice(0, -7);
-    if (timeDiff < 86400000){
-        // const hours = Math.floor(timeDiff / 360000);
-        // articleDate = hours.toString() + " hours ago";
-        articleDate = "Today";
-    }
-    else if (timeDiff < 172800000){
-        articleDate = "Yesterday";
-    }
-    
-    Image.getSize(articleData.image_url, (width, height) => {setAspectRatio(width/height);})
+    let url = eventData.url;
 
+    if (eventData.news_url != null){
+        url = eventData.news_url;
+    }
+    else if (eventData.video_url != null){
+        url = eventData.video_url;
+    }
 
     // ANIMATIONS
     const scale = useRef(new Animated.Value(1)).current;
@@ -39,7 +34,9 @@ export default function Article(props:{articleData:any}){
 
     // Create an animation that scales the view back to its original size when released
     const animateOut = (open: boolean) => {
-        if (open) Linking.openURL(articleData.url);
+        if (open){
+        Linking.openURL(url);
+        }
         Animated.timing(scale, {
         toValue: 1,
         duration: 300,
@@ -53,26 +50,23 @@ export default function Article(props:{articleData:any}){
 
     tap.onTouchesDown(()=>animateIn());
     tap.onEnd(()=>animateOut(true));
-    // tap.onTouchesMove(()=>animateIn());
+    tap.onTouchesMove(()=>animateOut(false));
     tap.onTouchesCancelled(()=>animateOut(false));
     // tap.onEnd(()=>toggle()); // UNCOMMENT TO RESTORE PINNED
     tap.numberOfTaps(1);
 
-    
     return (
         <GestureDetector gesture={tap}>
-            <Animated.View style={[styles.container,{transform:[{scale}]}]}>
-                <View style={styles.left}>
-                    <Text numberOfLines={4} style={styles.title}>{articleData.title}</Text>
-
-                    <Text style={styles.time}>{articleDate}</Text>
+            <Animated.View style={[styles.container, {transform:[{scale}]}]}>
+                <View style={styles.top}>
+                    <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: eventData.feature_image}} />        
                 </View>
-                <View style={styles.right}>
-                    <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: articleData.image_url}} />        
-                    <Text style={styles.source}>{articleData.news_site}</Text>
-
+                <View style={styles.bottom}>
+                    <Text numberOfLines={4} style={styles.title}>{eventData.name}</Text>
+                    <Text style={styles.source}>{eventData.location}</Text>
                 </View>
             </Animated.View>
+
         </GestureDetector>
     );
 }
@@ -80,30 +74,31 @@ export default function Article(props:{articleData:any}){
 const styles = StyleSheet.create({
     container:{
         display: "flex",
-        flexDirection: "row",
+        flexDirection: "column",
 
         justifyContent: 'space-between',
         overflow: "hidden",
 
         margin: 5,
-        padding: 5,
+        // padding: 5,
         paddingBottom: 3,
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         borderRadius: 12,
     },
-    left:{
+    bottom:{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
-        width: "65%",
+        alignItems: "flex-start",
+        width: "100%",
+        padding: 5,
     },
-    right:{
+    top:{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
         
         // backgroundColor: COLORS.FOREGROUND,
-        width: "35%",
+        width: "100%",
 
     },
     
@@ -137,12 +132,5 @@ const styles = StyleSheet.create({
         textAlign: "right",
         marginRight: 2,
     },
-    time:{
-
-        fontSize: 14,
-        fontFamily: FONT,
-        color: COLORS.FOREGROUND,
-        marginRight: 2,
-    }
     
 });

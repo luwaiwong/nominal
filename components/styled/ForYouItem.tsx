@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
       
     },
     title:{
-      fontSize: 40,
+      fontSize: 35,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "600",

@@ -1,7 +1,10 @@
-import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
+
+import { ScrollView, StatusBar, StyleSheet, Text, View, Animated} from "react-native";
+
 import { BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT } from "../styles";
 
 import Article from "../styled/Article";
+import Event from "../styled/Event";
 
 export default function News(props){
     const userData = props.userData;
@@ -16,7 +19,7 @@ export default function News(props){
                 {eventsHighlights != undefined && eventsHighlights.length != 0 && 
                 <View style={styles.sectionContainer}>
                     <Text style={styles.sectionTitle}>Upcoming Events</Text>
-                    {eventsHighlights != undefined && eventsHighlights.map((item, index) => {return (<Text style={styles.newsItemTitle} key={index}>{item.name}</Text>);})}        
+                    {eventsHighlights != undefined && eventsHighlights.map((item, index) => {return (<Event eventData={item} key={index}/>);})}        
                 </View>
                 }
                 

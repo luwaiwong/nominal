@@ -2,7 +2,7 @@ import { View, Text, Image, StyleSheet} from "react-native";
 
 import {COLORS, FONT} from '../styles';
 
-export default function HighlightLaunchInfo(props) {
+export default function HighlightLaunch(props) {
     const data = props.data;
     const isNext = props.isNext;
     // console.log(data);

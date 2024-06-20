@@ -13,17 +13,22 @@ export default function Loading() {
             Animated.sequence([
                 Animated.timing(opacity, {
                     toValue: 0,
-                    duration: 200,
+                    duration: 400,
                     useNativeDriver: true,
                 }),
                 Animated.timing(opacity, {
                     toValue: 1,
+                    duration: 400,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(opacity, {
+                    toValue: 0,
                     duration: 200,
                     useNativeDriver: true,
                 }),
                 
                 Animated.timing(opacity, {
-                    toValue: 1,
+                    toValue: 0,
                     duration: 800,
                     useNativeDriver: true,
                 }),
@@ -67,7 +72,7 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
         overflow: "hidden",
-        marginTop: colors.TOP_BAR_HEIGHT+60
+        marginTop: colors.TOP_BAR_HEIGHT+10
     },
     loadingShort:{
         backgroundColor: colors.BACKGROUND_HIGHLIGHT,

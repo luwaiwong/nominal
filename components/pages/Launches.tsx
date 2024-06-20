@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, Animated, ScrollView, StatusBar, Dimensions } f
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import LaunchInfo from '../styled/LaunchInfo';
+import LaunchInfo from '../styled/Launch';
 import Loading from '../styled/Loading';
 import {BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT} from '../styles';
 
