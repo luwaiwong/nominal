@@ -5,6 +5,7 @@ import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 import { COLORS, FONT, TOP_BAR_HEIGHT } from "../styles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated from 'react-native-reanimated'
+import { BlurView } from "expo-blur";
 
 export default function TitleBar(props){
     const immersive = props.immersive;
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
 
-    marginTop: StatusBar.currentHeight-10,
+    marginTop: StatusBar.currentHeight+5,
     width: 125,
     height: TOP_BAR_HEIGHT,
     zIndex: 110,

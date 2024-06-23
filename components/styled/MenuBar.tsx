@@ -1,9 +1,14 @@
 import React, { useImperativeHandle } from 'react'; 
 import { View, Text , StyleSheet} from 'react-native'; 
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons'; 
+import { BlurView } from 'expo-blur';
+
+// import { BlurView } from '@react-native-community/blur';
 
 import {COLORS, FONT, BOTTOM_BAR_HEIGHT} from '../styles';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+
+
 
 // THIS IS A MESS. I'M SORRY. I'M NOT SORRY.
 
@@ -13,17 +18,19 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-        padding: 6,
+        
+        backgroundColor: 'rgba(52, 52, 52, 0.4)',
+        // backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        padding: 4,
 
-        borderTopLeftRadius: 0,
-        borderTopRightRadius: 0,
 
-        width: "100%",
-        height: BOTTOM_BAR_HEIGHT,
+        width: "96%",
+        height: BOTTOM_BAR_HEIGHT-10,
         position: "absolute",
-        bottom: 0,
-        left:0,
+        bottom: "1%",
+        left: "2%",
+        borderRadius: 15,
+        overflow: "hidden",
 
         zIndex: 5000,
     },
@@ -37,7 +44,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        // backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         padding: 0,
         paddingTop: 3,
         flex: 1,
@@ -84,13 +91,13 @@ const MenuBar = React.forwardRef((props: any, ref: any)=> {
         }
     }));
     return (
-        <View style={styles.menuBar}>           
+        <BlurView intensity={80} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.menuBar} >           
             <MenuButton icon="settings" setPage={()=>setPage(0)} label="settings" active={page.current==0} />
             <MenuButton icon="rocket-launch" setPage={()=>setPage(1)} label="launches" active={page.current == 1} />
             <MenuButton icon="home" setPage={()=>setPage(2)} label="for you" active={page.current == 2} />
             <MenuButtonCommunity icon="space-station" setPage={()=>setPage(3)} label="dashboard" active={page.current == 3} />
             <MenuButtonCommunity icon="newspaper-variant" setPage={()=>setPage(4)} label="news" active={page.current == 4 } />
-        </View>
+        </BlurView>
     );
     
 function MenuButton({icon, setPage, label, active}){

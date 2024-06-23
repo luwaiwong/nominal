@@ -9,6 +9,7 @@ import LaunchInfo from "../styled/Launch";
 import Loading from "../styled/Loading";
 import Event from "../styled/Event";
 import Article from "../styled/Article";
+import PagerView from "react-native-pager-view";
 
 
 export default function Dashboard(props) {
@@ -46,6 +47,7 @@ export default function Dashboard(props) {
                     <RefreshControl refreshing={false} onRefresh={()=>{refreshData()}} />
                   }
                 >
+
                     {/* Highlight Launch */}
                     {highlights[0] != undefined && <HighlightLaunch data={highlights[0]}  />}
 
@@ -73,44 +75,66 @@ export default function Dashboard(props) {
                     </View>
                     }
                     
-                    {/* Upcoming Launches */}
                     <View style={[styles.contentSection]}>
-                        {upcomingFiltered.map((launch: any) => {
-                        return (
-                            <LaunchInfo key={launch.id} data={launch} user={userData} />
-                        );
-                    })}
-                    </View>
 
+                      <View style={styles.contentHeaderSection} >
+                          <Text style={styles.contentHeaderText} >Recent </Text>
 
-                    {/* Show events here */}
-                    {/* Recently Launched */}
-                    <View style={styles.contentHeaderSection} >
-                        <Text style={styles.contentHeaderText} >Recently Launched </Text>
-                        <MaterialIcons 
-                        name="arrow-forward-ios" 
-                        style={styles.contentHeaderIcon} 
-                        />
-                    </View>
-                    <View style={styles.contentSeperator}></View>
+                          <View style={styles.seeMoreSection}>
+                            <Text style={styles.contentSeeMore} >See All </Text>
+                            <MaterialIcons 
+                            name="arrow-forward-ios" 
+                            style={styles.contentHeaderIcon} 
+                            />
 
-                    {/* Recent Launches */}
-                    <View style={[styles.contentSection]}>
+                          </View>
+                      </View>
+                    <PagerView style={{height: 200}} initialPage={0}>
                         {recentlyLaunched.map((launch: any) => {
                         return (
                             <LaunchInfo key={launch.id} data={launch} user={userData}/>
                         );
                     })}
-                    </View>
-                    
 
-                    
-                    <View style={styles.contentHeaderSection} >
-                        <Text style={styles.contentHeaderText} >Upcoming Events </Text>
-                        <MaterialIcons 
-                        name="arrow-forward-ios" 
-                        style={styles.contentHeaderIcon} 
-                        />
+                    </PagerView>
+                    </View>
+
+                    {/* Upcoming Launches */}
+                    <View style={[styles.contentSection]}>
+
+                      <View style={styles.contentHeaderSection} >
+                          <Text style={styles.contentHeaderText} >Upcoming </Text>
+                          <View style={styles.seeMoreSection}>
+                            <Text style={styles.contentSeeMore} >See All </Text>
+                            <MaterialIcons 
+                            name="arrow-forward-ios" 
+                            style={styles.contentHeaderIcon} 
+                            />
+
+                          </View>
+                      </View>
+                      {upcomingFiltered.map((launch: any) => {
+                      return (
+                          <LaunchInfo key={launch.id} data={launch} user={userData} />
+                      );
+                      })}
+                    </View>
+
+
+
+                    {/* Show events here */}
+
+                    <View style={styles.newsHeaderSection} >
+                        <Text style={styles.contentHeaderText} >Events </Text>
+                        
+                          <View style={styles.seeMoreSection}>
+                            <Text style={styles.contentSeeMore} >See All </Text>
+                            <MaterialIcons 
+                            name="arrow-forward-ios" 
+                            style={styles.contentHeaderIcon} 
+                            />
+
+                          </View>
                     </View>
                     {/* Events */}
                     <View style={[styles.contentSection]}>
@@ -121,12 +145,18 @@ export default function Dashboard(props) {
                     })}
                     </View>
                     
-                    <View style={styles.contentHeaderSection} >
+                    
+                    <View style={styles.newsHeaderSection} >
                         <Text style={styles.contentHeaderText} >Articles </Text>
-                        <MaterialIcons 
-                        name="arrow-forward-ios" 
-                        style={styles.contentHeaderIcon} 
-                        />
+                        
+                        <View style={styles.seeMoreSection}>
+                          <Text style={styles.contentSeeMore} >See All </Text>
+                          <MaterialIcons 
+                          name="arrow-forward-ios" 
+                          style={styles.contentHeaderIcon} 
+                          />
+
+                        </View>
                     </View>
                     {/* Events */}
                     <View style={[styles.contentSection]}>
@@ -137,7 +167,7 @@ export default function Dashboard(props) {
                     })}
                     </View>
                     
-
+                    <View style={styles.bottomPadding}></View>
                 </ScrollView>
             </View>
       );
@@ -153,36 +183,64 @@ export default function Dashboard(props) {
 
 const styles = StyleSheet.create({
     container: {
-      height: Dimensions.get('window').height-BOTTOM_BAR_HEIGHT,
+      height: Dimensions.get('window').height,
+      // paddingBottom : BOTTOM_BAR_HEIGHT,
     },
     topPadding:{
       height: TOP_BAR_HEIGHT+StatusBar.currentHeight,
       width: "100%",
     },
+    bottomPadding:{
+      height: BOTTOM_BAR_HEIGHT,
+      width: "100%",
+    },
     // Content Section
     contentSection: {
       display: 'flex',
-      backgroundColor: COLORS.BACKGROUND,
+      backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+      borderRadius: 15,
+      marginHorizontal: 10,
+      marginBottom: 10,
       overflow: 'hidden',
     },
     contentHeaderSection: {
       display: 'flex',
       flexDirection: 'row',
-      alignItems: 'center',
+      alignItems: 'flex-end',
+      justifyContent: 'space-between',
     },
     contentHeaderText: {
-      fontSize: 32,
+      fontSize: 25,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+
+
+      
+      marginLeft: 12,
+      // marginBottom: 5,
+    },
+    seeMoreSection:{
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      justifyContent: 'center',
+      marginRight: 12,
+    },
+    contentSeeMore: {
+      fontSize: 18,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       
-      marginLeft: 8,
-      marginBottom: 5,
+      // marginLeft: 12,
+      marginBottom: 2,
+      // marginRight: 12,
     },
     contentHeaderIcon: {
       color: COLORS.FOREGROUND,
-      fontSize: 28,
-      marginLeft: 8,
-      marginBottom: 8,
+      fontSize: 18,
+      marginTop: 8,
+      // marginLeft: 8,
+      marginBottom: 5,
     },
     contentHeaderIconHidden: {
       color: COLORS.FOREGROUND,
@@ -201,6 +259,16 @@ const styles = StyleSheet.create({
 
       backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
     },
+
+    // Sections
+    newsHeaderSection:{
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      justifyContent: 'space-between',
+     marginHorizontal: 10,
+    },
+
     bottomBuffer:{
         height: BOTTOM_BAR_HEIGHT+140,
     }

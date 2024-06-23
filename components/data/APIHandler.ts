@@ -36,6 +36,10 @@ export async function getNews(){
     .then((data) => {
         return data;
     })
+    .catch((error) => {
+        console.log("Error fetching news data:", error);
+        return {}
+    })
 }
 
 export async function getEvents(){

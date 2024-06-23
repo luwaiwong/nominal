@@ -171,6 +171,7 @@ export default class UserData {
   }
 
   #getDashboardFilteredLaunches() {
+    return this.launchdata.upcoming.slice(1, 3);
     // return this.launchdata.upcoming.slice(0, 5);
     // Filter the launches based on the tags
     // Cutoff at launches that are more than 1 week away
@@ -246,11 +247,18 @@ export default class UserData {
     console.log("Getting News");
     return await this.APIHandler.getNews()
       .then((data) => {
+        if (data.results === undefined) {
+          console.log("Error getting news: " + data);
+          this.news = [];
+          return this.news;
+        }
         this.news = data.results;
         return this.news;
       })
       .catch((error) => {
         console.log("Error getting news: " + error);
+        this.news = [];
+        return this.news;
       });
   }
 

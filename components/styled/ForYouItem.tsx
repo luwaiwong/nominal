@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
       width:"100%",
       height: "100%",
       paddingBottom: BOTTOM_BAR_HEIGHT,
-      paddingTop: StatusBar.currentHeight+TOP_BAR_HEIGHT-20,
+      paddingTop: StatusBar.currentHeight+TOP_BAR_HEIGHT,
       
       display: "flex",
       flexDirection: "column",

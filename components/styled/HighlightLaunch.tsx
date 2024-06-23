@@ -27,11 +27,12 @@ container:{
     justifyContent: "flex-start",
     // backgroundColor: COLORS.FOREGROUND,
     width: "100%",
-    height: 400,
+    height: 300,
     padding: 10,
 
     borderRadius: 10,
-    overflow: "hidden"
+    overflow: "hidden",
+
 },
 image:{
     position: "absolute",
