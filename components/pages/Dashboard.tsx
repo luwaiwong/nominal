@@ -10,6 +10,7 @@ import Loading from "../styled/Loading";
 import Event from "../styled/Event";
 import Article from "../styled/Article";
 import PagerView from "react-native-pager-view";
+import { BlurView } from "expo-blur";
 
 
 export default function Dashboard(props) {
@@ -39,6 +40,7 @@ export default function Dashboard(props) {
       return (
             <View style={styles.container}>
                 {/* Padding for title bar */}
+                <View style={styles.topBackground} />
                 <View style={styles.topPadding}/>
                 {/* Scolling Area */}
                 <ScrollView 
@@ -47,110 +49,41 @@ export default function Dashboard(props) {
                     <RefreshControl refreshing={false} onRefresh={()=>{refreshData()}} />
                   }
                 >
+                  <View style={{height: 10}}/>
+                  {/* Highlight Launch */}
+                  {highlights[0] != undefined && <HighlightLaunch data={highlights[0]}  />}
 
-                    {/* Highlight Launch */}
-                    {highlights[0] != undefined && <HighlightLaunch data={highlights[0]}  />}
+                  
 
-                    {/* Pinned Launches */}
-                    {pinnedLaunches != undefined && pinnedLaunches.length > 0 && 
-                    <View>
-                      {/* Pinned Header */}
-                      <View style={styles.contentHeaderSection} >
-                          <Text style={styles.contentHeaderText}>Pinned </Text>
-                          <MaterialIcons 
-                              name="arrow-forward-ios" 
-                              style={styles.contentHeaderIcon} 
-                          />
+                  <View style={[styles.contentSection , {marginTop: 0}]}>
+                    <View style={styles.contentHeaderSection} >
+                      <Text style={styles.contentHeaderText} >Recent </Text>
+
+                      <View style={styles.seeMoreSection}>
+                        {/* <Text style={styles.contentSeeMore} >See All </Text> */}
+                        <MaterialIcons 
+                        name="arrow-forward-ios" 
+                        style={styles.contentHeaderIcon} 
+                        />
+
                       </View>
-                      <View style={styles.contentSeperator}></View>
-                      
-                      {/* Pinned Launches */}
-                      <View style={[styles.contentSection]}>
-                          {pinnedLaunches.map((launch: any) => {
-                          return (
-                              <LaunchInfo key={launch.id} data={launch} user={userData} />
-                          );
-                      })}
-                      </View> 
                     </View>
-                    }
-                    
-                    <View style={[styles.contentSection]}>
-
-                      <View style={styles.contentHeaderSection} >
-                          <Text style={styles.contentHeaderText} >Recent </Text>
-
-                          <View style={styles.seeMoreSection}>
-                            <Text style={styles.contentSeeMore} >See All </Text>
-                            <MaterialIcons 
-                            name="arrow-forward-ios" 
-                            style={styles.contentHeaderIcon} 
-                            />
-
-                          </View>
-                      </View>
                     <PagerView style={{height: 200}} initialPage={0}>
-                        {recentlyLaunched.map((launch: any) => {
-                        return (
-                            <LaunchInfo key={launch.id} data={launch} user={userData}/>
-                        );
+                      {recentlyLaunched.map((launch: any) => {
+                      return (
+                        <LaunchInfo key={launch.id} data={launch} user={userData}/>
+                      );
                     })}
 
                     </PagerView>
-                    </View>
+                  </View>
 
-                    {/* Upcoming Launches */}
-                    <View style={[styles.contentSection]}>
-
-                      <View style={styles.contentHeaderSection} >
-                          <Text style={styles.contentHeaderText} >Upcoming </Text>
-                          <View style={styles.seeMoreSection}>
-                            <Text style={styles.contentSeeMore} >See All </Text>
-                            <MaterialIcons 
-                            name="arrow-forward-ios" 
-                            style={styles.contentHeaderIcon} 
-                            />
-
-                          </View>
-                      </View>
-                      {upcomingFiltered.map((launch: any) => {
-                      return (
-                          <LaunchInfo key={launch.id} data={launch} user={userData} />
-                      );
-                      })}
-                    </View>
-
-
-
-                    {/* Show events here */}
-
-                    <View style={styles.newsHeaderSection} >
-                        <Text style={styles.contentHeaderText} >Events </Text>
-                        
-                          <View style={styles.seeMoreSection}>
-                            <Text style={styles.contentSeeMore} >See All </Text>
-                            <MaterialIcons 
-                            name="arrow-forward-ios" 
-                            style={styles.contentHeaderIcon} 
-                            />
-
-                          </View>
-                    </View>
-                    {/* Events */}
-                    <View style={[styles.contentSection]}>
-                        {events.map((launch: any) => {
-                        return (
-                            <Event key={launch.id} eventData={launch}  />
-                        );
-                    })}
-                    </View>
-                    
-                    
-                    <View style={styles.newsHeaderSection} >
-                        <Text style={styles.contentHeaderText} >Articles </Text>
-                        
+                  {/* Upcoming Launches */}
+                  <View style={[styles.contentSection]}>
+                    <View style={styles.contentHeaderSection} >
+                        <Text style={styles.contentHeaderText} >Upcoming </Text>
                         <View style={styles.seeMoreSection}>
-                          <Text style={styles.contentSeeMore} >See All </Text>
+                          {/* <Text style={styles.contentSeeMore} >See All </Text> */}
                           <MaterialIcons 
                           name="arrow-forward-ios" 
                           style={styles.contentHeaderIcon} 
@@ -158,16 +91,64 @@ export default function Dashboard(props) {
 
                         </View>
                     </View>
-                    {/* Events */}
-                    <View style={[styles.contentSection]}>
-                        {news.map((launch: any) => {
-                        return (
-                            <Article key={launch.id} articleData={launch}  />
-                        );
+                    {upcomingFiltered.map((launch: any) => {
+                    return (
+                        <LaunchInfo key={launch.id} data={launch} user={userData} />
+                    );
                     })}
-                    </View>
-                    
-                    <View style={styles.bottomPadding}></View>
+                  </View>
+
+
+                  <View style={[styles.buffer]}></View>
+
+                  {/* Show events here */}
+
+                  <View style={styles.newsHeaderSection} >
+                      <Text style={styles.contentHeaderText} >Events </Text>
+                      
+                      <View style={styles.seeMoreSection}>
+                        {/* <Text style={styles.contentSeeMore} >See All </Text> */}
+                        <MaterialIcons 
+                        name="arrow-forward-ios" 
+                        style={styles.contentHeaderIcon} 
+                        />
+
+                      </View>
+                  </View>
+                  {/* Events */}
+                  <View style={[styles.contentSection]}>
+                      {events.map((launch: any) => {
+                      return (
+                          <Event key={launch.id} eventData={launch}  />
+                      );
+                  })}
+                  </View>
+                  
+                  <View style={[styles.buffer]}></View>
+                  
+                  <View style={styles.newsHeaderSection} >
+                      <Text style={styles.contentHeaderText} >Articles </Text>
+                      
+                      <View style={styles.seeMoreSection}>
+                        {/* <Text style={styles.contentSeeMore} >See All </Text> */}
+                        <MaterialIcons 
+                        name="arrow-forward-ios" 
+                        style={styles.contentHeaderIcon} 
+                        />
+
+                      </View>
+                  </View>
+                  {/* Events */}
+                  <View style={[styles.contentSection]}>
+                      {news.map((launch: any) => {
+                      return (
+                          <Article key={launch.id} articleData={launch}  />
+                      );
+                  })}
+                  </View>
+                  
+                  <View style={[styles.buffer]}></View>
+                  <View style={styles.bottomPadding}></View>
                 </ScrollView>
             </View>
       );
@@ -183,8 +164,19 @@ export default function Dashboard(props) {
 
 const styles = StyleSheet.create({
     container: {
-      height: Dimensions.get('window').height,
+      flex: 1,
       // paddingBottom : BOTTOM_BAR_HEIGHT,
+      // backgroundColor: 'white',
+    },
+    topBackground:{
+      position: 'absolute',
+      top: 0,
+      height: TOP_BAR_HEIGHT+StatusBar.currentHeight,
+      width: "100%",
+
+
+      zIndex: 100,
+
     },
     topPadding:{
       height: TOP_BAR_HEIGHT+StatusBar.currentHeight,
@@ -200,7 +192,7 @@ const styles = StyleSheet.create({
       backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
       borderRadius: 15,
       marginHorizontal: 10,
-      marginBottom: 10,
+      marginTop: 10,
       overflow: 'hidden',
     },
     contentHeaderSection: {
@@ -218,6 +210,9 @@ const styles = StyleSheet.create({
       
       marginLeft: 12,
       // marginBottom: 5,
+    },
+    buffer:{
+      height: 10,
     },
     seeMoreSection:{
       display: 'flex',
@@ -269,7 +264,4 @@ const styles = StyleSheet.create({
      marginHorizontal: 10,
     },
 
-    bottomBuffer:{
-        height: BOTTOM_BAR_HEIGHT+140,
-    }
 });

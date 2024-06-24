@@ -160,13 +160,10 @@ function calculateTminus(launchTime: Date, status: string = "TBC"){
 const styles = StyleSheet.create({
 // Sections
 background: {
-  marginLeft: 10,
-  marginRight: 10,
+  margin: 10,
   height: 180,
   overflow: 'hidden',
-  marginBottom: 10,
   padding: 5,
-  borderRadius: 10,
 
   backgroundColor: colors.BACKGROUND_HIGHLIGHT,
   

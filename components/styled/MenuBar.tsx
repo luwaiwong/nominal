@@ -1,5 +1,5 @@
 import React, { useImperativeHandle } from 'react'; 
-import { View, Text , StyleSheet} from 'react-native'; 
+import { View, Text , StyleSheet, Dimensions} from 'react-native'; 
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons'; 
 import { BlurView } from 'expo-blur';
 
@@ -24,11 +24,11 @@ const styles = StyleSheet.create({
         padding: 4,
 
 
-        width: "96%",
+        width: Dimensions.get('window').width-20,
         height: BOTTOM_BAR_HEIGHT-10,
         position: "absolute",
-        bottom: "1%",
-        left: "2%",
+        bottom: 10,
+        left: 10,
         borderRadius: 15,
         overflow: "hidden",
 
@@ -91,7 +91,7 @@ const MenuBar = React.forwardRef((props: any, ref: any)=> {
         }
     }));
     return (
-        <BlurView intensity={80} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.menuBar} >           
+        <BlurView intensity={75} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.menuBar} >           
             <MenuButton icon="settings" setPage={()=>setPage(0)} label="settings" active={page.current==0} />
             <MenuButton icon="rocket-launch" setPage={()=>setPage(1)} label="launches" active={page.current == 1} />
             <MenuButton icon="home" setPage={()=>setPage(2)} label="for you" active={page.current == 2} />

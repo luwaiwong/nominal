@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
 
-    marginTop: StatusBar.currentHeight+5,
+    marginTop: StatusBar.currentHeight,
     width: 125,
     height: TOP_BAR_HEIGHT,
     zIndex: 110,
@@ -88,6 +88,8 @@ const styles = StyleSheet.create({
       textShadowOffset: {width: 0, height: 0.5},
       textShadowRadius: 1,
       elevation: 200,
+
+      zIndex: 110,
     },
     menuButton:{
       color: COLORS.ACCENT,

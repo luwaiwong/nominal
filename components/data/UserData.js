@@ -146,13 +146,13 @@ export default class UserData {
     return this.news;
   }
   #getNewsDataHighlights() {
-    return this.news.slice(0, 1);
+    return this.news.slice(0, 4);
   }
   #getEventsData() {
     return this.events;
   }
   #getEventsDataHighlights() {
-    return this.events.slice(0, 1);
+    return this.events.slice(0, 2);
   }
 
   // FOR YOU ALGORITHM
@@ -171,7 +171,6 @@ export default class UserData {
   }
 
   #getDashboardFilteredLaunches() {
-    return this.launchdata.upcoming.slice(1, 3);
     // return this.launchdata.upcoming.slice(0, 5);
     // Filter the launches based on the tags
     // Cutoff at launches that are more than 1 week away
@@ -202,13 +201,17 @@ export default class UserData {
 
       launches.push(launch);
     }
+
+    if (launches.length > 2) {
+      return launches.slice(1, 3);
+    }
     return launches;
   }
   #getDashboardEvents() {
     return this.events.slice(0, 1);
   }
   #getDashboardNews() {
-    return this.news.slice(0, 4);
+    return this.news.slice(0, 2);
   }
 
   // Data fetching functions
