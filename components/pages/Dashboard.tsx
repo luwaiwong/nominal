@@ -5,12 +5,13 @@ import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons
 
 import {COLORS, FONT, TOP_BAR_HEIGHT,BOTTOM_BAR_HEIGHT}from "../styles";
 import HighlightLaunch from "../styled/HighlightLaunch";
-import LaunchInfo from "../styled/Launch";
+import LaunchInfo from "../styled/LaunchSimple";
 import Loading from "../styled/Loading";
 import Event from "../styled/Event";
 import Article from "../styled/Article";
 import PagerView from "react-native-pager-view";
 import { BlurView } from "expo-blur";
+import LaunchCarousel from "../styled/LaunchCarousel";
 
 
 export default function Dashboard(props) {
@@ -53,30 +54,9 @@ export default function Dashboard(props) {
                   {/* Highlight Launch */}
                   {highlights[0] != undefined && <HighlightLaunch data={highlights[0]}  />}
 
-                  
+                  {/* <View style={{marginTop: -10}}></View> */}
 
-                  <View style={[styles.contentSection , {marginTop: 0}]}>
-                    <View style={styles.contentHeaderSection} >
-                      <Text style={styles.contentHeaderText} >Recent </Text>
-
-                      <View style={styles.seeMoreSection}>
-                        {/* <Text style={styles.contentSeeMore} >See All </Text> */}
-                        <MaterialIcons 
-                        name="arrow-forward-ios" 
-                        style={styles.contentHeaderIcon} 
-                        />
-
-                      </View>
-                    </View>
-                    <PagerView style={{height: 200}} initialPage={0}>
-                      {recentlyLaunched.map((launch: any) => {
-                      return (
-                        <LaunchInfo key={launch.id} data={launch} user={userData}/>
-                      );
-                    })}
-
-                    </PagerView>
-                  </View>
+                  <LaunchCarousel content={recentlyLaunched} userData={userData} type="launch" />
 
                   {/* Upcoming Launches */}
                   <View style={[styles.contentSection]}>

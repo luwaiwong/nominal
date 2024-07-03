@@ -6,6 +6,7 @@ import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 import {BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT} from "../styles";
 import UserData from "../data/UserData";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { BlurView } from "expo-blur";
 // import { BlurView } from "@react-native-community/blur";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -26,17 +27,12 @@ export default function ForYouItem(data) {
           <View>
             <Text style={styles.title} onPress={()=>togglePinned()} >{launchInfo.mission.name} </Text>
           </View>
+
           <View>
-            
-            <Text style={styles.timeText}>{("T ") + calculateTminus(launchTime)}</Text>
-            <View 
-              style={styles.infoSection}
-              // blurType="light"
-              // blurAmount={10}
-              // reducedTransparencyFallbackColor="white"
-            >
-              <Text style={styles.statusText}>Status: {launchInfo.status.name}</Text>
-              
+
+         
+            <BlurView  intensity={60} tint='dark' experimentalBlurMethod='dimezisBlurView'
+              style={styles.infoSection}>
               <View>
                 <Text style={styles.largeText}>{launchInfo.rocket.configuration.full_name}</Text>
                 <Text style={styles.text}>{launchInfo.launch_provider.name}</Text>
@@ -49,7 +45,12 @@ export default function ForYouItem(data) {
                   <Text style={styles.tag}>{launchInfo.mission.orbit.name}</Text>
                 </View>
               </View>
-            </View>
+
+              
+               <Text style={styles.timeText}>{("T ") + calculateTminus(launchTime)}</Text>
+            </BlurView>
+
+            {/* <Text style={styles.timeText}>{("T ") + calculateTminus(launchTime)}</Text> */}
           </View>
         </View>
 
@@ -112,14 +113,17 @@ const styles = StyleSheet.create({
       flexDirection: "column",
       justifyContent: "space-between",
 
-      margin: "4%",
+      // margin: "4%",
+      margin: 10,
       borderRadius: 10,
       padding: 5,
 
-      width:"92%",
-      height: 250,
+      // width:"92%",
+      height: 225,
 
-      backgroundColor: 'rgba(0, 0, 0, 0.5)'
+      backgroundColor: 'rgba(52, 52, 52, 0.3)',
+
+      overflow: "hidden",
       
     },
     title:{
@@ -143,14 +147,14 @@ const styles = StyleSheet.create({
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "400",
-      textAlign: "left",
+      textAlign: "center",
 
-      width:"60%",
-      marginHorizontal: "4%",
-      padding: 5,
+      // marginHorizontal: 10,
+      // marginBottom: 10,
+      // padding: 5,
       
-      backgroundColor: "rgba(30,30,30,0.5)",
-      borderRadius: 10,
+      // backgroundColor: "rgba(30,30,30,0.8)",
+      borderRadius: 15,
 
       textShadowColor: 'rgba(0, 0, 0, 0.4)',
       textShadowOffset: {width: 0, height: 1},

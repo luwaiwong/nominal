@@ -101,15 +101,14 @@ export default function TestLaunchData(data) {
 
             <Text style={styles.titleText} numberOfLines={1}>{launchInfo.mission.name} </Text>
         
-            <View style={styles.horizontalInfoContainer}>
-                <Text style={styles.smallText}>{status}</Text>
-                <Text style={styles.smallText}>{tminus}</Text>
-            </View>
+            <Text style={styles.smallText}>{tminus}</Text>
+
             <View style={styles.smallSpacer}></View>
             <Text style={styles.smallText} numberOfLines={1}>{launchInfo.launch_provider.name}</Text>
             <Text style={styles.smallText}>{launchInfo.rocket.configuration.full_name}</Text>
-            <Text style={styles.smallText} numberOfLines={2}>{launchInfo.launch_pad.name}</Text>
+            {/* <Text style={styles.smallText} numberOfLines={1}>{launchInfo.launch_pad.name}</Text> */}
             <View style={styles.smallSpacer}></View>
+
             <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
           </View>
           {/* Pinned Icon */}
@@ -160,9 +159,9 @@ function calculateTminus(launchTime: Date, status: string = "TBC"){
 const styles = StyleSheet.create({
 // Sections
 background: {
-  marginLeft: 10,
-  marginRight: 10,
-  height: 180,
+  marginLeft: 8,
+  marginRight: 8,
+  height: 150,
   overflow: 'hidden',
   marginBottom: 10,
   padding: 5,
@@ -178,7 +177,7 @@ bodySection:{
   display: 'flex',
   flexDirection: 'row',
   width: '100%',
-  height: 170,
+  height: 140,
   justifyContent: 'space-between',
   
 },
@@ -191,8 +190,8 @@ infoSection:{
 
 },
 image: {
-  width: 170,
-  height: 170,
+  width: 140,
+  height: 140,
   borderRadius: 10,
 },
 text: {

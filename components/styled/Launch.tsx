@@ -161,11 +161,13 @@ const styles = StyleSheet.create({
 // Sections
 background: {
   margin: 10,
+  marginVertical: 4,
   height: 180,
   overflow: 'hidden',
-  padding: 5,
+  padding: 10,
 
   backgroundColor: colors.BACKGROUND_HIGHLIGHT,
+  borderRadius: 15,
   
 },
 headerSection:{
@@ -175,7 +177,7 @@ bodySection:{
   display: 'flex',
   flexDirection: 'row',
   width: '100%',
-  height: 170,
+  height: 165,
   justifyContent: 'space-between',
   
 },
@@ -188,8 +190,8 @@ infoSection:{
 
 },
 image: {
-  width: 170,
-  height: 170,
+  width: 165,
+  height: 165,
   borderRadius: 10,
 },
 text: {

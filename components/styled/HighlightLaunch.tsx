@@ -152,8 +152,8 @@ launchPad:{
     color:COLORS.FOREGROUND,
     fontFamily:FONT,
     
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: {width: 0, height: 1},
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: {width: 0, height: 1.5},
     textShadowRadius: 1,
     elevation: 200,
 }

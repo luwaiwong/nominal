@@ -167,7 +167,7 @@ export default class UserData {
   // Return last 3 recently launched
   // #TODO Change to return recently launched from last week?
   #getDashboardRecentLaunches() {
-    return this.launchdata.previous.slice(0, 2);
+    return this.launchdata.previous.slice(0, 5);
   }
 
   #getDashboardFilteredLaunches() {
