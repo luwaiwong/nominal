@@ -138,22 +138,22 @@ function calculateTminus(launchTime: Date, status: string = "TBC"){
   }
 
   if (days < 0){
-    return "+ "+ (-days) + "d, "  + (-hours) + "h ";;
+    return "+ "+ (-days) + " days, "  + (-hours) + " hours ";;
   }
   if (hours < 0){
-    return "+ "+ (-hours) + "h, "  + (-minutes) + "m ";;
+    return "+ "+ (-hours) + " hours, "  + (-minutes) + " minutes ";;
   }
   if (minutes < 0){
-    return "+ "+ minutes + "m ";
+    return "+ "+ minutes + " minutes ";
   }
   if (days <= 0 && hours <= 0){
-    return prefix+ minutes + "m ";
+    return prefix+ minutes + " minutes ";
   }
   if (days <= 0){
-    return prefix+hours + "h, " + minutes + "m ";
+    return prefix+hours + " hours, " + minutes + " minutes ";
   }
   
-  return prefix+days + "d, " + hours + "h ";
+  return prefix+days + " days, " + hours + " hours ";
 }
 
 const styles = StyleSheet.create({
