@@ -6,7 +6,7 @@ function TMinus(){
     return (
         <View style={styles.container}>
 
-        </View>>
+        </View>
     )
 }
 

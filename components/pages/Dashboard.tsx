@@ -59,11 +59,11 @@ export default function Dashboard(props) {
 
                   {/* Upcoming Launches */}
                   <View style={[styles.contentSection]}>
-                    <Pressable onPress={()=>{nav.navigate('Launches', {data: userData.getUpcoming(), title:"upcoming" })}}>
+                    <Pressable onPress={()=>{nav.navigate('Launches', {data: launchData.upcoming,user: userData, title:"Upcoming" })}}>
                       <View style={styles.contentHeaderSection} >
                           <Text style={styles.contentHeaderText} >Upcoming </Text>
                           <View style={styles.seeMoreSection}>
-                            {/* <Text style={styles.contentSeeMore} >See All </Text> */}
+                            <Text style={styles.contentSeeMore} >See All </Text>
                             <MaterialIcons 
                             name="arrow-forward-ios" 
                             style={styles.contentHeaderIcon} 
@@ -82,50 +82,59 @@ export default function Dashboard(props) {
                   <View style={[styles.buffer]}></View>
 
                   {/* Show events here */}
-
-                  <View style={styles.newsHeaderSection} >
-                      <Text style={styles.contentHeaderText} >Events </Text>
-                      
-                      <View style={styles.seeMoreSection}>
-                        {/* <Text style={styles.contentSeeMore} >See All </Text> */}
-                        <MaterialIcons 
-                        name="arrow-forward-ios" 
-                        style={styles.contentHeaderIcon} 
-                        />
-
-                      </View>
-                  </View>
+                  
+                  <Pressable onPress={()=>props.data.setPage(4)}>
+                    <View style={styles.newsHeaderSection} >
+                        <Text style={styles.sectionHeaderText} >News & Events </Text>
+              
+                    </View>
+                  </Pressable>
                   {/* Events */}
                   <View style={[styles.contentSection]}>
-                      {events.map((launch: any) => {
-                      return (
-                          <Event key={launch.id} eventData={launch}  />
-                      );
-                  })}
-                  </View>
-                  
-                  <View style={[styles.buffer]}></View>
-                  
-                  <View style={styles.newsHeaderSection} >
-                      <Text style={styles.contentHeaderText} >Articles </Text>
-                      
-                      <View style={styles.seeMoreSection}>
-                        {/* <Text style={styles.contentSeeMore} >See All </Text> */}
-                        <MaterialIcons 
-                        name="arrow-forward-ios" 
-                        style={styles.contentHeaderIcon} 
-                        />
+                    <Pressable onPress={()=>nav.navigate("All Events", {data: launchData.events, title:"Events" })}>
+                      <View style={styles.contentHeaderSection} >
+                          <Text style={styles.contentHeaderText} >Events </Text>
+                          
+                          <View style={styles.seeMoreSection}>
+                            <Text style={styles.contentSeeMore} >See All </Text>
+                            <MaterialIcons 
+                            name="arrow-forward-ios" 
+                            style={styles.contentHeaderIcon} 
+                            />
 
+                          </View>
                       </View>
+                    </Pressable>
+                    {events.map((launch: any) => {
+                    return (
+                        <Event key={launch.id} eventData={launch}  />
+                    );
+                    })} 
                   </View>
-                  {/* Events */}
+                  
                   <View style={[styles.contentSection]}>
-                      {news.map((launch: any) => {
-                      return (
-                          <Article key={launch.id} articleData={launch}  />
-                      );
-                  })}
+                    <Pressable onPress={()=>nav.navigate("All News", {data: launchData.news, title:"Articles" })}>
+                      <View style={styles.contentHeaderSection} >
+                          <Text style={styles.contentHeaderText} >Articles </Text>
+                          
+                          <View style={styles.seeMoreSection}>
+                            <Text style={styles.contentSeeMore} >See All </Text>
+                            <MaterialIcons 
+                            name="arrow-forward-ios" 
+                            style={styles.contentHeaderIcon} 
+                            />
+
+                          </View>
+                      </View>
+                    </Pressable>
+                  
+                        {news.map((launch: any) => {
+                        return (
+                            <Article key={launch.id} articleData={launch}  />
+                        );
+                    })}
                   </View>
+                  
                   
                   <View style={[styles.buffer]}></View>
                   <View style={styles.bottomPadding}></View>
@@ -181,14 +190,22 @@ const styles = StyleSheet.create({
       alignItems: 'flex-end',
       justifyContent: 'space-between',
     },
-    contentHeaderText: {
+    sectionHeaderText:{
       fontSize: 25,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      marginLeft: 12,
+      marginTop: 5
+    },
+    contentHeaderText: {
+      fontSize: 22,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
 
 
       
       marginLeft: 12,
+      marginTop: 5
       // marginBottom: 5,
     },
     buffer:{
@@ -239,7 +256,7 @@ const styles = StyleSheet.create({
     newsHeaderSection:{
       display: 'flex',
       flexDirection: 'row',
-      alignItems: 'flex-end',
+      alignItems: 'center',
       justifyContent: 'space-between',
      marginHorizontal: 10,
     },

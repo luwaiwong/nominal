@@ -76,7 +76,7 @@ export default function Index(props) {
   // Page Change Handling
   // Use to change current page when button pressed
   function setPage(page){
-    // console.log("Setting Page to:", page);
+    console.log("Setting Page to:", page);
     pagerRef.current.setPage(page);
 
   }
@@ -128,6 +128,7 @@ export default function Index(props) {
         setPinned: setPinnedLaunches,
         reloadData: reloadData,
         nav: props.navigation,
+        setPage: setPage,
       };
       return (
         <PagerView 

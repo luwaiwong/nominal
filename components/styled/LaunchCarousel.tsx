@@ -17,7 +17,6 @@ export default function LaunchCarousel(props:{content, userData, type, nav}){
         // Handle page selection
         const { position } = event.nativeEvent;
 
-        console.log('Page changed to:', position);
         setCurrentPage(position);
 
         // if (menuBarRef.current != null){
@@ -27,12 +26,12 @@ export default function LaunchCarousel(props:{content, userData, type, nav}){
     return (
         <>
             <View style={[styles.contentSection , {marginTop: 0}]}>
-            <Pressable onPress={() => props.nav.navigate("Launches", {data:props.userData.getPrevious(), title:"recents"})}>
+            <Pressable onPress={() => props.nav.navigate("Launches", {data:props.userData.getPrevious(),user: props.userData, title:"Recent Launches"})}>
                 <View style={styles.contentHeaderSection} >
                     <Text style={styles.contentHeaderText} >Recent </Text>
 
                     <View style={styles.seeMoreSection}>
-                    {/* <Text style={styles.contentSeeMore} >See All </Text> */}
+                    <Text style={styles.contentSeeMore} >See All </Text>
                     <MaterialIcons 
                     name="arrow-forward-ios" 
                     style={styles.contentHeaderIcon} 
@@ -100,7 +99,7 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
     },
     contentHeaderText: {
-      fontSize: 25,
+      fontSize: 22,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
 
@@ -108,6 +107,15 @@ const styles = StyleSheet.create({
       
       marginLeft: 12,
       // marginBottom: 5,
+    },
+    contentSeeMore: {
+      fontSize: 18,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      
+      // marginLeft: 12,
+      marginBottom: 2,
+      // marginRight: 12,
     },
 
     seeMoreSection:{

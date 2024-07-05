@@ -87,17 +87,19 @@ export default function RegularLaunches(props){
                     <LaunchInfo key={launch.id} data={launch} user={userData}/>
                   );
               })}
+                <View style={styles.bottomPadding}></View>
               </ScrollView>
             </View>
             {/* Previous Section */}
             <View style={[styles.contentSection]}>
-              <ScrollView >  
+              <ScrollView>  
                 {previousLaunches.length == 0 && <Loading/>}
                   {previousLaunches.map((launch: any) => {
                     return (
                       <LaunchInfo key={launch.id} data={launch} user={userData}/>
                     );
                 })}
+                <View style={styles.bottomPadding}></View>
               </ScrollView>
             </View> 
           </Animated.View>
@@ -137,6 +139,10 @@ const styles = StyleSheet.create({
       marginLeft: "5%",
     
     },
+    bottomPadding:{
+      height: BOTTOM_BAR_HEIGHT+10,
+      width: "100%",
+    },
 
     // Content Section
     contentContainer:{
@@ -145,7 +151,8 @@ const styles = StyleSheet.create({
       // position: 'absolute',
       marginLeft: "0%",
       width: "200%",
-      height: Dimensions.get('window').height-TOP_BAR_HEIGHT-BOTTOM_BAR_HEIGHT-StatusBar.currentHeight-18,
+      height: Dimensions.get('window').height-StatusBar.currentHeight,
+      paddingBottom: BOTTOM_BAR_HEIGHT,
       
       overflow: "hidden",
     },

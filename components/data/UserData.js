@@ -78,6 +78,12 @@ export default class UserData {
   getPrevious() {
     return this.launchdata.previous;
   }
+  getNews() {
+    return this.news;
+  }
+  getEvents() {
+    return this.events;
+  }
 
   // Tags Functions
   getTags() {
@@ -140,6 +146,7 @@ export default class UserData {
     data.news = this.#getNewsData();
     data.events = this.#getEventsData();
     data.eventsHighlights = this.#getEventsDataHighlights();
+    data.newsHighlights = this.#getNewsDataHighlights();
     return data;
   }
 
@@ -153,7 +160,7 @@ export default class UserData {
     return this.news;
   }
   #getNewsDataHighlights() {
-    return this.news.slice(0, 4);
+    return this.news.slice(0, 5);
   }
   #getEventsData() {
     return this.events;

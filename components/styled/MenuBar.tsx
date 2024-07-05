@@ -53,20 +53,23 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: COLORS.ACCENT,
+        height: "100%",
+        width: "80%",
+        // backgroundColor: COLORS.FOREGROUND,
         padding: 0,
         paddingTop: 3,
         flex: 1,
 
-        borderRadius: 15,
+        borderRadius: 20,
 
     },
     buttonIcon: {
         fontSize: 35,
-        color: COLORS.FOREGROUND,
+        color: COLORS.SUBFOREGROUND,
     },
     buttonIconActive: {
-        fontSize: 35,
+        fontSize: 45,
+        marginBottom: 5,
         color: COLORS.FOREGROUND,
     },
     buttonText: {
@@ -111,7 +114,7 @@ function MenuButton({icon, setPage, label, active}){
         <GestureDetector gesture={tap}>
             <View style={active?styles.buttonContainerActive:styles.buttonContainer}>
                 <MaterialIcons name={icon} style={active?styles.buttonIconActive:styles.buttonIcon} />
-                <Text style={styles.buttonText}>{label}</Text>
+                {/* <Text style={styles.buttonText}>{label}</Text> */}
             </View>
         </GestureDetector>
     );
@@ -130,7 +133,7 @@ function MenuButtonCommunity({icon, setPage, label, active}){
         <GestureDetector gesture={tap}>
             <View style={active?styles.buttonContainerActive:styles.buttonContainer}>
                 <MaterialCommunityIcons name={icon} style={active?styles.buttonIconActive:styles.buttonIcon} />
-                <Text style={styles.buttonText}>{label}</Text>
+                {/* <Text style={styles.buttonText}>{label}</Text> */}
             </View>
         </GestureDetector>
     );

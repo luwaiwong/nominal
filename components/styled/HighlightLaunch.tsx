@@ -43,6 +43,7 @@ container:{
     height: 300,
     // padding: 10,
     margin: 10,
+    marginTop: 0,
 
     borderRadius: 10,
     overflow: "hidden",

@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         borderRadius: 12,
         margin: 10,
+        marginBottom: 0,
     },
     bottom:{
         display: "flex",
