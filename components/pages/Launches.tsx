@@ -1,7 +1,6 @@
 import React, {useRef} from 'react';
 import { StyleSheet, View, Text, Animated, ScrollView, StatusBar, Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import LaunchInfo from '../styled/Launch';
 import Loading from '../styled/Loading';

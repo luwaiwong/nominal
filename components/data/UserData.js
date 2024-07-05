@@ -72,6 +72,13 @@ export default class UserData {
     return pinned;
   }
 
+  getUpcoming() {
+    return this.launchdata.upcoming;
+  }
+  getPrevious() {
+    return this.launchdata.previous;
+  }
+
   // Tags Functions
   getTags() {
     return this.tags;

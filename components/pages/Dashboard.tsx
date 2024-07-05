@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, ScrollView, RefreshControl, StatusBar, Dimensions } from "react-native";
+import { StyleSheet, View, Text, ScrollView, RefreshControl, StatusBar, Dimensions, Pressable } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
@@ -17,7 +17,9 @@ import LaunchCarousel from "../styled/LaunchCarousel";
 export default function Dashboard(props) {
   let userData = props.data.userData;
 
+  // All data
   let launchData = props.data.launchData
+  let upcoming = launchData.upcoming
   let recentlyLaunched = launchData.dashboardRecent
   let upcomingFiltered = launchData.dashboardFiltered
   let highlights = launchData.dashboardHighlights
@@ -25,13 +27,10 @@ export default function Dashboard(props) {
   let events = props.data.launchData.dashboardEvents
   let news = props.data.launchData.dashboardNews
 
+  let nav = props.data.nav
+
 
   let pinnedLaunches = props.data.launchData.pinned._j // I DON'T KNOW WHY _J IS REQUIRED
-
-  // Page State
-  let [pinnedShown, setPinnedShown] = useState<any>(true);
-  let [upcomingShown, setUpcomingShown] = useState<any>(true);
-  let [recentShown, setRecentShown] = useState<any>(true);
 
     async function refreshData(){
       props.data.reloadData()
@@ -56,21 +55,22 @@ export default function Dashboard(props) {
 
                   {/* <View style={{marginTop: -10}}></View> */}
 
-                  <LaunchCarousel content={recentlyLaunched} userData={userData} type="launch" />
+                  <LaunchCarousel content={recentlyLaunched} userData={userData} type="launch" nav={nav} />
 
                   {/* Upcoming Launches */}
                   <View style={[styles.contentSection]}>
-                    <View style={styles.contentHeaderSection} >
-                        <Text style={styles.contentHeaderText} >Upcoming </Text>
-                        <View style={styles.seeMoreSection}>
-                          {/* <Text style={styles.contentSeeMore} >See All </Text> */}
-                          <MaterialIcons 
-                          name="arrow-forward-ios" 
-                          style={styles.contentHeaderIcon} 
-                          />
-
-                        </View>
-                    </View>
+                    <Pressable onPress={()=>{nav.navigate('Launches', {data: userData.getUpcoming(), title:"upcoming" })}}>
+                      <View style={styles.contentHeaderSection} >
+                          <Text style={styles.contentHeaderText} >Upcoming </Text>
+                          <View style={styles.seeMoreSection}>
+                            {/* <Text style={styles.contentSeeMore} >See All </Text> */}
+                            <MaterialIcons 
+                            name="arrow-forward-ios" 
+                            style={styles.contentHeaderIcon} 
+                            />
+                          </View>
+                      </View>
+                    </Pressable>
                     {upcomingFiltered.map((launch: any) => {
                     return (
                         <LaunchInfo key={launch.id} data={launch} user={userData} />

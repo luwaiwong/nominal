@@ -5,7 +5,6 @@ import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 
 import {BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT} from "../styles";
 import UserData from "../data/UserData";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
 // import { BlurView } from "@react-native-community/blur";
 

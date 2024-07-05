@@ -1,13 +1,13 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
 import {COLORS, FONT, FOREGROUND}from "../styles";
 import Launch from './LaunchSimple';
 
-export default function LaunchCarousel(props:{content, userData, type}){
+export default function LaunchCarousel(props:{content, userData, type, nav}){
     let content = props.content;
     let length = content.length;
     let [currentPage, setCurrentPage] = useState(0);
@@ -27,18 +27,20 @@ export default function LaunchCarousel(props:{content, userData, type}){
     return (
         <>
             <View style={[styles.contentSection , {marginTop: 0}]}>
-            <View style={styles.contentHeaderSection} >
-                <Text style={styles.contentHeaderText} >Recent </Text>
+            <Pressable onPress={() => props.nav.navigate("Launches", {data:props.userData.getPrevious(), title:"recents"})}>
+                <View style={styles.contentHeaderSection} >
+                    <Text style={styles.contentHeaderText} >Recent </Text>
 
-                <View style={styles.seeMoreSection}>
-                {/* <Text style={styles.contentSeeMore} >See All </Text> */}
-                <MaterialIcons 
-                name="arrow-forward-ios" 
-                style={styles.contentHeaderIcon} 
-                />
+                    <View style={styles.seeMoreSection}>
+                    {/* <Text style={styles.contentSeeMore} >See All </Text> */}
+                    <MaterialIcons 
+                    name="arrow-forward-ios" 
+                    style={styles.contentHeaderIcon} 
+                    />
 
+                    </View>
                 </View>
-            </View>
+            </Pressable>
             <PagerView 
                 style={{height: 145}} 
                 initialPage={0}
