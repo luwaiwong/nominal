@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import { StyleSheet, View, Text, Animated, ScrollView, StatusBar, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, Animated, ScrollView, StatusBar, Dimensions, FlatList } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 import LaunchInfo from '../styled/Launch';
@@ -80,7 +80,13 @@ export default function RegularLaunches(props){
           <Animated.View style={[styles.contentContainer, {marginLeft:animatedPageMargin}]}>
             {/* Upcoming Section */}
             <View style={[styles.contentSection]}>
-              <ScrollView >  
+            <FlatList
+                data={upcomingLaunches}
+                keyExtractor={(item, index) => index.toString()}
+                ListFooterComponent={<View style={styles.bottomPadding}></View>}
+                renderItem={({ item }) => <LaunchInfo data={item} user={userData}></LaunchInfo>}>
+            </FlatList>
+              {/* <ScrollView >  x
               {upcomingLaunches.length == 0  && <Loading/>}  
                 {upcomingLaunches.map((launch: any) => {
                   return (
@@ -88,11 +94,17 @@ export default function RegularLaunches(props){
                   );
               })}
                 <View style={styles.bottomPadding}></View>
-              </ScrollView>
+              </ScrollView> */}
             </View>
             {/* Previous Section */}
             <View style={[styles.contentSection]}>
-              <ScrollView>  
+              <FlatList
+                  data={previousLaunches}
+                  keyExtractor={(item, index) => index.toString()}
+                  ListFooterComponent={<View style={styles.bottomPadding}></View>}
+                  renderItem={({ item }) => <LaunchInfo data={item} user={userData}></LaunchInfo>}>
+              </FlatList>
+              {/* <ScrollView>  
                 {previousLaunches.length == 0 && <Loading/>}
                   {previousLaunches.map((launch: any) => {
                     return (
@@ -100,7 +112,7 @@ export default function RegularLaunches(props){
                     );
                 })}
                 <View style={styles.bottomPadding}></View>
-              </ScrollView>
+              </ScrollView> */}
             </View> 
           </Animated.View>
 

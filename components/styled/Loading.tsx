@@ -1,13 +1,11 @@
-import { StyleSheet, View, Text, Image, Animated } from "react-native";
+import { StyleSheet, View, Animated, StatusBar } from "react-native";
 import React, { useRef } from "react";
-import { useEffect, useState } from "react";
-import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
+import { useEffect} from "react";
 
 import * as colors from "../styles";
-import UserData from "../data/UserData";
 
 export default function Loading() {
-    const opacity = useRef(new Animated.Value(1)).current;
+    const opacity = useRef(new Animated.Value(0)).current;
     useEffect(() => {
         Animated.loop(
             Animated.sequence([
@@ -21,23 +19,18 @@ export default function Loading() {
                     duration: 400,
                     useNativeDriver: true,
                 }),
-                Animated.timing(opacity, {
-                    toValue: 0,
-                    duration: 200,
-                    useNativeDriver: true,
-                }),
                 
-                Animated.timing(opacity, {
-                    toValue: 0,
-                    duration: 800,
-                    useNativeDriver: true,
-                }),
             ])
         ).start();
     }, []);
   
   return (
     <Animated.View style={[styles.page, {opacity:opacity}]}>
+        <View style={styles.loadingShort}></View>
+        <View style={styles.loadingLong}></View>
+        <View style={styles.loadingLong}></View>
+        <View style={styles.loadingShort}></View>
+        <View style={styles.padding}></View>
         <View style={styles.loadingShort}></View>
         <View style={styles.loadingLong}></View>
         <View style={styles.loadingLong}></View>
@@ -72,7 +65,7 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
         overflow: "hidden",
-        marginTop: colors.TOP_BAR_HEIGHT+10
+        marginTop: colors.TOP_BAR_HEIGHT + StatusBar.currentHeight,
     },
     loadingShort:{
         backgroundColor: colors.BACKGROUND_HIGHLIGHT,

@@ -1,9 +1,9 @@
 import { StyleSheet, View, Text, FlatList, StatusBar } from 'react-native';
 import { MaterialIcons } from 'react-native-vector-icons';
 import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
-import Article from '../../styled/Article';
+import Launch from '../../styled/Launch';
 
-export default function NewsPage(props) {
+export default function LaunchesPage(props) {
     const data = props.route.params.data;
     const user = props.route.params.user;
     return (
@@ -14,14 +14,14 @@ export default function NewsPage(props) {
                     style={styles.back} 
                     onPress={() => props.navigation.goBack()}>
                 </MaterialIcons>
-                <Text style={styles.title}>Articles</Text>
+                <Text style={styles.title}>{props.route.params.title}</Text>
             </View>
             
             <FlatList
                 data={data}
                 keyExtractor={(item, index) => index.toString()}
                 style={styles.list}
-                renderItem={({ item }) => <Article articleData={item}></Article>}>
+                renderItem={({ item }) => <Launch data={item} user={user}>{item.name}</Launch>}>
             </FlatList>
         </View>
     )

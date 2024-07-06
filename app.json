@@ -16,11 +16,14 @@
       "translucent": false,
       "hidden": true
     },
+    "androidNavigationBar": {
+      "backgroundColor": "#252627"
+    },  
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false
     },
     "android": {
       "adaptiveIcon": {

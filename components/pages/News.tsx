@@ -1,5 +1,5 @@
 
-import { ScrollView, StatusBar, StyleSheet, Text, View, Animated, Pressable} from "react-native";
+import { ScrollView, StatusBar, StyleSheet, Text, View, Animated, Pressable, Dimensions} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import { BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT } from "../styles";
@@ -47,6 +47,7 @@ export default function News(props){
                     <View style={{height:10}}></View>
                     {news != undefined && news.map((item, index) => {return (<Article articleData={item} key={index}/>);})}
                 </View>
+                <View style={styles.bottomBuffer}></View>
             </ScrollView>
         </View>
     </>)
@@ -59,8 +60,10 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
         marginTop: StatusBar.currentHeight + TOP_BAR_HEIGHT,
-        marginBottom: BOTTOM_BAR_HEIGHT,
+        height: Dimensions.get('window').height - StatusBar.currentHeight - TOP_BAR_HEIGHT ,
         width: '100%',
+
+        zIndex: 100,
     },
     // SECTION STUFF
     sectionContainer:{
@@ -115,6 +118,9 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         alignContent: 'flex-end',
         
+    },
+    bottomBuffer:{
+        height: BOTTOM_BAR_HEIGHT,
     }
     
 })

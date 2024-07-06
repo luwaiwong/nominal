@@ -59,10 +59,10 @@ export default function Launch(data) {
   // Gestures
   const tap = Gesture.Tap();
 
-  tap.onTouchesDown(()=>animateIn());
-  tap.onTouchesUp(()=>animateOut());
+  // tap.onTouchesDown(()=>animateIn());
+  // tap.onTouchesUp(()=>animateOut());
   // tap.onTouchesMove(()=>animateIn());
-  tap.onTouchesCancelled(()=>animateOut());
+  // tap.onTouchesCancelled(()=>animateOut());
   // tap.onEnd(()=>toggle()); // UNCOMMENT TO RESTORE PINNED
   tap.numberOfTaps(2);
   

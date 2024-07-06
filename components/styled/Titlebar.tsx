@@ -1,17 +1,10 @@
 import React from "react"
-import { StyleSheet, View, Text,Pressable, StatusBar } from "react-native"
-import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
+import { StyleSheet, View, Text, StatusBar } from "react-native"
+import Animated from 'react-native-reanimated'
 
 import { COLORS, FONT, TOP_BAR_HEIGHT } from "../styles";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Animated from 'react-native-reanimated'
-import { BlurView } from "expo-blur";
 
 export default function TitleBar(props){
-    const immersive = props.immersive;
-    const setImmersive = props.setImmersive;
-    const tagsOpen = props.tagsOpen;
-    const setTagsOpen = props.setTagsOpen;
     const pageScrollState = props.scrollState;
     return (
       <View style={styles.centerTopContainer}>

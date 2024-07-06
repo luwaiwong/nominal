@@ -19,6 +19,7 @@ export default function App() {
               <View
                 style={{
                 flex: 1,
+                // backgroundColor: 'rgba(38,38,38,0.5)',
                 backgroundColor: COLORS.BACKGROUND,
               }}
             />)

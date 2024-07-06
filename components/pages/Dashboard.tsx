@@ -9,8 +9,6 @@ import LaunchInfo from "../styled/LaunchSimple";
 import Loading from "../styled/Loading";
 import Event from "../styled/Event";
 import Article from "../styled/Article";
-import PagerView from "react-native-pager-view";
-import { BlurView } from "expo-blur";
 import LaunchCarousel from "../styled/LaunchCarousel";
 
 

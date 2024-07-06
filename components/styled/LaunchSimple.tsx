@@ -59,12 +59,12 @@ export default function TestLaunchData(data) {
   // Gestures
   const tap = Gesture.Tap();
 
-  tap.onTouchesDown(()=>animateIn());
-  tap.onTouchesUp(()=>animateOut());
+  // tap.onTouchesDown(()=>animateIn());
+  // tap.onTouchesUp(()=>animateOut());
   // tap.onTouchesMove(()=>animateIn());
-  tap.onTouchesCancelled(()=>animateOut());
+  // tap.onTouchesCancelled(()=>animateOut());
   // tap.onEnd(()=>toggle()); // UNCOMMENT TO RESTORE PINNED
-  tap.numberOfTaps(2);
+  // tap.numberOfTaps(2);
   
   // Status name
   let status = launchInfo.status.name;
