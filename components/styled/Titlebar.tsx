@@ -77,8 +77,8 @@ const styles = StyleSheet.create({
       width: 150,
 
       
-      textShadowColor: 'rgba(0, 0, 0, 0.6)',
-      textShadowOffset: {width: 0, height: 0.5},
+      textShadowColor: 'rgba(0, 0, 0, 0.8)',
+      textShadowOffset: {width: 0, height: 1},
       textShadowRadius: 1,
       elevation: 200,
 

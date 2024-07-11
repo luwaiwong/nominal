@@ -4,14 +4,13 @@ import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 
 import {BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT} from "../styles";
-import UserData from "../data/UserData";
 import { BlurView } from "expo-blur";
 // import { BlurView } from "@react-native-community/blur";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-export default function ForYouItem(data) {
+export function ForYouLaunch(data) {
   let launchInfo = data.data;  
   let [launchTime, setLaunchTime] = useState<any>(new Date(launchInfo.net));
   let [pinned, setPinned] = useState<any>(data.user.pinned.includes(launchInfo.id));
@@ -56,6 +55,25 @@ export default function ForYouItem(data) {
     </View>
   );
 
+}
+
+export function ForYouEvent(data) {
+  const eventData = data.data;
+  return (
+  <View style={styles.page}>
+    <Image style={styles.image} source={{uri: eventData.feature_image}} />
+    <View style={styles.contentContainer}>
+      <View>
+      </View>
+      <BlurView  intensity={60} tint='dark' experimentalBlurMethod='dimezisBlurView'
+        style={styles.infoSection}>
+
+        <Text style={styles.eventTitle}>{eventData.name} </Text>
+      </BlurView>
+
+    </View>
+  </View>
+  )
 }
 
 function calculateTminus(launchTime: Date, status: string = "TBC"){
@@ -132,7 +150,7 @@ const styles = StyleSheet.create({
       fontWeight: "600",
       textAlign: "left",
 
-      textShadowColor: 'rgba(0, 0, 0, 0.4)',
+      textShadowColor: 'rgba(0, 0, 0, 0.8)',
       textShadowOffset: {width: 0, height: 1},
       textShadowRadius: 1,
       elevation: 200,
@@ -218,5 +236,20 @@ const styles = StyleSheet.create({
       paddingHorizontal: 5,
       paddingVertical: 2,
     },
-    
+    // EVENT
+    eventTitle:{
+      fontSize: 25,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "600",
+      textAlign: "left",
+
+      textShadowColor: 'rgba(0, 0, 0, 0.8)',
+      textShadowOffset: {width: 0, height: 1},
+      textShadowRadius: 1,
+      elevation: 200,
+      
+      borderRadius: 15,
+
+    },
 });

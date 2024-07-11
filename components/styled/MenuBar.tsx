@@ -93,6 +93,9 @@ const MenuBar = React.forwardRef((props: any, ref: any)=> {
             forceRerender((x)=>x+1);
         }
     }));
+
+    if (page.current == -1) return null;
+    if (setPage == null) return null;
     return (
         <BlurView intensity={75} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.menuBar} >           
             <MenuButton icon="settings" setPage={()=>setPage(0)} label="settings" active={page.current==0} />

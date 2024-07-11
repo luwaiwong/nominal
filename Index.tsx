@@ -76,8 +76,10 @@ export default function Index(props) {
   // Page Change Handling
   // Use to change current page when button pressed
   function setPage(page){
-    console.log("Setting Page to:", page);
-    pagerRef.current.setPage(page);
+    if (pagerRef.current != null){
+      pagerRef.current.setPage(page);
+
+    }
 
   }
 

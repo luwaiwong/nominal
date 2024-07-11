@@ -171,7 +171,15 @@ export default class UserData {
 
   // FOR YOU ALGORITHM
   #getForYouData() {
-    return this.launchdata.upcoming;
+    // Return the top 3 upcoming launches, the top event, and the next 4 upcoming launches
+    // TODO
+    // Sort items by time, for 1 week
+    const data = [];
+    data.push(...this.launchdata.upcoming.slice(0, 3));
+    data.push(this.events[0]);
+    data.push(...this.launchdata.upcoming.slice(3, 7));
+    // console.log(data);
+    return data;
   }
 
   // FOR DASHBOARD

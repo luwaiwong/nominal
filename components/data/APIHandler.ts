@@ -69,6 +69,7 @@ function processLaunchData(data: any){
     let processedData = data.map((launch: any) => {
         return {
             // Dashboard Launch Data
+            type: "launch",
             id: launch.id,
             sd_id: launch.id,
             name: launch.name,
