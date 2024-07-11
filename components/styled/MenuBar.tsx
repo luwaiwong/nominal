@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         
-        backgroundColor: 'rgba(52, 52, 52, 0.4)',
+        backgroundColor: 'rgba('+COLORS.BACKGROUND_HIGHLIGHT_RGB+' 0.4)',
         // backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         padding: 4,
 
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: 10,
         left: 10,
-        borderRadius: 15,
+        borderRadius: 10,
         overflow: "hidden",
 
         zIndex: 5000,
@@ -97,7 +97,7 @@ const MenuBar = React.forwardRef((props: any, ref: any)=> {
     if (page.current == -1) return null;
     if (setPage == null) return null;
     return (
-        <BlurView intensity={75} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.menuBar} >           
+        <BlurView intensity={60} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.menuBar} >           
             <MenuButton icon="settings" setPage={()=>setPage(0)} label="settings" active={page.current==0} />
             <MenuButton icon="rocket-launch" setPage={()=>setPage(1)} label="launches" active={page.current == 1} />
             <MenuButton icon="home" setPage={()=>setPage(2)} label="for you" active={page.current == 2} />

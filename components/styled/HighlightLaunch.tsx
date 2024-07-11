@@ -2,6 +2,7 @@ import { View, Text, Image, StyleSheet, Dimensions} from "react-native";
 import { BlurView } from "expo-blur";
 
 import {COLORS, FONT} from '../styles';
+import TMinus from "./TMinus";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -21,13 +22,14 @@ export default function HighlightLaunch(props) {
                     <Text style={styles.title}>{data.mission.name}</Text>
                     <Text style={styles.rocket}>{data.rocket.configuration.full_name}</Text>
                     <Text style={styles.launchProvider}>{data.launch_provider.name}</Text>
+                    <Text style={styles.launchPad}>{data.launch_pad.location.name}</Text>
                 </View>
-                <View style={styles.bottomSection}>
-                    <Text style={styles.launchPad}>{data.launch_pad.name}</Text>
-                    <Text style={styles.launchPad}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
+                <BlurView intensity={0} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.bottomSection}>
+                    <Text style={styles.launchPad} >{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
+                    <TMinus time={launchTime} />
           
 
-                </View>
+                </BlurView>
             </View>
         </View>
     );
@@ -93,16 +95,20 @@ infoContainer:{
     
 
     // marginLeft: 10,
-    padding: 10,
+    padding: 0,
 
     zIndex: 3
 
 },
 topSection:{
-
+    padding: 10,
 },
 bottomSection:{
-
+    backgroundColor: 'rgba('+COLORS.BACKGROUND_RGB+ '0.8)',
+    margin: 10,
+    padding: 5,
+    borderRadius: 8,
+    overflow: "hidden",
 },
 typeText:{
     // backgroundColor: 'rgba(0, 0, 0, 0.3)',

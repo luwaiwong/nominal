@@ -1,10 +1,11 @@
-import { StyleSheet, View, Text, Image, StatusBar } from "react-native";
+import { StyleSheet, View, Text, Image, StatusBar, Dimensions } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 
 import {BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT} from "../styles";
 import { BlurView } from "expo-blur";
+import TMinus from "./TMinus";
 // import { BlurView } from "@react-native-community/blur";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -23,32 +24,26 @@ export function ForYouLaunch(data) {
         <Image style={styles.image} source={{uri: launchInfo.image}} />
         <View style={styles.contentContainer}>
           <View>
-            <Text style={styles.title} onPress={()=>togglePinned()} >{launchInfo.mission.name} </Text>
+            <Text style={styles.title} numberOfLines={1} onPress={()=>togglePinned()} >{launchInfo.mission.name} </Text>
+            <Text style={styles.subtitle} numberOfLines={1} >Launch </Text>
           </View>
 
           <View>
-
-         
-            <BlurView  intensity={60} tint='dark' experimentalBlurMethod='dimezisBlurView'
+            <BlurView  intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView'
               style={styles.infoSection}>
-              <View>
-                <Text style={styles.largeText}>{launchInfo.rocket.configuration.full_name}</Text>
-                <Text style={styles.text}>{launchInfo.launch_provider.name}</Text>
-              </View>
-              <View>
-                <Text style={styles.text}>{launchInfo.launch_pad.name}</Text>
-                <Text style={styles.largeText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
-                <View style= {styles.tagsSecton}>
-                  <Text style={styles.tag}>{launchInfo.mission.type}</Text>
-                  <Text style={styles.tag}>{launchInfo.mission.orbit.name}</Text>
-                </View>
+              <Text style={styles.descriptionText} numberOfLines={3}>{launchInfo.mission.description}</Text>
+              <View style={styles.infoTextSection}>
+                <Text style={styles.launcherText} numberOfLines={1}>{launchInfo.rocket.configuration.full_name}</Text>
+
+                <Text style={styles.placeText}numberOfLines={1}>{launchInfo.launch_pad.location.name}</Text>
+                <Text style={styles.timeText} >{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
               </View>
 
-              
-               <Text style={styles.timeText}>{("T ") + calculateTminus(launchTime)}</Text>
+              <View style={styles.timeSection}>
+                <TMinus time={launchTime} />
+
+              </View>
             </BlurView>
-
-            {/* <Text style={styles.timeText}>{("T ") + calculateTminus(launchTime)}</Text> */}
           </View>
         </View>
 
@@ -59,16 +54,31 @@ export function ForYouLaunch(data) {
 
 export function ForYouEvent(data) {
   const eventData = data.data;
+  console.log(Object.keys(eventData));
+  console.log(eventData.program[0].name);
+
+  const date = new Date(eventData.date);
   return (
   <View style={styles.page}>
     <Image style={styles.image} source={{uri: eventData.feature_image}} />
     <View style={styles.contentContainer}>
       <View>
-      </View>
-      <BlurView  intensity={60} tint='dark' experimentalBlurMethod='dimezisBlurView'
-        style={styles.infoSection}>
-
         <Text style={styles.eventTitle}>{eventData.name} </Text>
+        <Text style={styles.subtitle} numberOfLines={1} >Event</Text>        
+      </View>
+      <BlurView  intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView'
+        style={styles.infoSection}>
+        <View style={styles.infoTextSection}>
+          <Text style={styles.descriptionText} numberOfLines={3}>{eventData.description}</Text>
+          <Text style={styles.largeText} numberOfLines={1}>{eventData.program[1].name}</Text>
+          <Text style={styles.text} numberOfLines={1}>{eventData.type.name}</Text>
+
+          <Text style={styles.timeText} >{DAYS[date.getDay()]+" "+MONTHS[date.getMonth()]+" "+date.getDate()+ ", "+date.getFullYear()} </Text>
+        </View>
+        <View style={styles.timeSection}>
+          <TMinus time={eventData.date} />
+
+        </View>
       </BlurView>
 
     </View>
@@ -76,27 +86,6 @@ export function ForYouEvent(data) {
   )
 }
 
-function calculateTminus(launchTime: Date, status: string = "TBC"){
-  let currentTime = new Date();
-  let launchDate = new Date(launchTime);
-  let timeDifference = launchDate.getTime() - currentTime.getTime();
-  let days = (Math.floor(timeDifference / (1000 * 60 * 60 * 24)));
-  let hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  let minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-  let seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-
-  let prefix = "- ";
-  if (status === "TBC" || status === "TBD"){
-    prefix = "~ ";
-  }
-
-  
-  return prefix+ formatNumber(days) + " : " + formatNumber(hours) + " : "  + formatNumber(minutes) 
-}
-
-function formatNumber(num: number){
-  return ('0'+num.toString()).slice(-2)
-}
 
 const styles = StyleSheet.create({
     page:{
@@ -114,6 +103,7 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "110%",
     },
+    // Sections
     contentContainer:{
       width:"100%",
       height: "100%",
@@ -136,13 +126,33 @@ const styles = StyleSheet.create({
       padding: 5,
 
       // width:"92%",
-      height: 225,
+      height: 250,
+      // height: Dimensions.get('window').height-StatusBar.currentHeight-TOP_BAR_HEIGHT-BOTTOM_BAR_HEIGHT-20,
+      // height: "80%",
 
-      backgroundColor: 'rgba(52, 52, 52, 0.3)',
+
+      backgroundColor: 'rgba(52, 52, 52, 0.4)',
 
       overflow: "hidden",
       
     },
+    horizonalTextSection:{
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: 'flex-end',
+      width: "100%",
+    },
+    infoTextSection:{
+      flex: 2,
+      // backgroundColor: 'rgba(52, 52, 52, 0.4)',
+      overflow: "hidden",
+    },
+    timeSection:{
+      height: 75,
+    },
+    // Text
+    // TOP SECTION
     title:{
       fontSize: 35,
       color: COLORS.FOREGROUND,
@@ -155,29 +165,24 @@ const styles = StyleSheet.create({
       textShadowRadius: 1,
       elevation: 200,
       
-      marginHorizontal: "4%",
-      width:"92%",
-
+      marginHorizontal: 10,
     },
-    timeText:{
-      fontSize: 30,
+    subtitle:{
+      fontSize: 20,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
-      fontWeight: "400",
-      textAlign: "center",
+      fontWeight: "600",
+      textAlign: "left",
 
-      // marginHorizontal: 10,
-      // marginBottom: 10,
-      // padding: 5,
-      
-      // backgroundColor: "rgba(30,30,30,0.8)",
-      borderRadius: 15,
-
-      textShadowColor: 'rgba(0, 0, 0, 0.4)',
+      textShadowColor: 'rgba(0, 0, 0, 0.8)',
       textShadowOffset: {width: 0, height: 1},
       textShadowRadius: 1,
       elevation: 200,
+      
+      marginHorizontal: 12,
     },
+
+    // INFO SECTION
     statusText:{
       fontSize: 25,
       color: COLORS.FOREGROUND,
@@ -190,8 +195,31 @@ const styles = StyleSheet.create({
       textShadowRadius: 1,
       elevation: 200,
     },
+    launcherText:{
+      fontSize: 33,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+    },
+    descriptionText:{
+      fontSize: 15,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+      marginRight: 5,
+    },
+    placeText:{
+      fontSize: 20,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+      marginTop: -5
+    },
     smallText:{
-      fontSize: 12,
+      fontSize: 15,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "400",
@@ -203,6 +231,7 @@ const styles = StyleSheet.create({
       fontFamily: FONT,
       fontWeight: "400",
       textAlign: "left",
+      marginRight: 5,
     },
     largeText:{
       fontSize: 25,
@@ -212,6 +241,7 @@ const styles = StyleSheet.create({
       textAlign: "left",
     
     },
+    
     tagsSecton:{
       display: "flex",
       flexDirection: "row",
@@ -219,10 +249,9 @@ const styles = StyleSheet.create({
       flexWrap: "wrap",
       width: "100%",
 
-      marginTop: 5,
     },
     tag:{
-      fontSize: 16,
+      fontSize: 17,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "400",
@@ -231,14 +260,13 @@ const styles = StyleSheet.create({
       borderRadius: 10,
 
       marginRight: 5,
-      marginTop: 2,
-      marginBottom: 2,
       paddingHorizontal: 5,
-      paddingVertical: 2,
+      paddingBottom: 2,
     },
+    
     // EVENT
     eventTitle:{
-      fontSize: 25,
+      fontSize: 30,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "600",
@@ -249,7 +277,29 @@ const styles = StyleSheet.create({
       textShadowRadius: 1,
       elevation: 200,
       
-      borderRadius: 15,
+      marginHorizontal: 10,
+    },
 
+    // TMinus
+    
+    timeText:{
+      fontSize: 20,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+
+      // marginHorizontal: 10,
+      // marginBottom: 10,
+      // padding: 5,
+      
+      // backgroundColor: "rgba(30,30,30,0.8)",
+      borderRadius: 15,
+      // marginLeft: 5,
+      marginBottom: 5,
+
+      textShadowColor: 'rgba(0, 0, 0, 0.4)',
+      textShadowOffset: {width: 0, height: 1},
+      textShadowRadius: 1,
+      elevation: 200,
     },
 });

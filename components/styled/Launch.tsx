@@ -108,7 +108,7 @@ export default function Launch(data) {
             <View style={styles.smallSpacer}></View>
             <Text style={styles.smallText} numberOfLines={1}>{launchInfo.launch_provider.name}</Text>
             <Text style={styles.smallText}>{launchInfo.rocket.configuration.full_name}</Text>
-            <Text style={styles.smallText} numberOfLines={2}>{launchInfo.launch_pad.name}</Text>
+            <Text style={styles.smallText} numberOfLines={2}>{launchInfo.launch_pad.location.name}</Text>
             <View style={styles.smallSpacer}></View>
             <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
           </View>

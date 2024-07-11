@@ -17,7 +17,7 @@
       "hidden": true
     },
     "androidNavigationBar": {
-      "backgroundColor": "#252627"
+      "backgroundColor": "#1c1c1c"
     },  
     "assetBundlePatterns": [
       "**/*"
