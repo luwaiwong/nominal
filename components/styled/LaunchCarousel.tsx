@@ -18,10 +18,6 @@ export default function LaunchCarousel(props:{content, userData, type, nav}){
         const { position } = event.nativeEvent;
 
         setCurrentPage(position);
-
-        // if (menuBarRef.current != null){
-        // menuBarRef.current.updatePage();
-        // }
     };
     return (
         <>
@@ -41,13 +37,15 @@ export default function LaunchCarousel(props:{content, userData, type, nav}){
                 </View>
             </Pressable>
             <PagerView 
+                
                 style={{height: 145}} 
                 initialPage={0}
                 onPageSelected={onPageSelected}>
                 
                 {props.type == "launch" && content.map((launch: any) => {
                 return (
-                <Launch key={launch.id} data={launch} user={props.userData}/>
+                    <Launch key={launch.id} data={launch} user={props.userData} nav={props.nav}/>
+
                 );
             })}
             </PagerView>
@@ -137,7 +135,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        // backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         marginVertical: 5,
 
         flex: 1,

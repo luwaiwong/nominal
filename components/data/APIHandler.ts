@@ -67,6 +67,7 @@ export async function getRocketFamilies(){
 
 function processLaunchData(data: any){
     let processedData = data.map((launch: any) => {
+        // console.log(Object.keys(launch));
         return {
             // Dashboard Launch Data
             // Launch Info
@@ -74,10 +75,14 @@ function processLaunchData(data: any){
             id: launch.id,
             sd_id: launch.id,
             name: launch.name,
+            image: launch.image,
+
+            // Provider and Location
             rocket: launch.rocket,
             launch_provider: launch.launch_service_provider,
             launch_pad: launch.pad,
             mission: launch.mission,
+
             // Launch Time
             net: launch.net,
             net_precision: launch.net_precision,
@@ -87,7 +92,14 @@ function processLaunchData(data: any){
             // Status
             status: launch.status,
             holdreason: launch.holdreason,
-            image: launch.image,
+            failreason: launch.failreason,
+
+            // Links & Media
+            webcast_live: launch.webcast_live,
+            infographic: launch.infographic,
+
+            // Other information
+            program: launch.program,
         }
     });
     return processedData;

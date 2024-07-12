@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, Dimensions} from "react-native";
+import { View, Text, Image, StyleSheet, Dimensions, Pressable} from "react-native";
 import { BlurView } from "expo-blur";
 
 import {COLORS, FONT} from '../styles';
@@ -8,30 +8,33 @@ const MONTHS = ["January", "February", "March", "April", "May", "June", "July", 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function HighlightLaunch(props) {
+    const nav = props.nav;
     const data = props.data;
     const isNext = props.isNext;
     const launchTime = new Date(data.net);
-    // console.log(data);
     return (
-        <View style={styles.container}>
-            <Image style={styles.image} blurRadius={1} source={{uri: data.image}} />   
-            <View style={styles.overlay} />
-            <View style={styles.infoContainer}>
-                <View style={styles.topSection}>
-                    <Text style={styles.typeText}>Next Launch</Text>
-                    <Text style={styles.title}>{data.mission.name}</Text>
-                    <Text style={styles.rocket}>{data.rocket.configuration.full_name}</Text>
-                    <Text style={styles.launchProvider}>{data.launch_provider.name}</Text>
-                    <Text style={styles.launchPad}>{data.launch_pad.location.name}</Text>
-                </View>
-                <BlurView intensity={0} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.bottomSection}>
-                    <Text style={styles.launchPad} >{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
-                    <TMinus time={launchTime} />
-          
+        <Pressable onPress={()=>nav.navigate("Launch", {data: data})}>
+            <View style={styles.container}>
+                <Image style={styles.image} blurRadius={1} source={{uri: data.image}} />   
+                <View style={styles.overlay} />
+                <View style={styles.infoContainer}>
+                    <View style={styles.topSection}>
+                        <Text style={styles.typeText}>Next Launch</Text>
+                        <Text style={styles.title}>{data.mission.name}</Text>
+                        <Text style={styles.rocket}>{data.rocket.configuration.full_name}</Text>
+                        <Text style={styles.launchProvider}>{data.launch_provider.name}</Text>
+                        <Text style={styles.launchPad}>{data.launch_pad.location.name}</Text>
+                    </View>
+                    <BlurView intensity={0} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.bottomSection}>
+                        <Text style={styles.launchPad} >{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
+                        <TMinus time={launchTime} />
+            
 
-                </BlurView>
+                    </BlurView>
+                </View>
             </View>
-        </View>
+            
+        </Pressable>
     );
 }
 

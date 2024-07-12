@@ -97,7 +97,7 @@ const MenuBar = React.forwardRef((props: any, ref: any)=> {
     if (page.current == -1) return null;
     if (setPage == null) return null;
     return (
-        <BlurView intensity={60} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.menuBar} >           
+        <BlurView intensity={45} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.menuBar} >           
             <MenuButton icon="settings" setPage={()=>setPage(0)} label="settings" active={page.current==0} />
             <MenuButton icon="rocket-launch" setPage={()=>setPage(1)} label="launches" active={page.current == 1} />
             <MenuButton icon="home" setPage={()=>setPage(2)} label="for you" active={page.current == 2} />

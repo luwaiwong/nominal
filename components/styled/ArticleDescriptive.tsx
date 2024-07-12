@@ -1,10 +1,10 @@
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { StyleSheet, View, Image, Text, Animated, Linking} from "react-native";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { COLORS, FONT } from "../styles";
 
-export default function Article(props:{articleData:any}){
+export default function ArticleDescriptive(props:{articleData:any}){
     const articleData = props.articleData;
     
     const [aspectRatio, setAspectRatio] = useState(1);
@@ -23,10 +23,7 @@ export default function Article(props:{articleData:any}){
         articleDate = "Yesterday";
     }
     
-    // Get the aspect ratio of the image one time
-    useEffect(() => {
-        Image.getSize(articleData.image_url, (width, height) => {setAspectRatio(width/height);})
-    }, []);
+    Image.getSize(articleData.image_url, (width, height) => {setAspectRatio(width/height);})
 
 
     // ANIMATIONS
@@ -66,7 +63,11 @@ export default function Article(props:{articleData:any}){
         <GestureDetector gesture={tap}>
             <Animated.View style={[styles.container,{transform:[{scale}]}]}>
                 <View style={styles.left}>
-                    <Text numberOfLines={4} style={styles.title}>{articleData.title}</Text>
+                    <View>
+                        <Text numberOfLines={4} style={styles.title}>{articleData.title}</Text>
+                        <Text numberOfLines={4} style={styles.description}>{articleData.summary}</Text>
+
+                    </View>
 
                     <Text style={styles.time}>{articleDate}</Text>
                 </View>
@@ -135,8 +136,16 @@ const styles = StyleSheet.create({
         
         
     },
+    description:{
+        fontSize: 13,
+        fontFamily: FONT,
+        color: COLORS.FOREGROUND,
+        paddingRight: 10,
+        
+        
+    },
     source:{
-        fontSize: 14,
+        fontSize: 16,
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
         textAlign: "right",
@@ -144,7 +153,7 @@ const styles = StyleSheet.create({
     },
     time:{
 
-        fontSize: 14,
+        fontSize: 16,
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
         marginRight: 2,

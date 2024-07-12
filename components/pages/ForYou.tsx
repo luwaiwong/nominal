@@ -5,12 +5,13 @@ import PagerView from "react-native-pager-view";
 import { COLORS, FONT } from "../styles";
 import Loading from "../styled/Loading";
 
-import {ForYouLaunch, ForYouEvent} from "../styled/ForYouItem";
+import {ForYouLaunch, ForYouEvent, ForYouEnd} from "../styled/ForYouItem";
 
 export default function ForYou(props) {
   let userData = props.data.userData;
   let launchData = props.data.launchData;
   let foryou = launchData.foryou;
+  let news = launchData.news;
 
   return(
       <PagerView style={styles.immersiveSection} initialPage={0} orientation="vertical" >
@@ -23,6 +24,7 @@ export default function ForYou(props) {
               return (<ForYouEvent key={item.id} data={item} user={userData}/>);
             }
         })}
+        <ForYouEnd data={news.slice(0,4)}/>
       </PagerView>
     );
 }

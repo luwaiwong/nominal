@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, StatusBar, Dimensions } from "react-native";
+import { StyleSheet, View, Text, Image, StatusBar, Dimensions, FlatList } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
@@ -6,6 +6,8 @@ import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 import {BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT} from "../styles";
 import { BlurView } from "expo-blur";
 import TMinus from "./TMinus";
+import Article from "./Article";
+import ArticleDescriptive from "./ArticleDescriptive";
 // import { BlurView } from "@react-native-community/blur";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -87,6 +89,29 @@ export function ForYouEvent(data) {
   </View>
   )
 }
+
+export function ForYouEnd(props){
+  const news = props.data;
+  return (
+  <View style={styles.page}>
+    <View style={styles.contentContainer}>
+      <View>
+        <Text style={styles.eventTitle}>You're all caught up! </Text>    
+        <Text style={styles.subtitle}>Here are some recent articles:</Text>    
+      </View>
+      <FlatList
+        style={styles.articleSection}
+        data={news}
+        renderItem={({item}) => <ArticleDescriptive articleData={item} />}
+        keyExtractor={(item) => item.id}>
+
+      </FlatList>
+    </View>
+  </View>
+  )
+
+}
+
 
 
 const styles = StyleSheet.create({
@@ -303,5 +328,14 @@ const styles = StyleSheet.create({
       textShadowOffset: {width: 0, height: 1},
       textShadowRadius: 1,
       elevation: 200,
+    },
+
+    // ARTICLES
+    articleSection:{
+      display: "flex",
+      flexDirection: "column",
+      width: "100%",
+      height: "100%",
+      marginTop: 10,
     },
 });

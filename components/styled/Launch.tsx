@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, Animated } from "react-native";
+import { StyleSheet, View, Text, Image, Animated, Pressable } from "react-native";
 import React, { useRef } from "react";
 import { useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
@@ -10,6 +10,7 @@ import { GestureDetector, Gesture} from "react-native-gesture-handler";
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 export default function Launch(data) {
+  let nav = data.nav;
   let launchInfo = data.data;  
   let userData = data.user;
   let [launchTime, setLaunchTime] = useState<any>(new Date(launchInfo.net));
@@ -91,8 +92,7 @@ export default function Launch(data) {
   
   // HTML
   return (
-    <GestureDetector gesture={tap} >
-      
+    <Pressable onPress={()=> nav.navigate("Launch", {data: launchInfo})}>
       <Animated.View style={[styles.background, {transform:[{scale}]}]}>
         {/* Header, Holds the title and t -  countdown */}
         {/* Body, Holds the launch info on left and image on right */}
@@ -102,7 +102,7 @@ export default function Launch(data) {
             <Text style={styles.titleText} numberOfLines={1}>{launchInfo.mission.name} </Text>
         
             <View style={styles.horizontalInfoContainer}>
-                <Text style={styles.smallText}>{status}</Text>
+                {/* <Text style={styles.smallText}>{status}</Text> */}
                 <Text style={styles.smallText}>{tminus}</Text>
             </View>
             <View style={styles.smallSpacer}></View>
@@ -119,7 +119,8 @@ export default function Launch(data) {
           <Image style={styles.image} source={{uri: launchInfo.image}} /> 
         </View>
       </Animated.View>
-    </GestureDetector>
+
+    </Pressable>
   );
 
 }
@@ -152,6 +153,9 @@ function calculateTminus(launchTime: Date, status: string = "TBC"){
   }
   if (days <= 0){
     return prefix+hours + "h, " + minutes + "m ";
+  }
+  if (days == 1){
+    return prefix+days + "d, " + hours + "h ";
   }
   
   return prefix+days + "d, " + hours + "h ";

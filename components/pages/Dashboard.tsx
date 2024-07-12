@@ -49,7 +49,7 @@ export default function Dashboard(props) {
                 >
                   <View style={{height: 10}}/>
                   {/* Highlight Launch */}
-                  {highlights[0] != undefined && <HighlightLaunch data={highlights[0]}  />}
+                  {highlights[0] != undefined && <HighlightLaunch data={highlights[0]} nav={nav}  />}
 
                   {/* <View style={{marginTop: -10}}></View> */}
 
@@ -71,7 +71,7 @@ export default function Dashboard(props) {
                     </Pressable>
                     {upcomingFiltered.map((launch: any) => {
                     return (
-                        <LaunchInfo key={launch.id} data={launch} user={userData} />
+                        <LaunchInfo key={launch.id} data={launch} user={userData} nav={nav} />
                     );
                     })}
                   </View>

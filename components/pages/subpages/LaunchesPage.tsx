@@ -21,7 +21,7 @@ export default function LaunchesPage(props) {
                 data={data}
                 keyExtractor={(item, index) => index.toString()}
                 style={styles.list}
-                renderItem={({ item }) => <Launch data={item} user={user}>{item.name}</Launch>}>
+                renderItem={({ item }) => <Launch data={item} user={user} nav={props.navigation}>{item.name}</Launch>}>
             </FlatList>
         </View>
     )
