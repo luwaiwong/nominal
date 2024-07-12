@@ -12,6 +12,7 @@ const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 export default function LaunchPage(props) {
     const launch = props.route.params.data;
     const launchTime = new Date(launch.net);
+    const isPrecise = launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second";
     let status = "Upcoming";
 
     // Set Status
@@ -21,7 +22,7 @@ export default function LaunchPage(props) {
     
 
     // Get the aspect ratio of the image one time
-    const [aspectRatio, setAspectRatio] = useState(1);
+    const [aspectRatio, setAspectRatio] = useState(2);
     useEffect(() => {
         Image.getSize(launch.image, (width, height) => {
         const aspectRatio = width/height;
@@ -34,7 +35,7 @@ export default function LaunchPage(props) {
     }, []);
     
 
-    // console.log(launch);
+    // console.log(launch.net_precision.name);
 
     return (
         <View style={styles.container}>
@@ -50,7 +51,7 @@ export default function LaunchPage(props) {
                 {/* Title and date */}
                 <Text style={styles.launchTitle}>{launch.mission.name}</Text>
                 
-                    { (launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day") ? 
+                    { (isPrecise) ? 
                         <Text style={styles.launchTime}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
                         : 
                         <Text style={styles.launchTime}>{MONTHS[launchTime.getMonth()+1]+" "+launchTime.getFullYear()}</Text>
@@ -63,7 +64,7 @@ export default function LaunchPage(props) {
                 <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: launch.image}} />
                 <View style={styles.tminusContainer}>
                     
-                    { (launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day") ? 
+                    { (isPrecise) ? 
                         <TMinus time={new Date(launchTime)} />
                         : 
                         <Text style={styles.timeText}> NET {MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
@@ -84,14 +85,14 @@ export default function LaunchPage(props) {
 
                 {/* Other info */}
                 <View style={styles.providerSection}>
-                    <Text style={styles.launchProviderTitle}>Rocket Information</Text>
+                    <Text style={styles.launchProviderTitle}>Launch Provider</Text>
                     <Text style={styles.rocketText}>{launch.rocket.configuration.full_name}</Text>
                     <Text style={styles.launchProviderText}>{launch.launch_provider.name}</Text>
                 </View>
                     
                 {/* Location Info */}
                 <View style={styles.locationSection}>
-                    <Text style={styles.launchProviderTitle}>Location Information</Text>
+                    <Text style={styles.launchProviderTitle}>Location</Text>
                     
                     <Text style={styles.launchLocationText}>{launch.launch_pad.location.name}</Text>
                     <View style={styles.launchpadSection}>

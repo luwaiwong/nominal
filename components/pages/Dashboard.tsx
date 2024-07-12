@@ -69,6 +69,7 @@ export default function Dashboard(props) {
                           </View>
                       </View>
                     </Pressable>
+                    
                     {upcomingFiltered.map((launch: any) => {
                     return (
                         <LaunchInfo key={launch.id} data={launch} user={userData} nav={nav} />

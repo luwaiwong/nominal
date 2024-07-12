@@ -12,6 +12,8 @@ export default function Settings(){
             <Text style={styles.emoji}>👷🚧🚧🚧👷‍♀️</Text>
             <Text style={styles.emoji}>🚚🧱🧱🧱🧰</Text>
             <Text style={styles.emoji}></Text>
+            <Text style={styles.subtext}>Note that right now, if you reload it too many times, the app will stop working when you hit the API limit. </Text>
+            <Text style={styles.subtext}>I'm working on a fix for this, but for now, just wait one hour before trying again. </Text>
             <Text style={styles.text}>Thanks for downloading, and supporting me!</Text>
             <Text style={styles.text}></Text>
         </View>)
@@ -32,6 +34,13 @@ const styles = StyleSheet.create({
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: "center",
+    },
+    subtext: {
+        fontSize: 16,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: "left",
+        marginLeft: 10,
     },
     emoji:{
         fontSize: 50,

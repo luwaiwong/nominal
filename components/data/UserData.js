@@ -257,9 +257,11 @@ export default class UserData {
   #getDashboardFilteredLaunches() {
     // return this.launchdata.upcoming.slice(0, 5);
     // Filter the launches based on the tags
-    // Cutoff at launches that are more than 1 week away
+    // Cutoff at launches that are more than 1 month away
+    return this.launchdata.upcoming.slice(1, 3);
+
     let curTime = new Date().getTime();
-    let cutoffTime = curTime + 604800000;
+    let cutoffTime = curTime + 1000 * 60 * 60 * 24 * 30;
     let launches = [];
 
     for (let i = 1; i < this.launchdata.upcoming.length; i++) {

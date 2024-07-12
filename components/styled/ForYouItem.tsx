@@ -21,12 +21,12 @@ export function ForYouLaunch(data) {
     setPinned(data.user.togglePinned(launchInfo.id));
   };
   
-    let status = "Upcoming Launch";
+  let status = "Upcoming Launch";
 
-    // Set Status
-    if (launchTime.getTime() < Date.now()) {
-        status = "Just Launched";
-    }
+  // Set Status
+  if (launchTime.getTime() < Date.now()) {
+      status = "Just Launched";
+  }
   return (
     <Pressable onPress={()=>data.nav.navigate("Launch", {data: launchInfo})}>
     <View style={styles.page}>
@@ -64,19 +64,26 @@ export function ForYouLaunch(data) {
 
 export function ForYouEvent(data) {
   const eventData = data.data;
+  const date = new Date(eventData.date);
   let name = "";
   if (eventData.program[0] != undefined) {
     name = eventData.program[0].name;
   }
 
-  const date = new Date(eventData.date);
+  let status = "Upcoming Event";
+
+  // Set Status
+  if (date.getTime() < Date.now()) {
+      status = "Recent Event";
+  }
+
   return (
   <View style={styles.page}>
     <Image style={styles.image} source={{uri: eventData.feature_image}} />
     <View style={styles.contentContainer}>
       <View>
         <Text style={styles.eventTitle}>{eventData.name} </Text>
-        <Text style={styles.subtitle} numberOfLines={1} >Event</Text>        
+        <Text style={styles.subtitle} numberOfLines={1} >{status}</Text>        
       </View>
       <BlurView  intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView'
         style={styles.infoSection}>
@@ -203,7 +210,7 @@ const styles = StyleSheet.create({
       marginHorizontal: 10,
     },
     subtitle:{
-      fontSize: 20,
+      fontSize: 18,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "600",
