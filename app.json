@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "launches-app",
-    "slug": "launches-app",
-    "version": "1.0.0",
+    "name": "Launches",
+    "slug": "launches",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -18,7 +18,7 @@
     },
     "androidNavigationBar": {
       "backgroundColor": "#1c1c1c"
-    },  
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -29,10 +29,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#252627"
-      }
+      },
+      "package": "com.luwaiwong.launches"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c963a5d5-c2b0-4691-89b6-e3967e10df4c"
+      }
     }
   }
 }

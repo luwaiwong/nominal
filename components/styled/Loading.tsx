@@ -19,6 +19,11 @@ export default function Loading() {
                     duration: 400,
                     useNativeDriver: true,
                 }),
+                Animated.timing(opacity, {
+                    toValue: 0,
+                    duration: 400,
+                    useNativeDriver: true,
+                }),
                 
             ])
         ).start();

@@ -1,6 +1,6 @@
 {
-  "name": "launches-app",
-  "version": "1.0.0",
+  "name": "launches",
+  "version": "0.1.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -21,7 +21,6 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.74.1",
-    "react-native-blur": "^3.2.2",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-pager-view": "6.3.0",
     "react-native-reanimated": "~3.10.1",
