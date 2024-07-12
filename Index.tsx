@@ -27,7 +27,7 @@ import { useSharedValue } from "react-native-reanimated";
 
 export default function Index(props) {
   // App Data Variables
-  let [userData, setUserData] = useState(null);
+  let userData = useRef(null);
   let [immersive, setImmersive] = useState(false);
   let [launchData, setLaunchData]= useState(null)
   let [pinnedLaunches, setPinnedLaunches] = useState([])
@@ -42,9 +42,9 @@ export default function Index(props) {
     console.log("App Mounted");
     // Create a new user data object
     // This way the user data isn't reset every time the app is re-rendered
-    let userData = new UserData();
-    setUserData(userData)
-    fetchData(userData);
+    let data = new UserData();
+    userData.current = data;
+    fetchData(userData.current);
   }, []);
 
   // Function to fetch data
@@ -61,7 +61,7 @@ export default function Index(props) {
   // Reload function called with pull down reload gesture
   async function reloadData(){
     console.log("Refreshing Page")
-    await fetchData(userData).catch((error)=>{console.log("Error Reloading Page", error)})
+    await fetchData(userData.current).catch((error)=>{console.log("Error Reloading Page", error)})
   }
 
   // Checks if font is loaded, if the font is not loaded yet, just show a loading screen
@@ -121,7 +121,7 @@ export default function Index(props) {
       // Data object fed into all pages
       // Includes current state of app
       let data = {
-        userData: userData,
+        userData: userData.current,
         immersive: immersive,
         launchData: launchData, 
         upcoming: launchData.upcoming,

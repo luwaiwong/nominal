@@ -171,14 +171,76 @@ export default class UserData {
 
   // FOR YOU ALGORITHM
   #getForYouData() {
-    // Return the top 3 upcoming launches, the top event, and the next 4 upcoming launches
+    // Intended behaviour:
+    // Return launch or event that is closest to current date
+    // But only if the event/launch has a date_precision of day or better
+    // Otherwise return the next launch/event that has a date_precision of day or better
+    // If no launches with date_precision of day or better, return one with date_precision of month
+    // If no event with date_precision of month, return one with date_precision of month
     // TODO
-    // Sort items by time, for 1 week
+
+    // Launch index and event index
+    let ei = 0;
+    let li = 0;
+
+    // Other info
+    const launches = this.launchdata.upcoming;
+    const now = new Date().getTime();
     const data = [];
-    data.push(...this.launchdata.upcoming.slice(0, 3));
-    data.push(this.events[0]);
-    data.push(...this.launchdata.upcoming.slice(3, 7));
-    // console.log(data);
+
+    while (ei < this.events.length || li < this.launchdata.upcoming.length) {
+      let einrange = ei < this.events.length;
+      let linrange = li < this.launchdata.upcoming.length;
+
+      if (!einrange && !linrange) {
+        break;
+      }
+      // If out of events, and launches are still accurate
+      else if (!einrange && launches[li].net_precision.name != "Month") {
+        data.push(this.launchdata.upcoming[li]);
+        li++;
+        continue;
+      }
+      // If out of launches, and events are still accurate
+      else if (
+        !linrange &&
+        this.events[ei].date_precision != null &&
+        this.events[ei].date_precision.name != "Month"
+      ) {
+        data.push(this.events[ei]);
+        ei++;
+        continue;
+      }
+      // If out of launches, and events are not accurate
+      else if (!linrange) {
+        // Stop
+        break;
+      }
+      // If we still have events and launches, but launches are not accurate
+      else if (launches[li].net_precision.name == "Month") {
+        // Stop
+        // data.push(this.launchdata.upcoming[li]);
+        li = this.launchdata.upcoming.length + 1;
+        continue;
+      }
+      let eventTime = new Date(this.events[ei].date).getTime();
+      let launchTime = new Date(this.launchdata.upcoming[li].net).getTime();
+
+      let eventHasPrecision =
+        this.events[ei].date_precision != null &&
+        this.events[ei].date_precision.name != "Month";
+
+      // Add whichever is closer, as long as the event has precision
+      if (eventTime <= launchTime && eventHasPrecision) {
+        data.push(this.events[ei]);
+        ei++;
+        continue;
+      } else {
+        data.push(this.launchdata.upcoming[li]);
+        li++;
+        continue;
+      }
+    }
     return data;
   }
 

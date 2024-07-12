@@ -9,7 +9,7 @@ export default function TMinus(props:{time}){
 
     let currentTime = new Date();
     let date = new Date(time);
-    let timeDifference = date.getTime() - currentTime.getTime();
+    let timeDifference = date.getTime() - currentTime.getTime()-1000;
     let days = (Math.floor(timeDifference / (1000 * 60 * 60 * 24)));
     let hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     let minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
@@ -31,7 +31,8 @@ export default function TMinus(props:{time}){
                     <Text style={styles.text}>T</Text>
                 </View>
                 <View style={styles.textSpacer}>
-                    <Text style={styles.text}>-</Text>
+                    {tminus[4] < 0 && <Text style={styles.textPlus}>+</Text>}
+                    {tminus[4] >= 0 && <Text style={styles.text}>-</Text>}
                 </View>
                 <View style={styles.textSection}>
                     <Text style={styles.timeText}>{formatNumber(tminus[0])}</Text>
@@ -88,12 +89,18 @@ function calculateTminus(launchTime: Date, status: string = "TBC"){
   let currentTime = new Date();
   let launchDate = new Date(launchTime);
   let timeDifference = launchDate.getTime() - currentTime.getTime();
+    let plusorminus = 1
+  if (timeDifference < 0){
+    timeDifference = currentTime.getTime() - launchDate.getTime();
+    plusorminus = -1;
+  }
   let days = (Math.floor(timeDifference / (1000 * 60 * 60 * 24)));
   let hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   let minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
   let seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
 
-  return [(days), (hours), (minutes), (seconds)];
+
+  return [(days), (hours), (minutes), (seconds), plusorminus];
 }
 
 
@@ -141,6 +148,15 @@ const styles = StyleSheet.create({
         color: COLORS.FOREGROUND,
         textAlign: "center",
         fontFamily: FONT,
+        
+
+    },
+    textPlus:{
+        fontSize: 40,
+        color: COLORS.FOREGROUND,
+        textAlign: "center",
+        fontFamily: FONT,
+        marginTop: 5,
         
 
     },

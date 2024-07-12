@@ -54,8 +54,10 @@ export function ForYouLaunch(data) {
 
 export function ForYouEvent(data) {
   const eventData = data.data;
-  console.log(Object.keys(eventData));
-  console.log(eventData.program[0].name);
+  let name = "";
+  if (eventData.program[0] != undefined) {
+    name = eventData.program[0].name;
+  }
 
   const date = new Date(eventData.date);
   return (
@@ -70,7 +72,7 @@ export function ForYouEvent(data) {
         style={styles.infoSection}>
         <View style={styles.infoTextSection}>
           <Text style={styles.descriptionText} numberOfLines={3}>{eventData.description}</Text>
-          <Text style={styles.largeText} numberOfLines={1}>{eventData.program[1].name}</Text>
+          <Text style={styles.largeText} numberOfLines={1}>{name}</Text>
           <Text style={styles.text} numberOfLines={1}>{eventData.type.name}</Text>
 
           <Text style={styles.timeText} >{DAYS[date.getDay()]+" "+MONTHS[date.getMonth()]+" "+date.getDate()+ ", "+date.getFullYear()} </Text>

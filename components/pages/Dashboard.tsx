@@ -127,7 +127,9 @@ export default function Dashboard(props) {
                     </Pressable>
                   
                         {news.map((launch: any) => {
+                        // console.log(launch)
                         return (
+
                             <Article key={launch.id} articleData={launch}  />
                         );
                     })}

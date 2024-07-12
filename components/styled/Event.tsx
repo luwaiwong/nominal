@@ -17,8 +17,11 @@ export default function Event(props:{eventData:any}){
     if (eventData.news_url != null){
         url = eventData.news_url;
     }
-    else if (eventData.video_url != null){
+    else if (eventData.video_url != null && eventData.webcast_live) {
         url = eventData.video_url;
+    }
+    else if (eventData.info_urls[0] != null){
+        url = eventData.info_urls[0];
     }
 
     // ANIMATIONS
