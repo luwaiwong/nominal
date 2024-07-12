@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, StatusBar, Dimensions, FlatList } from "react-native";
+import { StyleSheet, View, Text, Image, StatusBar, Dimensions, FlatList, Pressable } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
@@ -21,13 +21,20 @@ export function ForYouLaunch(data) {
     setPinned(data.user.togglePinned(launchInfo.id));
   };
   
+    let status = "Upcoming Launch";
+
+    // Set Status
+    if (launchTime.getTime() < Date.now()) {
+        status = "Just Launched";
+    }
   return (
+    <Pressable onPress={()=>data.nav.navigate("Launch", {data: launchInfo})}>
     <View style={styles.page}>
         <Image style={styles.image} source={{uri: launchInfo.image}} />
         <View style={styles.contentContainer}>
           <View>
             <Text style={styles.title} numberOfLines={1} onPress={()=>togglePinned()} >{launchInfo.mission.name} </Text>
-            <Text style={styles.subtitle} numberOfLines={1} >Launch </Text>
+            <Text style={styles.subtitle} numberOfLines={1} >{status} </Text>
           </View>
 
           <View>
@@ -50,6 +57,7 @@ export function ForYouLaunch(data) {
         </View>
 
     </View>
+    </Pressable>
   );
 
 }

@@ -18,10 +18,10 @@ export default function ForYou(props) {
         {foryou.map((item: any) => {
             if (item.type == "launch"){
               return (
-                <ForYouLaunch key={item.id} data={item} user={userData}/>
+                <ForYouLaunch key={item.id} data={item} user={userData} nav={props.data.nav}/>
               );
             } else {
-              return (<ForYouEvent key={item.id} data={item} user={userData}/>);
+              return (<ForYouEvent key={item.id} data={item} user={userData}  nav={props.data.nav}/>);
             }
         })}
         <ForYouEnd data={news.slice(0,4)}/>
