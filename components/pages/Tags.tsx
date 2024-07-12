@@ -3,7 +3,7 @@ import React, {useRef} from "react";
 import { useEffect, useState } from "react";
 import { GestureDetector, Gesture} from "react-native-gesture-handler";
 
-import LaunchInfo from "../styled/LaunchInfo";
+import LaunchInfo from "../styled/Launch";
 
 import * as colors from "../styles";
 import { transform } from "typescript";

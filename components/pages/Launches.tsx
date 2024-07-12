@@ -1,13 +1,13 @@
 import React, {useRef} from 'react';
-import { StyleSheet, View, Text, Animated, ScrollView, StatusBar, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, Animated, ScrollView, StatusBar, Dimensions, FlatList } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-import LaunchInfo from '../styled/LaunchInfo';
+import LaunchInfo from '../styled/Launch';
 import Loading from '../styled/Loading';
 import {BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT} from '../styles';
 
-export default function RegularLaunches(props){
+export default function Launch(props){
+    const nav = props.data.nav;
     const userData = props.data.userData;
     const upcomingLaunches = props.data.upcoming;
     const previousLaunches = props.data.previous;
@@ -81,25 +81,39 @@ export default function RegularLaunches(props){
           <Animated.View style={[styles.contentContainer, {marginLeft:animatedPageMargin}]}>
             {/* Upcoming Section */}
             <View style={[styles.contentSection]}>
-              <ScrollView >  
+            <FlatList
+                data={upcomingLaunches}
+                keyExtractor={(item, index) => index.toString()}
+                ListFooterComponent={<View style={styles.bottomPadding}></View>}
+                renderItem={({ item }) => <LaunchInfo data={item} user={userData} nav={nav}> </LaunchInfo>}>
+            </FlatList>
+              {/* <ScrollView >  x
               {upcomingLaunches.length == 0  && <Loading/>}  
                 {upcomingLaunches.map((launch: any) => {
                   return (
                     <LaunchInfo key={launch.id} data={launch} user={userData}/>
                   );
               })}
-              </ScrollView>
+                <View style={styles.bottomPadding}></View>
+              </ScrollView> */}
             </View>
             {/* Previous Section */}
             <View style={[styles.contentSection]}>
-              <ScrollView >  
+              <FlatList
+                  data={previousLaunches}
+                  keyExtractor={(item, index) => index.toString()}
+                  ListFooterComponent={<View style={styles.bottomPadding}></View>}
+                  renderItem={({ item }) => <LaunchInfo data={item} user={userData} nav={nav}></LaunchInfo>}>
+              </FlatList>
+              {/* <ScrollView>  
                 {previousLaunches.length == 0 && <Loading/>}
                   {previousLaunches.map((launch: any) => {
                     return (
                       <LaunchInfo key={launch.id} data={launch} user={userData}/>
                     );
                 })}
-              </ScrollView>
+                <View style={styles.bottomPadding}></View>
+              </ScrollView> */}
             </View> 
           </Animated.View>
 
@@ -138,6 +152,10 @@ const styles = StyleSheet.create({
       marginLeft: "5%",
     
     },
+    bottomPadding:{
+      height: BOTTOM_BAR_HEIGHT+10,
+      width: "100%",
+    },
 
     // Content Section
     contentContainer:{
@@ -146,7 +164,8 @@ const styles = StyleSheet.create({
       // position: 'absolute',
       marginLeft: "0%",
       width: "200%",
-      height: Dimensions.get('window').height-TOP_BAR_HEIGHT-BOTTOM_BAR_HEIGHT-StatusBar.currentHeight-18,
+      height: Dimensions.get('window').height-StatusBar.currentHeight,
+      paddingBottom: BOTTOM_BAR_HEIGHT,
       
       overflow: "hidden",
     },

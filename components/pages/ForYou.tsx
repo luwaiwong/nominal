@@ -5,23 +5,26 @@ import PagerView from "react-native-pager-view";
 import { COLORS, FONT } from "../styles";
 import Loading from "../styled/Loading";
 
-import ForYouItem from "../styled/ForYouItem";
+import {ForYouLaunch, ForYouEvent, ForYouEnd} from "../styled/ForYouItem";
 
 export default function ForYou(props) {
   let userData = props.data.userData;
-  let immersiveShown = props.data.immersive
-  let upcomingLaunches = props.data.upcoming
-  let previousLaunches = props.data.previous
-  let pinnedLaunches = props.data.pinned
-  let setPinned = props.data.setPinned
+  let launchData = props.data.launchData;
+  let foryou = launchData.foryou;
+  let news = launchData.news;
 
   return(
       <PagerView style={styles.immersiveSection} initialPage={0} orientation="vertical" >
-        {upcomingLaunches.map((launch: any) => {
-            return (
-              <ForYouItem key={launch.id} data={launch} user={userData}/>
-            );
+        {foryou.map((item: any) => {
+            if (item.type == "launch"){
+              return (
+                <ForYouLaunch key={item.id} data={item} user={userData} nav={props.data.nav}/>
+              );
+            } else {
+              return (<ForYouEvent key={item.id} data={item} user={userData}  nav={props.data.nav}/>);
+            }
         })}
+        <ForYouEnd data={news.slice(0,4)}/>
       </PagerView>
     );
 }

@@ -1,6 +1,6 @@
 {
-  "name": "launches-app",
-  "version": "1.0.0",
+  "name": "launches",
+  "version": "0.1.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -11,21 +11,24 @@
   "dependencies": {
     "@expo-google-fonts/space-grotesk": "^0.2.3",
     "@expo/metro-runtime": "~3.2.1",
-    "@react-native-community/blur": "^4.4.0",
+    "@react-navigation/native": "^6.1.17",
+    "@react-navigation/native-stack": "^6.10.0",
+    "@react-navigation/stack": "^6.4.0",
     "@types/react": "~18.2.45",
     "expo": "~51.0.6",
+    "expo-blur": "~13.0.2",
     "expo-status-bar": "~1.12.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.74.1",
-    "react-native-blur": "^3.2.2",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-pager-view": "6.3.0",
+    "react-native-reanimated": "~3.10.1",
     "react-native-safe-area-context": "4.10.1",
     "react-native-vector-icons": "^10.0.3",
     "react-native-web": "~0.19.6",
     "typescript": "~5.3.3",
-    "react-native-reanimated": "~3.10.1"
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

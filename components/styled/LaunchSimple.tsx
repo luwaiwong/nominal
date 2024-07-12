@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, Animated } from "react-native";
+import { StyleSheet, View, Text, Image, Animated, Pressable } from "react-native";
 import React, { useRef } from "react";
 import { useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
@@ -9,7 +9,8 @@ import { GestureDetector, Gesture} from "react-native-gesture-handler";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-export default function TestLaunchData(data) {
+
+export default function LaunchSimple(data) {
   let launchInfo = data.data;  
   let userData = data.user;
   let [launchTime, setLaunchTime] = useState<any>(new Date(launchInfo.net));
@@ -41,7 +42,8 @@ export default function TestLaunchData(data) {
   };
 
   const toggle = () => {
-    togglePinned()
+    console.log("Pinned")
+    // togglePinned()
     Animated.sequence([
     Animated.timing(scale, {
       toValue: 0.8,
@@ -57,14 +59,18 @@ export default function TestLaunchData(data) {
   }
 
   // Gestures
-  const tap = Gesture.Tap();
+  const doubletap = Gesture.Tap();
+  const singletap = Gesture.Tap();
 
-  tap.onTouchesDown(()=>animateIn());
-  tap.onTouchesUp(()=>animateOut());
-  // tap.onTouchesMove(()=>animateIn());
-  tap.onTouchesCancelled(()=>animateOut());
-  // tap.onEnd(()=>toggle()); // UNCOMMENT TO RESTORE PINNED
-  tap.numberOfTaps(2);
+  doubletap.onTouchesDown(()=>animateIn());
+  doubletap.onTouchesUp(()=>animateOut());
+  doubletap.onTouchesMove(()=>animateIn());
+  doubletap.onTouchesCancelled(()=>animateOut());
+  doubletap.onStart(()=>toggle());
+  doubletap.numberOfTaps(2);
+
+  singletap.numberOfTaps(1);
+  singletap.onEnd(()=>console.log("open page"));
   
   // Status name
   let status = launchInfo.status.name;
@@ -91,35 +97,36 @@ export default function TestLaunchData(data) {
   
   // HTML
   return (
-    <GestureDetector gesture={tap} >
-      
-      <Animated.View style={[styles.background, {transform:[{scale}]}]}>
-        {/* Header, Holds the title and t -  countdown */}
-        <View style={styles.headerSection}>
-          <Text style={styles.titleText} >{launchInfo.mission.name} </Text>
-        </View>
-        {/* Body, Holds the launch info on left and image on right */}
-        <View style={styles.bodySection}>
-          <View style={styles.infoSection}>
-            <View style={styles.horizontalInfoContainer}>
-                <Text style={styles.smallText}>{status}</Text>
+      // <GestureDetector gesture={Gesture.Exclusive(doubletap, singletap)} >
+      <Pressable onPress={()=> data.nav.navigate("Launch", {data: launchInfo})}>
+          <Animated.View style={[styles.background, {transform:[{scale}]}]} collapsable={false}>
+            {/* Header, Holds the title and t -  countdown */}
+            {/* Body, Holds the launch info on left and image on right */}
+            <View style={styles.bodySection}>
+              <View style={styles.infoSection}>
+
+                <Text style={styles.titleText} numberOfLines={1}>{launchInfo.mission.name} </Text>
+            
                 <Text style={styles.smallText}>{tminus}</Text>
+
+                <View style={styles.smallSpacer}></View>
+                <Text style={styles.smallText} numberOfLines={1}>{launchInfo.launch_provider.name}</Text>
+                <Text style={styles.smallText}>{launchInfo.rocket.configuration.full_name}</Text>
+                {/* <Text style={styles.smallText} numberOfLines={1}>{launchInfo.launch_pad.name}</Text> */}
+                <View style={styles.smallSpacer}></View>
+
+                <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
+              </View>
+              {/* Pinned Icon */}
+              {/* {pinned ? 
+                <MaterialCommunityIcons name="bell-ring"  style={styles.notificationIconActive}  /> : 
+                <MaterialCommunityIcons name="bell-outline"  style={styles.notificationIcon}  />} */}
+              <Image style={styles.image} source={{uri: launchInfo.image}} /> 
             </View>
-            <View style={styles.smallSpacer}></View>
-            <Text style={styles.smallText}>{launchInfo.launch_provider.name}</Text>
-            <Text style={styles.smallText}>{launchInfo.rocket.configuration.full_name}</Text>
-            <Text style={styles.smallText}>{launchInfo.launch_pad.name}</Text>
-            <View style={styles.smallSpacer}></View>
-            <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
-          </View>
-          {/* Pinned Icon */}
-          {/* {pinned ? 
-            <MaterialCommunityIcons name="bell-ring"  style={styles.notificationIconActive}  /> : 
-            <MaterialCommunityIcons name="bell-outline"  style={styles.notificationIcon}  />} */}
-          <Image style={styles.image} source={{uri: launchInfo.image}} /> 
-        </View>
-      </Animated.View>
-    </GestureDetector>
+          </Animated.View>
+      </Pressable>
+
+
   );
 
 }
@@ -128,6 +135,13 @@ function calculateTminus(launchTime: Date, status: string = "TBC"){
   let currentTime = new Date();
   let launchDate = new Date(launchTime);
   let timeDifference = launchDate.getTime() - currentTime.getTime();
+  let isnegative = false;
+
+  if (timeDifference < 0){
+    timeDifference = currentTime.getTime() - launchDate.getTime();
+    isnegative = true;
+  }
+
   let days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
   let hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   let minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
@@ -137,38 +151,36 @@ function calculateTminus(launchTime: Date, status: string = "TBC"){
   if (status === "TBC" || status === "TBD"){
     prefix = "~ ";
   }
+  if (isnegative){
+    prefix = "+ ";
+  }
 
-  if (days <= 1){
-    return "+ "+ (-days) + "d, "  + (-hours) + "h ";;
-  }
-  if (hours <= 1){
-    return "+ "+ (-hours) + "h, "  + (-minutes) + "m ";;
-  }
-  if (minutes < 0){
-    return "+ "+ minutes + "m ";
-  }
   if (days <= 0 && hours <= 0){
-    return prefix+ minutes + "m ";
+    return prefix+ minutes + " minutes ";
   }
   if (days <= 0){
-    return prefix+hours + "h, " + minutes + "m ";
+    return prefix+hours + " hours, " + minutes + " minutes ";
+  }
+  if (days == 1){
+    return prefix+days + " day, " + hours + " hours ";
   }
   
-  return prefix+days + "d, " + hours + "h ";
+  return prefix+days + " days, " + hours + " hours ";
 }
 
 const styles = StyleSheet.create({
 // Sections
 background: {
-  marginLeft: 10,
-  marginRight: 10,
-  height: 200,
+  marginLeft: 8,
+  marginRight: 8,
+  height: 150,
   overflow: 'hidden',
   marginBottom: 10,
   padding: 5,
   borderRadius: 10,
 
   backgroundColor: colors.BACKGROUND_HIGHLIGHT,
+  zIndex: 1000,
   
 },
 headerSection:{
@@ -178,7 +190,7 @@ bodySection:{
   display: 'flex',
   flexDirection: 'row',
   width: '100%',
-  height: 150,
+  height: 140,
   justifyContent: 'space-between',
   
 },
@@ -191,8 +203,8 @@ infoSection:{
 
 },
 image: {
-  width: 150,
-  height: 150,
+  width: 140,
+  height: 140,
   borderRadius: 10,
 },
 text: {
@@ -204,13 +216,15 @@ text: {
 },
 // Header Section Stuff
 titleText: {
-    flex: 1,
+    // flex: 1,
     fontSize: 20,
     color: colors.FOREGROUND,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 50,
+    width: '100%',
+    // height: 30,
     fontFamily: colors.FONT,
+    marginBottom: 5,
 },
 // Info Section Stuff
 horizontalInfoContainer:{
@@ -233,13 +247,13 @@ smallText: {
     fontFamily: colors.FONT,
 },
 mediumText:{
-  fontSize: 18,
+  fontSize: 17,
   color: colors.FOREGROUND,
 
     fontFamily: colors.FONT,
 },
 LargeText:{
-  fontSize: 20,
+  fontSize: 18,
   color: colors.FOREGROUND,
 
     fontFamily: colors.FONT,
