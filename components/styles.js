@@ -7,6 +7,9 @@ export const COLORS = {
   FOREGROUND: "#D8DEE9",
   ACCENT: "#5E81AC",
   SUBFOREGROUND: "#b1b7bf",
+  GREEN: "#A3DF95",
+  YELLOW: "#FFDA61",
+  RED: "#F75D55",
 };
 export const BACKGROUND = "#1e1e1e";
 export const BACKGROUND_HIGHLIGHT = "#252627";

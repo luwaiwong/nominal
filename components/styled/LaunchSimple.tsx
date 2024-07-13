@@ -159,7 +159,7 @@ function calculateTminus(launchTime: Date, status: string = "TBC"){
     return prefix+ minutes + " minutes ";
   }
   if (days <= 0){
-    return prefix+hours + " hours, " + minutes + " minutes ";
+    return prefix+hours + " hours, " + minutes + " min ";
   }
   if (days == 1){
     return prefix+days + " day, " + hours + " hours ";

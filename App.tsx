@@ -25,8 +25,8 @@ export default function App() {
               }}
             />),
             transitionSpec:{
-              open: {animation: 'timing', config: {duration: 0, delay: 0}},
-              close: {animation: 'timing', config: {duration: 0, delay: 0}},
+              open: {animation: 'timing', config: {duration: 100, delay: 0}},
+              close: {animation: 'timing', config: {duration: 100, delay: 0}},
             }
           }}
           

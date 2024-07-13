@@ -9,33 +9,17 @@ import TMinus from '../../styled/TMinus';
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "January"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-export default function LaunchPage(props) {
+export default function EventPage(props) {
     const launch = props.route.params.data;
     const launchTime = new Date(launch.net);
     const isPrecise = launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second";
-
     let status = "Upcoming";
-    let statusColor = COLORS.FOREGROUND;
-    // Set Status for Time
+
+    // Set Status
     if (launchTime.getTime() < Date.now()) {
         status = "Launched";
     }
-    // Check Status for Launch
-    if (launch.status.id === 4) {
-        status = "Failed";
-        statusColor = COLORS.RED;
-    }   else if (launch.status.id === 7) {
-        status = "Partial Failure";
-        statusColor = COLORS.YELLOW;
-    }  else if (launch.status.id === 3) {
-        status = "Success";
-        statusColor = COLORS.GREEN;
-    }
     
-    console.log(launch.status);
-
-    // STATE
-    const [locDescShown, setLocDescShown] = useState(false);
 
     // Get the aspect ratio of the image one time
     const [aspectRatio, setAspectRatio] = useState(2);
@@ -51,6 +35,7 @@ export default function LaunchPage(props) {
     }, []);
     
 
+    // console.log(launch.net_precision.name);
 
     return (
         <View style={styles.container}>
@@ -74,7 +59,7 @@ export default function LaunchPage(props) {
 
                 {/* Status, Image and TMinus */}
                 <View style={styles.statusBannerContainer}>
-                    <Text style={[styles.statusBannerText,{color: statusColor}]}>{status}</Text>
+                    <Text style={styles.statusBannerText}>{status}</Text>
                 </View>
                 <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: launch.image}} />
                 <View style={styles.tminusContainer}>
@@ -86,9 +71,9 @@ export default function LaunchPage(props) {
                         }
                     
                 </View>
-                
-                {launch.failreason != null && launch.failreason != "" && <Text style={styles.failReason} >Cause of Failure: {launch.failreason}</Text>}
+
                 {/* Description */}
+                <Text style={styles.test}>webcast: {launch.webcast_live.toString()} vid_urls: {launch.mission.vid_urls}</Text>
                 <Text style={styles.launchDescription} >{launch.mission.description}</Text>
 
                 <View style={styles.tagsSection}>
@@ -127,18 +112,11 @@ export default function LaunchPage(props) {
                         </Pressable>
 
                     </View>
-                    
-                    {/* Hide if no description */}
-                    {launch.launch_pad.description != null && 
-                    <Pressable onPress={()=>setLocDescShown(!locDescShown)}>
-                        <Text style={styles.locationDescription} numberOfLines={locDescShown?10:2}>{launch.launch_pad.description}</Text>
-                    </Pressable>
-                    }
+                    {launch.launch_pad.description != null && <Text style={styles.locationDescription} numberOfLines={3}>{launch.launch_pad.description}</Text>}
                     
                     <Text style={styles.orbitText}>Target Orbit: {launch.mission.orbit.name}</Text>
 
                 </View>
-                <Text style={styles.test}>webcast: {launch.webcast_live.toString()} vid_urls: {launch.mission.vid_urls}</Text>
 
 
             </ScrollView>
@@ -271,21 +249,6 @@ const styles = StyleSheet.create({
 
 
     },
-    failReason:{
-        fontSize: 15,
-        color: COLORS.FOREGROUND,
-        fontFamily: FONT,
-        textAlign: 'justify',
-        marginHorizontal: 10,
-        marginTop: 10,
-        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-
-        padding: 10,
-
-        borderRadius: 10,
-        borderColor: COLORS.RED,
-        borderWidth: 2,
-    },
 
     // #endregion
     // #region LAUNCH DESCRIPTION
@@ -295,7 +258,7 @@ const styles = StyleSheet.create({
         fontFamily: FONT,
         textAlign: 'auto',
         marginHorizontal: 10,
-        marginBottom: 20,
+        marginBottom: 30,
         marginTop: 15,
     },
     
@@ -354,7 +317,6 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         borderRadius: 10,
         marginHorizontal: 10,
-        marginBottom: 10,
         padding: 10,
     },
 
@@ -407,7 +369,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     locationDescription:{
-        fontSize: 14,
+        fontSize: 15,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
