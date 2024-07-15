@@ -24,7 +24,7 @@ export default function ForYou(props) {
               return (<ForYouEvent key={item.id} data={item} user={userData}  nav={props.data.nav}/>);
             }
         })}
-        <ForYouEnd data={news.slice(0,4)}/>
+        <ForYouEnd data={news.slice(0,3)}/>
       </PagerView>
     );
 }

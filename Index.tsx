@@ -25,13 +25,14 @@ import UserData from "./components/data/UserData";
 import * as colors from "./components/styles";
 import { useSharedValue } from "react-native-reanimated";
 
+
 export default function Index(props) {
   // App Data Variables
   let userData = useRef(null);
   let [immersive, setImmersive] = useState(false);
   let [launchData, setLaunchData]= useState(null)
   let [pinnedLaunches, setPinnedLaunches] = useState([])
-  let currentPage = useRef(2);
+  let currentPage = useRef(0);
   let menuBarRef = useRef(null);
   
   const pagerRef = useRef(null);
@@ -142,11 +143,15 @@ export default function Index(props) {
           onPageScroll={onPageScroll}
           onPageSelected={onPageSelected}
         >
-          <Settings/>
+          {/* <Settings/>
           <Launches data={data} />
           <ForYou data={data}/>
           <Dashboard data={data} />
-          <News data={data}/>
+          <News data={data}/> */}
+          <ForYou data={data}/>
+          <Dashboard data={data}/>
+          <Launches data={data}/>
+          <Settings />
         </PagerView>
       )
     }
