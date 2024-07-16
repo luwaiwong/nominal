@@ -25,7 +25,13 @@ export default function Article(props:{articleData:any}){
     
     // Get the aspect ratio of the image one time
     useEffect(() => {
-        Image.getSize(articleData.image_url, (width, height) => {setAspectRatio(width/height);})
+        Image.getSize(articleData.image_url, (width, height) => {
+            let ratio = width/height;
+            if (ratio > 1.5){
+                setAspectRatio(1.5);
+            }else {
+                setAspectRatio(width/height);
+            }})
     }, []);
 
 

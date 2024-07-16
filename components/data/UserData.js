@@ -171,13 +171,24 @@ export default class UserData {
 
   // FOR YOU ALGORITHM
   #getForYouData() {
+    const now = new Date().getTime();
+
+    let recents = [];
+    // First, get recently launched launches within the last 7 days
+    for (let i = 0; i < this.launchdata.previous.length; i++) {
+      let launch = this.launchdata.previous[i];
+      let launchTime = new Date(launch.net).getTime();
+      if (now - launchTime < 1000 * 60 * 60 * 24 * 7) {
+        recents.push(launch);
+      }
+    }
+
     // Intended behaviour:
     // Return launch or event that is closest to current date
     // But only if the event/launch has a date_precision of day or better
     // Otherwise return the next launch/event that has a date_precision of day or better
     // If no launches with date_precision of day or better, return one with date_precision of month
     // If no event with date_precision of month, return one with date_precision of month
-    // TODO
 
     // Launch index and event index
     let ei = 0;
@@ -185,7 +196,6 @@ export default class UserData {
 
     // Other info
     const launches = this.launchdata.upcoming;
-    const now = new Date().getTime();
     const data = [];
 
     while (ei < this.events.length || li < this.launchdata.upcoming.length) {
@@ -241,7 +251,8 @@ export default class UserData {
         continue;
       }
     }
-    return data;
+
+    return [...data, ...recents];
   }
 
   // FOR DASHBOARD

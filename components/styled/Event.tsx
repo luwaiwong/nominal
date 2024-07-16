@@ -6,7 +6,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 import { COLORS, FONT } from "../styles";
 
-export default function Event(props:{eventData:any}){
+export default function Event(props){
     const eventData = props.eventData;
     const [aspectRatio, setAspectRatio] = useState(1);
 
@@ -38,7 +38,7 @@ export default function Event(props:{eventData:any}){
     // Create an animation that scales the view back to its original size when released
     const animateOut = (open: boolean) => {
         if (open){
-        Linking.openURL(url);
+            props.nav.navigate("Event", {data: eventData});
         }
         Animated.timing(scale, {
         toValue: 1,

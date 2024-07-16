@@ -4,38 +4,46 @@ import { MaterialIcons } from 'react-native-vector-icons';
 import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
 import Launch from '../../styled/Launch';
 import TMinus from '../../styled/TMinus';
+import LaunchSimple from '../../styled/LaunchSimple';
+import { processLaunchData } from '../../data/APIHandler';
 
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "January"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function EventPage(props) {
-    const launch = props.route.params.data;
-    const launchTime = new Date(launch.net);
-    const isPrecise = launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second";
-    let status = "Upcoming";
+    const event = props.route.params.data;
+    const time = new Date(event.date);
+    const isPrecise = event.date_precision.name === "Hour" || event.date_precision.name === "Minute" || event.date_precision.name === "Day"|| event.date_precision.name === "Second";
 
-    // Set Status
-    if (launchTime.getTime() < Date.now()) {
-        status = "Launched";
+    let status = "Upcoming Event";
+    let statusColor = COLORS.FOREGROUND;
+    // Set Status for Time
+    if (time.getTime() < Date.now()) {
+        status = "Past Event";
     }
     
+    const launches = processLaunchData(event.launches);
+
+    // STATE
+    const [locDescShown, setLocDescShown] = useState(false);
 
     // Get the aspect ratio of the image one time
     const [aspectRatio, setAspectRatio] = useState(2);
     useEffect(() => {
-        Image.getSize(launch.image, (width, height) => {
+        Image.getSize(event.feature_image, (width, height) => {
         const aspectRatio = width/height;
-        if (aspectRatio < 0.9) {
+        if (aspectRatio < 1) {
             console.log("Aspect Ratio is less than 1")
-            setAspectRatio(1)
+            setAspectRatio(1.1)
+        } else if (aspectRatio > 1.4) {
+            console.log("Aspect Ratio is less than 1")
+            setAspectRatio(1.4)
         } else {
             setAspectRatio(width/height);}
         })
     }, []);
     
-
-    // console.log(launch.net_precision.name);
 
     return (
         <View style={styles.container}>
@@ -45,82 +53,199 @@ export default function EventPage(props) {
                     style={styles.back} 
                     onPress={() => props.navigation.goBack()}>
                 </MaterialIcons>
-                <Text style={styles.title}>Launch</Text>
+                <Text style={styles.title}>{status}</Text>
             </View>
             <ScrollView>
                 {/* Title and date */}
-                <Text style={styles.launchTitle}>{launch.mission.name}</Text>
-                
+                <View style={styles.headerInfo}>
+                    <Text style={styles.launchTitle}>{event.name}</Text>
+                    
                     { (isPrecise) ? 
-                        <Text style={styles.launchTime}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
+                        <Text style={styles.launchTime}>{DAYS[time.getDay()]+" "+MONTHS[time.getMonth()]+" "+time.getDate()+ ", "+time.getFullYear()}</Text>
                         : 
-                        <Text style={styles.launchTime}>{MONTHS[launchTime.getMonth()+1]+" "+launchTime.getFullYear()}</Text>
+                        <Text style={styles.launchTime}>{MONTHS[time.getMonth()+1]+" "+time.getFullYear()}</Text>
                         }
 
-                {/* Status, Image and TMinus */}
-                <View style={styles.statusBannerContainer}>
-                    <Text style={styles.statusBannerText}>{status}</Text>
                 </View>
-                <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: launch.image}} />
+
+                {/* Launch Image */}
+                <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: event.feature_image}} />
+
+
+                {/* TMinus */}
                 <View style={styles.tminusContainer}>
                     
                     { (isPrecise) ? 
-                        <TMinus time={new Date(launchTime)} />
+                        <TMinus time={new Date(time)} />
                         : 
-                        <Text style={styles.timeText}> NET {MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
+                        <Text style={styles.timeText}> NET {MONTHS[time.getMonth()]+" "+time.getDate()+ ", "+time.getFullYear()}</Text>
                         }
                     
                 </View>
 
+
+                
                 {/* Description */}
-                <Text style={styles.test}>webcast: {launch.webcast_live.toString()} vid_urls: {launch.mission.vid_urls}</Text>
-                <Text style={styles.launchDescription} >{launch.mission.description}</Text>
+                <Text style={styles.descriptionTitle}>Description:</Text>
+                <Text style={styles.description} >{event.description}</Text>
 
-                <View style={styles.tagsSection}>
-                    <Text style={styles.tag}>{launch.mission.type}</Text>
-                    {launch.mission.agencies.map((agency, index) => {
-                        return <Text style={styles.tag} key={index}>{agency.type}</Text>
-                    })}
+
+                {/* Info Section */}
+                <Text style={styles.descriptionTitle}>Info:</Text>
+                    <Text style={styles.locationText}>{event.location}</Text>
+                    <Text style={styles.typeText}>{event.type.name}</Text>
+
+                <View style={styles.launchSection}>
+                    <Text style={styles.launchSubtitle}>Related Launches:</Text>
+                    {launches.map((launch, index) => {return <LaunchSimple key={index} data={launch} user={props.route.params.user} nav={props.navigation} />})}
                 </View>
+                
 
-                {/* Other info */}
-                <View style={styles.providerSection}>
-                    <Text style={styles.launchProviderTitle}>Launch Provider</Text>
-                    <Text style={styles.rocketText}>{launch.rocket.configuration.full_name}</Text>
-                    <Text style={styles.launchProviderText}>{launch.launch_provider.name}</Text>
-                </View>
-                    
-                {/* Location Info */}
-                <View style={styles.locationSection}>
-                    <Text style={styles.launchProviderTitle}>Location</Text>
-                    
-                    <Text style={styles.launchLocationText}>{launch.launch_pad.location.name}</Text>
-                    <View style={styles.launchpadSection}>
-                        {launch.launch_pad.name != 'Unknown Pad' &&
-                        <Pressable onPress={()=>Linking.openURL(launch.launch_pad.wiki_url)} style={styles.launchpadInfoSection}>
-                            <Text style={styles.launchPadText}>{launch.launch_pad.name}</Text>
-                            <Text style={styles.padInfoText}>Launch Attempts: {launch.launch_pad.orbital_launch_attempt_count}</Text>
-                            <Text style={styles.padInfoText}>Total Launches: {launch.launch_pad.total_launch_count}</Text>
-                            <View style={styles.seperationLine}></View>
-                            <Text style={styles.padInfoText}>Latitude: {launch.launch_pad.latitude}</Text>
-                            <Text style={styles.padInfoText}>Longitude: {launch.launch_pad.longitude}</Text>
-                        </Pressable>
-                        }
-                        
-                        <Pressable onPress={()=>Linking.openURL(launch.launch_pad.map_url)} style={styles.launchpadImageSection}>
-                            <Image style={styles.mapImage} source={{uri: launch.launch_pad.map_image}} />
-                        </Pressable>
-
+                { event.program.length > 0 &&
+                    <View style={styles.section}>
+                        <Text style={styles.subtitle}>Programs</Text>
+                        {event.program.map((program, index) => {return <Program key={index} data={program} />})}
                     </View>
-                    {launch.launch_pad.description != null && <Text style={styles.locationDescription} numberOfLines={3}>{launch.launch_pad.description}</Text>}
+                }
+                { event.agencies.length > 0 &&
+                <View style={styles.section}>
+                    <Text style={styles.subtitle}>Agencies</Text>
+                    {event.agencies.map((agency, index) => {return <Agency key={index} data={agency} />})}
                     
-                    <Text style={styles.orbitText}>Target Orbit: {launch.mission.orbit.name}</Text>
-
                 </View>
-
+                }
 
             </ScrollView>
             
+        </View>
+    )
+}
+function Agency(props:{data}){
+    // console.log(props.data);
+
+    const data = props.data;
+    let country = data.country_code;
+    if (data.name == "European Space Agency"){
+        country = "EU";
+    }
+
+    let type = data.type;
+    let name = data.name;
+    if (data.name == "National Aeronautics and Space Administration") {
+        name = "NASA";
+    }
+    // console.log(Object.keys(data));
+    // console.log(data.name)
+
+    let image = data.nation_url;
+    // Pick image
+    // launcher specific
+    if (data.name == "SpaceX") {
+        image = data.image_url
+    }
+    else if (name == "NASA") {
+        image = data.logo_url;
+    }
+    else if (data.nation_url != null) {
+        image = data.nation_url;
+    }   else if (data.image_url != null) {
+        image = data.image_url;
+    }   else if (data.logo_url != null) {
+        image = data.logo_url;
+    }
+
+    // Set aspect ratio
+    
+    const [aspectRatio, setAspectRatio] = useState(1);
+    useEffect(() => {
+        Image.getSize(image, (width, height) => {
+            const aspectRatio = width/height;
+            if (aspectRatio < 1) {
+                console.log("Aspect Ratio is less than 1")
+                setAspectRatio(1.1)
+            } else if (aspectRatio > 1.4) {
+                console.log("Aspect Ratio is less than 1")
+                setAspectRatio(1.2)
+            } else {
+                setAspectRatio(width/height);
+            }
+        })
+        
+    }, []);
+
+    return (
+        <View>
+            {/* <View style={styles.agencyTitleContainer}>
+                <Text style={styles.agencyText}>{name}</Text>
+            </View> */}
+            <View style={styles.agencyInfoContainer}>
+                <View style={styles.agencyTextSection}>
+                <Text style={styles.agencyText}>{name}</Text>
+                    <Text style={styles.agencyInfoText}>{data.administrator}</Text>
+                    <Text style={styles.agencyInfoText}>Founded: {data.founding_year}</Text>
+                    <Text style={styles.agencyInfoText}>Type: {type}, {country}</Text>
+
+                    <View style={styles.seperationLine}></View>
+                    {data.spacecraft != "" && <Text style={styles.agencyInfoTextSmall}>Spacecraft: {data.spacecraft}</Text>}
+                    {data.launchers != "" && <Text style={styles.agencyInfoTextSmall}>Rockets: {data.launchers}</Text>}
+                    {/* <Text style={styles.agencyInfoTextSmall}>Pending Launches: {props.data.pending_launches}</Text> */}
+                </View>
+                <Image source={{uri: image}} style={[styles.agencyImage, {aspectRatio: aspectRatio}]} />
+
+            </View>
+
+        </View>
+    
+    )
+}
+
+function Program(props:{data}){
+    const data = props.data;
+    const name = data.name;
+    const start = new Date(data.start_date);
+    const type = data.type.name;
+    const image = data.image_url;
+    const description = data.description;
+    const info_url = data.info_url;
+
+    let [descriptionShown, setDescriptionShown] = useState(false);
+
+    console.log(Object.keys(data));
+    console.log(data.info_url)
+    return (
+        <View>
+            <Pressable onPress={() => Linking.openURL(info_url)}>   
+                <View style={styles.programContainer}>
+                    <View style={styles.programInfoContainer}>
+                        <Text style={styles.programTitleText}>{name}</Text>
+                        <Text style={styles.programText}>Type: {type}</Text>
+                        <Text style={styles.programText}>Started: {start.toLocaleDateString()}</Text>
+                        {/* <Text style={styles.programText}>Agencies</Text>
+                        {data.agencies.map((agency, index) => {
+                            let name = agency.name;
+                            if (agency.name == "National Aeronautics and Space Administration") {
+                                name = "NASA";
+                            } else if (agency.name == "Russian Federal Space Agency (ROSCOSMOS)") {
+                                name = "Roscosmos";
+                            }
+                            else if (agency.name == "European Space Agency") {
+                                name = "ESA";
+                            }
+                            else if (agency.name == "Japan Aerospace Exploration Agency") {
+                                name = "JAXA";
+                            }
+                            return <Text style={styles.programText}>{name}</Text>
+                        })} */}
+
+                    </View>
+
+                    <Image source={{uri: image}} style={styles.programImage}/>
+                </View>
+            </Pressable>
+            <Pressable onPress={() => setDescriptionShown(!descriptionShown)}>
+                <Text style={styles.programDescription} numberOfLines={descriptionShown?10:3}>{description}</Text>  
+            </Pressable>
+
         </View>
     )
 }
@@ -181,8 +306,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
 
-        marginHorizontal: 8,
-        marginTop: 0,
+        // marginHorizontal: 8,
+        // marginTop: 0,
         padding: 10,
         borderRadius: 10,
         borderTopLeftRadius: 0,
@@ -196,10 +321,19 @@ const styles = StyleSheet.create({
         resizeMode: "cover",
         aspectRatio: 1,
         // margin: 10,
-        marginHorizontal: 8,
-        // borderRadius: 10,
-        // borderBottomLeftRadius: 0,
-        // borderBottomRightRadius: 0,
+        // marginHorizontal: 8,
+        borderRadius: 10,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+    },
+    headerInfo:{
+        position: 'absolute',
+        top: 0,
+        zIndex: 100,
+        backgroundColor: "rgba("+COLORS.BACKGROUND_RGB+"0.5)",
+        width: "96%",
+        borderRadius: 10,
+        margin: "2%",
     },
     launchTitle:{
         fontSize: 30,
@@ -208,6 +342,10 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         marginHorizontal: 10,
         marginTop: 10,
+        textShadowColor: 'rgba(0, 0, 0, 0.8)',
+        textShadowOffset: {width: 1, height: 1},
+        textShadowRadius: 1,
+        elevation: 200,
     },
     launchTime:{
         fontSize: 20,
@@ -218,28 +356,11 @@ const styles = StyleSheet.create({
         // marginTop: 5,
         marginBottom: 10,
         width: "100%",
-    },
-    statusBannerContainer:{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-        borderRadius: 10,
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
-        margin: 8,
-        marginBottom: 0,
-        padding: 10,
-    },
-    statusBannerText:{
-        fontSize: 23,
-        color: COLORS.FOREGROUND,
-        fontFamily: FONT,
-        textAlign: 'center',
-        marginHorizontal: 10,
-        // marginTop: 5,
-        width: "100%",
+
+        textShadowColor: 'rgba(0, 0, 0, 0.8)',
+        textShadowOffset: {width: 1, height: 1},
+        textShadowRadius: 1,
+        elevation: 200,
     },
     timeText:{
         fontSize: 30,
@@ -251,15 +372,25 @@ const styles = StyleSheet.create({
     },
 
     // #endregion
-    // #region LAUNCH DESCRIPTION
-    launchDescription:{
+    // #region DESCRIPTION
+    descriptionTitle:{
+        fontSize: 13,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'auto',
+        marginHorizontal: 12,
+        // marginBottom: 5,
+        marginTop: 15,
+
+    },
+    description:{
         fontSize: 16,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'auto',
-        marginHorizontal: 10,
-        marginBottom: 30,
-        marginTop: 15,
+        marginHorizontal: 12,
+        marginBottom: 16,
+        // marginTop: 15,
     },
     
     tagsSection:{
@@ -268,10 +399,12 @@ const styles = StyleSheet.create({
         justifyContent: "flex-start",
         flexWrap: "wrap",
         width: "100%",
-        marginLeft: 10,
+        marginLeft: 11,
+        marginTop: 5,
+        // marginBottom: 20,
     },
     tag:{
-      fontSize: 17,
+      fontSize: 15,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "400",
@@ -285,116 +418,163 @@ const styles = StyleSheet.create({
     },
     // #endregion
 
-    // #region LAUNCH PROVIDER DETAILS
-    providerSection:{
+    //#region Common styles
+    section:{
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         borderRadius: 10,
         margin: 10,
         padding: 10,
+        marginBottom:0
     },
-    launchProviderTitle:{
+    
+    subtitle:{
         fontSize: 15,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
     },
-    launchProviderText:{
+    launchSection:{
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        borderRadius: 10,
+        margin: 10,
+        // padding: 10,
+        marginBottom:0
+
+    },
+    
+    launchSubtitle:{
+        fontSize: 15,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+        paddingLeft: 13,
+        paddingTop: 10,
+    },
+    //#endregion
+    // #region LOCATION DETAILS
+
+    
+    locationText:{
+        fontSize: 20,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+        // marginBottom: 5,
+        marginLeft: 12,
+    },
+    
+    typeText:{
         fontSize: 18,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
+        marginLeft: 12,
+        marginBottom: 10,
     },
-    rocketText:{
-        fontSize: 22,
-        color: COLORS.FOREGROUND,
-        fontFamily: FONT,
-        textAlign: 'left',
+    seperationLine:
+    {
+        width: "75%",
+        height: 1,
+        backgroundColor: COLORS.FOREGROUND,
+        marginVertical: 5,
     },
-
-    // #endregion
-    // #region LAUNCH LOCATION DETAILS
-    locationSection:{
-        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-        borderRadius: 10,
-        marginHorizontal: 10,
-        padding: 10,
+    
+    //#region Agencies
+    agencyInfoContainer:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-around",
+        // alignItems: "flex-start",
+        width: "100%",
     },
-
-    launchpadSection:{
+    agencyTitleContainer:{
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
-        
     },
-    launchpadInfoSection:{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        // width: "50%",
-        flex: 1,
-        // backgroundColor: 'white'
-        marginRight: 10,
+    agencyTextSection:{
+        width: "50%",
     },
-    launchpadImageSection:{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        width: "48%",
-        flex: 1,
-        // backgroundColor: 'white'
-    },
-    
-    
-    mapImage:{
-        width: "100%",
-        aspectRatio: 1.5,
-        resizeMode: "cover",
-        borderRadius: 10,
-
-    },
-    launchLocationText:{
+    agencyText:{
         fontSize: 22,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
-        marginBottom: 5,
+        // paddingRight: 10,
+        width: "100%",
     },
-    launchPadText:{
+    agencyImage:{
+        width: "45%",
+        // height: 200,
+        resizeMode: "contain",
+        borderRadius: 15,
+        marginLeft: "5%",
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+    },
+    agencyInfoText:{
         fontSize: 14,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
-        marginBottom: 10,
+        // width: "50%"
     },
-    locationDescription:{
-        fontSize: 15,
+    agencyInfoTextSmall:{
+        fontSize: 13,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+    },
+    //#endregion
+
+    //#region PROGRAM
+    programContainer:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        marginTop: 5,
+    },
+    programInfoContainer:{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignContent: "flex-start",
+        alignItems: "flex-start",
+        width: "55%",
+        height: "100%",
+        // padding: 10,
+    },
+    programImage:{
+        width: "40%",
+        aspectRatio: 1,
+        resizeMode: "contain",
+        borderRadius: 15,
+        marginLeft: "5%",
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+    },
+    programTitleText:{
+        fontSize: 21,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+    },
+    programText:{
+        fontSize: 16,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+    },
+    programDescription:{
+        fontSize: 16,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
         marginTop: 5,
+        marginBottom: 5,
     },
-    padInfoText:{
-        fontSize: 12,
-        color: COLORS.FOREGROUND,
-        fontFamily: FONT,
-        textAlign: 'left',
-    },
-    orbitText:{
-        fontSize: 20,
-        color: COLORS.FOREGROUND,
-        fontFamily: FONT,
-        textAlign: 'left',
-        marginTop: 5,
-    },
-    seperationLine:
-    {
-        
-        width: "80%",
-        height: 1,
-        backgroundColor: 'rgba(0,0,0,0.3)',
-        marginVertical: 5,
-    }
+    //#endregion
     
 })

@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     
     },
     bottomPadding:{
-      height: BOTTOM_BAR_HEIGHT+10,
+      height: BOTTOM_BAR_HEIGHT+20,
       width: "100%",
     },
 

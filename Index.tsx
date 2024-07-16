@@ -36,7 +36,7 @@ export default function Index(props) {
   let menuBarRef = useRef(null);
   
   const pagerRef = useRef(null);
-  const pageScrollState = useSharedValue(0);
+  const pageScrollState = useSharedValue(225);
 
   // Called only once when the app is mounted
   useEffect(() => {
@@ -97,7 +97,7 @@ export default function Index(props) {
     // Handle page scroll state changes (e.g., idle, settling, dragging)
     // Example: Log the state change
     // console.log('Page scroll state:', state["nativeEvent"]);
-    pageScrollState.value = (state["nativeEvent"]["offset"]+state["nativeEvent"]["position"]) * -150 + 300;
+    pageScrollState.value = (state["nativeEvent"]["offset"]+state["nativeEvent"]["position"]) * -150 + 225;
     // Can be 
   }
   // Called when the page is changed
@@ -111,6 +111,7 @@ export default function Index(props) {
     if (menuBarRef.current != null){
       menuBarRef.current.updatePage();
     }
+
   };
 
   // Returns current page

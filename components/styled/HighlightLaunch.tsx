@@ -12,6 +12,10 @@ export default function HighlightLaunch(props) {
     const data = props.data;
     const isNext = props.isNext;
     const launchTime = new Date(data.net);
+    let status = "Next Launch";
+    if (launchTime.getTime() < Date.now()) {
+        status = "Just Launched";
+    }
     return (
         <Pressable onPress={()=>nav.navigate("Launch", {data: data})}>
             <View style={styles.container}>
@@ -19,7 +23,7 @@ export default function HighlightLaunch(props) {
                 <View style={styles.overlay} />
                 <View style={styles.infoContainer}>
                     <View style={styles.topSection}>
-                        <Text style={styles.typeText}>Next Launch</Text>
+                        <Text style={styles.typeText}>{status}</Text>
                         <Text style={styles.title}>{data.mission.name}</Text>
                         <Text style={styles.rocket}>{data.rocket.configuration.full_name}</Text>
                         <Text style={styles.launchProvider}>{data.launch_provider.name}</Text>
@@ -105,7 +109,7 @@ infoContainer:{
 },
 topSection:{
     padding: 10,
-    height: 180,
+    height: 160,
 },
 bottomSection:{
     backgroundColor: 'rgba('+COLORS.BACKGROUND_RGB+ '0.8)',
@@ -138,17 +142,6 @@ title:{
     textShadowRadius: 1,
     elevation: 200,
 },
-launchProvider:{
-
-    fontSize: 20,
-    color: COLORS.FOREGROUND,
-    fontFamily: FONT,
-    
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: {width: 0, height: 1},
-    textShadowRadius: 1,
-    elevation: 200,
-},
 rocket:{
     fontSize:22,
     color: COLORS.FOREGROUND,
@@ -158,8 +151,19 @@ rocket:{
     textShadowRadius: 1,
     elevation: 200,
 },
+launchProvider:{
+
+    fontSize: 15,
+    color: COLORS.FOREGROUND,
+    fontFamily: FONT,
+    
+    textShadowColor: 'rgba(0, 0, 0, 0.6)',
+    textShadowOffset: {width: 0, height: 1},
+    textShadowRadius: 1,
+    elevation: 200,
+},
 launchPad:{
-    fontSize:18,
+    fontSize:15,
     color:COLORS.FOREGROUND,
     fontFamily:FONT,
     
@@ -178,7 +182,8 @@ dateText:{
     textShadowOffset: {width: 0, height: 1.5},
     textShadowRadius: 1,
     elevation: 200,
-    marginLeft: 5
+    marginLeft: 5,
+    marginBottom: 5,
 }
 
 

@@ -32,7 +32,8 @@ export default function LaunchPage(props) {
         statusColor = COLORS.GREEN;
     }
     
-    console.log(launch);
+    // console.log(Object.keys(launch));
+    // console.log(launch.mission)
 
     // STATE
     const [locDescShown, setLocDescShown] = useState(false);
@@ -101,27 +102,30 @@ export default function LaunchPage(props) {
 
                 {launch.failreason != null && launch.failreason != "" && <Text style={styles.failReason} >Cause of Failure: {launch.failreason}</Text>}
                 
+
                 {/* Description */}
                 <Text style={styles.descriptionTitle}>Description:</Text>
                 <Text style={styles.launchDescription} >{launch.mission.description}</Text>
 
+
+                <Text style={styles.descriptionTitle}>Tags:</Text>
                 <View style={styles.tagsSection}>
                     <Text style={styles.tag}>{launch.mission.type}</Text>
                     {launch.mission.agencies.map((agency, index) => {
                         return <Text style={styles.tag} key={index}>{agency.type}</Text>
                     })}
+                    <Text style={styles.tag} >{launch.mission.orbit.name}</Text>
                 </View>
-
                 
                 {/* Other info */}
-                <View style={styles.providerSection}>
+                <View style={styles.section}>
                     <Text style={styles.subtitle}>Rocket</Text>
                     <Text style={styles.rocketText}>{launch.rocket.configuration.full_name}</Text>
                     <Text style={styles.launchProviderText}>{launch.launch_provider.name}</Text>
                 </View>
                     
                 {/* Location Info */}
-                <View style={styles.locationSection}>
+                <View style={styles.section}>
                     <Text style={styles.subtitle}>Location</Text>
                     
                     <Text style={styles.launchLocationText}>{launch.launch_pad.location.name}</Text>
@@ -129,7 +133,7 @@ export default function LaunchPage(props) {
                         {launch.launch_pad.name != 'Unknown Pad' &&
                         <Pressable onPress={()=>Linking.openURL(launch.launch_pad.wiki_url)} style={styles.launchpadInfoSection}>
                             <Text style={styles.launchPadText}>{launch.launch_pad.name}</Text>
-                            {/* <Text style={styles.padInfoText}>Launch Attempts: {launch.launch_pad.orbital_launch_attempt_count}</Text> */}
+                            {/* {launch.launch_pad.total} */}
                             <Text style={styles.padInfoText}>Total Launches: {launch.launch_pad.total_launch_count}</Text>
                             <View style={styles.seperationLine}></View>
                             <Text style={styles.padInfoText}>Latitude: {launch.launch_pad.latitude}</Text>
@@ -150,15 +154,102 @@ export default function LaunchPage(props) {
                     </Pressable>
                     }
                     
-                    <Text style={styles.orbitText}>Target Orbit: {launch.mission.orbit.name}</Text>
+                    <Text style={styles.orbitText}>Target: {launch.mission.orbit.name}</Text>
 
                 </View>
+                { launch.mission.agencies.length > 0 &&
+                <View style={styles.section}>
+                    <Text style={styles.subtitle}>Agencies</Text>
+                    {launch.mission.agencies.map((agency, index) => {return <Agency key={index} data={agency} />})}
+                    
+                </View>
+                }
                 <Text style={styles.test}>webcast: {launch.webcast_live.toString()} vid_urls: {launch.mission.vid_urls}</Text>
+                <Text style={styles.test}>holdreason: {launch.holdreason}</Text>
 
 
             </ScrollView>
             
         </View>
+    )
+}
+
+function Agency(props:{data}){
+    const data = props.data;
+    let country = data.country_code;
+    if (data.name == "European Space Agency"){
+        country = "EU";
+    }
+
+    let type = data.type;
+    let name = data.name;
+    // if (data.name == "National Aeronautics and Space Administration") {
+    //     name = "NASA";
+    // }
+    // console.log(Object.keys(data));
+    // console.log(data.name)
+
+    let image = data.nation_url;
+    // Pick image
+    // launcher specific
+    if (data.name == "SpaceX") {
+        image = data.image_url
+    }
+    else if (name == "National Aeronautics and Space Administration") {
+        image = data.logo_url;
+    }
+    else if (data.nation_url != null) {
+        image = data.nation_url;
+    }   else if (data.image_url != null) {
+        image = data.image_url;
+    }   else if (data.logo_url != null) {
+        image = data.logo_url;
+    }
+
+    // Set aspect ratio
+    
+    const [aspectRatio, setAspectRatio] = useState(1);
+    useEffect(() => {
+        Image.getSize(image, (width, height) => {
+            const aspectRatio = width/height;
+            if (aspectRatio < 1) {
+                setAspectRatio(1.1)
+            } else if (aspectRatio > 1.4) {
+                setAspectRatio(1.2)
+            } else {
+                setAspectRatio(width/height);
+            }
+        })
+        
+    }, []);
+
+    return (
+        <View>
+            <Pressable onPress={()=>Linking.openURL(data.info_url)}>
+                <View style={styles.agencyTitleContainer}>
+                    <Text style={styles.agencyText}>{name}</Text>
+                </View>
+                <View style={styles.agencyInfoContainer}>
+                    <View style={styles.agencyTextSection}>
+                        <Text style={styles.agencyInfoText}>{data.administrator}</Text>
+                        <Text style={styles.agencyInfoText}>Founded: {data.founding_year}</Text>
+                        <Text style={styles.agencyInfoText}>Type: {type}, {country}</Text>
+
+                        <View style={styles.seperationLine}></View>
+                        {/* {data.spacecraft != "" && <Text style={styles.agencyInfoTextSmall}>Spacecraft: {data.spacecraft}</Text>} */}
+                        {data.launchers != "" && <Text style={styles.agencyInfoTextSmall}>Rockets: {data.launchers}</Text>}
+                        <Text style={styles.agencyInfoTextSmall}>Current Launch Streak: {data.consecutive_successful_launches}</Text>
+                        <Text style={styles.agencyInfoTextSmall}>Total Launches: {data.total_launch_count}</Text>
+                        <Text style={styles.agencyInfoTextSmall}>Total Landings: {data.successful_landings}</Text>
+                        {/* <Text style={styles.agencyInfoTextSmall}>Pending Launches: {props.data.pending_launches}</Text> */}
+                    </View>
+                    <Image source={{uri: image}} style={[styles.agencyImage, {aspectRatio: aspectRatio}]} />
+
+                </View>
+
+            </Pressable>
+        </View>
+    
     )
 }
 
@@ -221,7 +312,7 @@ const styles = StyleSheet.create({
         // marginHorizontal: 8,
         // marginTop: 0,
         padding: 10,
-        // borderRadius: 10,
+        borderRadius: 10,
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
 
@@ -234,9 +325,9 @@ const styles = StyleSheet.create({
         aspectRatio: 1,
         // margin: 10,
         // marginHorizontal: 8,
-        // borderRadius: 10,
-        // borderBottomLeftRadius: 0,
-        // borderBottomRightRadius: 0,
+        borderRadius: 10,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
     },
     headerInfo:{
         position: 'absolute',
@@ -262,7 +353,7 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         marginHorizontal: 10,
         // marginTop: 5,
-        marginBottom: 10,
+        // marginBottom: 10,
         width: "100%",
 
         textShadowColor: 'rgba(0, 0, 0, 0.8)',
@@ -347,8 +438,8 @@ const styles = StyleSheet.create({
         justifyContent: "flex-start",
         flexWrap: "wrap",
         width: "100%",
-        marginLeft: 11,
-        marginTop: 5,
+        marginLeft: 12,
+        // marginTop: 4,
         // marginBottom: 20,
     },
     tag:{
@@ -363,22 +454,27 @@ const styles = StyleSheet.create({
       marginRight: 5,
       paddingHorizontal: 5,
       paddingBottom: 2,
+      marginTop: 5,
     },
     // #endregion
 
-    // #region LAUNCH PROVIDER DETAILS
-    providerSection:{
+    //#region Common styles
+    section:{
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         borderRadius: 10,
         margin: 10,
         padding: 10,
+        marginBottom:0
     },
+    
     subtitle:{
         fontSize: 15,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
     },
+    //#endregion
+    // #LAUNCH PROVIDER DETAILS
     launchProviderText:{
         fontSize: 18,
         color: COLORS.FOREGROUND,
@@ -393,14 +489,7 @@ const styles = StyleSheet.create({
     },
 
     // #endregion
-    // #region LAUNCH LOCATION DETAILS
-    locationSection:{
-        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-        borderRadius: 10,
-        marginHorizontal: 10,
-        marginBottom: 10,
-        padding: 10,
-    },
+    // #region LOCATION DETAILS
 
     launchpadSection:{
         display: "flex",
@@ -472,11 +561,64 @@ const styles = StyleSheet.create({
     },
     seperationLine:
     {
-        
         width: "75%",
         height: 1,
         backgroundColor: COLORS.FOREGROUND,
         marginVertical: 5,
-    }
+    },
+    //#region Agencies
+    agencyInfoContainer:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-around",
+        // alignItems: "flex-start",
+        width: "100%",
+        marginBottom: 10,
+    },
+    agencyTitleContainer:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        width: "100%",
+    },
+    agencyTextSection:{
+        width: "50%",
+    },
+    agencyText:{
+        fontSize: 22,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+        // paddingRight: 10,
+        width: "100%",
+    },
+    agencyImage:{
+        width: "43%",
+        // height: 200,
+        resizeMode: "cover",
+        borderRadius: 10,
+        marginLeft: "5%",
+        marginRight: "1%",
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+    },
+    agencyInfoText:{
+        fontSize: 13,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+        // width: "50%"
+    },
+    agencyInfoTextSmall:{
+        fontSize: 11,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+    },
+
+    
+
+
+    //#endregion
     
 })

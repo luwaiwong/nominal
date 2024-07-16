@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
         color: COLORS.SUBFOREGROUND,
     },
     buttonIconActive: {
-        fontSize: 45,
+        fontSize: 40,
         marginBottom: 5,
         color: COLORS.FOREGROUND,
     },
@@ -103,10 +103,10 @@ const MenuBar = React.forwardRef((props: any, ref: any)=> {
             <MenuButton icon="home" setPage={()=>setPage(2)} label="for you" active={page.current == 2} />
             <MenuButtonCommunity icon="space-station" setPage={()=>setPage(3)} label="dashboard" active={page.current == 3} />
             <MenuButtonCommunity icon="newspaper-variant" setPage={()=>setPage(4)} label="news" active={page.current == 4 } /> */}
-            <MenuButton icon="home" setPage={()=>setPage(2)} label="for you" active={page.current == 0} />
-            <MenuButtonCommunity icon="space-station" setPage={()=>setPage(3)} label="dashboard" active={page.current == 1} />
-            <MenuButton icon="rocket-launch" setPage={()=>setPage(1)} label="launches" active={page.current == 2} />
-            <MenuButton icon="settings" setPage={()=>setPage(0)} label="settings" active={page.current==3} />
+            <MenuButton icon="home" setPage={()=>setPage(0)} label="for you" active={page.current == 0} />
+            <MenuButtonCommunity icon="space-station" setPage={()=>setPage(1)} label="dashboard" active={page.current == 1} />
+            <MenuButton icon="rocket-launch" setPage={()=>setPage(2)} label="launches" active={page.current == 2} />
+            <MenuButton icon="settings" setPage={()=>setPage(3)} label="settings" active={page.current==3} />
         </BlurView>
     );
     

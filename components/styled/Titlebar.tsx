@@ -10,11 +10,15 @@ export default function TitleBar(props){
       <View style={styles.centerTopContainer}>
         <View style={styles.topContainer}>
           <Animated.View style={[styles.topAnimatedSection, {marginLeft: pageScrollState}]}>
-              <Text style={styles.titleText}>Settings</Text>
+              {/* <Text style={styles.titleText}>Settings</Text>
               <Text style={styles.titleText}>Launches</Text>
               <Text style={styles.titleText}>For You</Text>
               <Text style={styles.titleText}>Dashboard</Text>
-              <Text style={styles.titleText}>News</Text>
+              <Text style={styles.titleText}>News</Text> */}
+              <Text style={styles.titleText}>For You</Text>
+              <Text style={styles.titleText}>Dashboard</Text>
+              <Text style={styles.titleText}>Launches</Text>
+              <Text style={styles.titleText}>Settings</Text>
           </Animated.View>
         </View>
       </View>
@@ -77,8 +81,8 @@ const styles = StyleSheet.create({
       width: 150,
 
       
-      textShadowColor: 'rgba(0, 0, 0, 0.8)',
-      textShadowOffset: {width: 0, height: 1},
+      textShadowColor: 'rgba(0, 0, 0, 0.4)',
+      textShadowOffset: {width: 2, height: 2},
       textShadowRadius: 1,
       elevation: 200,
 

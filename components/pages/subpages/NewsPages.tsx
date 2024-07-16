@@ -2,6 +2,7 @@ import { StyleSheet, View, Text, FlatList, StatusBar } from 'react-native';
 import { MaterialIcons } from 'react-native-vector-icons';
 import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
 import Article from '../../styled/Article';
+import ArticleDescriptive from '../../styled/ArticleDescriptive';
 
 export default function NewsPage(props) {
     const data = props.route.params.data;
@@ -21,7 +22,7 @@ export default function NewsPage(props) {
                 data={data}
                 keyExtractor={(item, index) => index.toString()}
                 style={styles.list}
-                renderItem={({ item }) => <Article articleData={item}></Article>}>
+                renderItem={({ item }) => <ArticleDescriptive articleData={item}></ArticleDescriptive>}>
             </FlatList>
         </View>
     )

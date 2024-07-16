@@ -22,7 +22,7 @@ export default function EventsPage(props) {
                 data={data}
                 keyExtractor={(item, index) => index.toString()}
                 style={styles.list}
-                renderItem={({ item }) => <Event eventData={item}></Event>}>
+                renderItem={({ item }) => <Event eventData={item} nav={props.navigation}></Event>}>
             </FlatList>
         </View>
     )

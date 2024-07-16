@@ -7,6 +7,7 @@ import { COLORS } from "./components/styles";
 import EventsPage from "./components/pages/subpages/EventsPages";
 import NewsPage from "./components/pages/subpages/NewsPages";
 import LaunchPage from "./components/pages/subpages/LaunchPage";
+import EventPage from "./components/pages/subpages/EventPage";
 
 const Stack = createStackNavigator();
 export default function App() {
@@ -25,8 +26,8 @@ export default function App() {
               }}
             />),
             transitionSpec:{
-              open: {animation: 'timing', config: {duration: 100, delay: 0}},
-              close: {animation: 'timing', config: {duration: 100, delay: 0}},
+              open: {animation: 'timing', config: {duration: 200, delay: 0}},
+              close: {animation: 'timing', config: {duration: 200, delay: 0}},
             }
           }}
           
@@ -44,9 +45,12 @@ export default function App() {
             component = {LaunchPage}
           ></Stack.Screen>
           <Stack.Screen 
+            name = "Event"
+            component = {EventPage}
+          ></Stack.Screen>
+          <Stack.Screen 
             name = "All Events"
             component = {EventsPage}
-            options={{transitionSpec: {open: {animation: 'timing', config: {duration: 0, delay: 0}}, close: {animation: 'timing', config: {duration: 0, delay: 0}},}}}
           ></Stack.Screen>
           <Stack.Screen 
             name = "All News"

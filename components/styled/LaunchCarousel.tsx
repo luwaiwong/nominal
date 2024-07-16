@@ -7,10 +7,12 @@ import PagerView from 'react-native-pager-view';
 import {COLORS, FONT, FOREGROUND}from "../styles";
 import Launch from './LaunchSimple';
 
+const timerTickLength = 7.5
 export default function LaunchCarousel(props:{content, userData, type, nav}){
     let content = props.content;
     let length = content.length;
     let [currentPage, setCurrentPage] = useState(0);
+    let pagerRef = React.useRef(null);
         
     // Called when the page is changed
     const onPageSelected = (event) => {
@@ -19,6 +21,24 @@ export default function LaunchCarousel(props:{content, userData, type, nav}){
 
         setCurrentPage(position);
     };
+
+    // Ticking function
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setPage((currentPage + 1) % length);
+        }, timerTickLength * 1000);
+        return () => clearInterval(interval);
+    }, [currentPage]);
+
+    function setPage(page){
+        // console.log(page)
+        if (pagerRef.current != null){
+            pagerRef.current.setPage(page); 
+        }
+
+    }
+
+  
     return (
         <>
             <View style={[styles.contentSection , {marginTop: 0}]}>
@@ -38,9 +58,11 @@ export default function LaunchCarousel(props:{content, userData, type, nav}){
             </Pressable>
             <PagerView 
                 
+                ref={pagerRef} 
                 style={{height: 145}} 
                 initialPage={0}
                 onPageSelected={onPageSelected}>
+                
                 
                 {props.type == "launch" && content.map((launch: any) => {
                 return (

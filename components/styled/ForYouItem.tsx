@@ -20,13 +20,27 @@ export function ForYouLaunch(data) {
   const togglePinned = () => {
     setPinned(data.user.togglePinned(launchInfo.id));
   };
-  
-  let status = "Upcoming Launch";
 
-  // Set Status
+  let [descriptionOpen, setDescriptionOpen] = useState(false);
+
+  let status = "Upcoming Launch";
+  let statusColor = COLORS.FOREGROUND;
+  // Set Status for Time
   if (launchTime.getTime() < Date.now()) {
-      status = "Just Launched";
+      status = "Recently Launched";
   }
+  // Check Status for Launch
+  if (launchInfo.status.id === 4) {
+      status = "Failed Launch";
+      statusColor = COLORS.RED;
+  }   else if (launchInfo.status.id === 7) {
+      status = "Partial Failure";
+      statusColor = COLORS.YELLOW;
+  }  else if (launchInfo.status.id === 3) {
+      status = "Successful Launch";
+      statusColor = COLORS.GREEN;
+  }
+
   return (
     <Pressable onPress={()=>data.nav.navigate("Launch", {data: launchInfo})}>
     <View style={styles.page}>
@@ -34,13 +48,15 @@ export function ForYouLaunch(data) {
         <View style={styles.contentContainer}>
           <View>
             <Text style={styles.title} numberOfLines={1} onPress={()=>togglePinned()} >{launchInfo.mission.name} </Text>
-            <Text style={styles.subtitle} numberOfLines={1} >{status} </Text>
+            <Text style={[styles.subtitle,{color: statusColor}]} numberOfLines={1} >{status} </Text>
           </View>
 
           <View>
             <BlurView  intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView'
               style={styles.infoSection}>
-              <Text style={styles.descriptionText} numberOfLines={3}>{launchInfo.mission.description}</Text>
+                <Pressable onPress={()=>setDescriptionOpen(!descriptionOpen)}>
+                  <Text style={styles.descriptionText} numberOfLines={descriptionOpen?10:2}>{launchInfo.mission.description}</Text>
+                </Pressable>
               <View style={styles.infoTextSection}>
                 <Text style={styles.launcherText} numberOfLines={1}>{launchInfo.rocket.configuration.full_name}</Text>
 
@@ -168,7 +184,7 @@ const styles = StyleSheet.create({
       padding: 5,
 
       // width:"92%",
-      height: 250,
+      // height: 250,
       // height: Dimensions.get('window').height-StatusBar.currentHeight-TOP_BAR_HEIGHT-BOTTOM_BAR_HEIGHT-20,
       // height: "80%",
 
@@ -186,9 +202,7 @@ const styles = StyleSheet.create({
       width: "100%",
     },
     infoTextSection:{
-      flex: 2,
-      // backgroundColor: 'rgba(52, 52, 52, 0.4)',
-      overflow: "hidden",
+      marginBottom: 5,
     },
     timeSection:{
       height: 75,
@@ -202,22 +216,22 @@ const styles = StyleSheet.create({
       fontWeight: "600",
       textAlign: "left",
 
-      textShadowColor: 'rgba(0, 0, 0, 0.8)',
-      textShadowOffset: {width: 0, height: 1},
+      textShadowColor: 'rgba(0, 0, 0, 0.6)',
+      textShadowOffset: {width: 1, height: 2},
       textShadowRadius: 1,
       elevation: 200,
       
       marginHorizontal: 10,
     },
     subtitle:{
-      fontSize: 18,
+      fontSize: 21,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "600",
       textAlign: "left",
 
-      textShadowColor: 'rgba(0, 0, 0, 0.8)',
-      textShadowOffset: {width: 0, height: 1},
+      textShadowColor: 'rgba(0, 0, 0, 0.6)',
+      textShadowOffset: {width: 2, height: 2},
       textShadowRadius: 1,
       elevation: 200,
       
@@ -284,16 +298,18 @@ const styles = StyleSheet.create({
     
     },
     
-    tagsSecton:{
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      flexWrap: "wrap",
-      width: "100%",
-
+    tagsSection:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        flexWrap: "wrap",
+        width: "100%",
+        // marginLeft: 12,
+        marginTop: 4,
+        // marginBottom: 20,
     },
     tag:{
-      fontSize: 17,
+      fontSize: 15,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "400",
@@ -304,8 +320,8 @@ const styles = StyleSheet.create({
       marginRight: 5,
       paddingHorizontal: 5,
       paddingBottom: 2,
+      marginTop: 5,
     },
-    
     // EVENT
     eventTitle:{
       fontSize: 30,
@@ -351,6 +367,6 @@ const styles = StyleSheet.create({
       flexDirection: "column",
       width: "100%",
       height: "100%",
-      marginTop: 10,
+      marginTop: 25,
     },
 });

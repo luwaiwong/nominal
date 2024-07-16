@@ -1,5 +1,5 @@
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Pressable } from "react-native";
-import { useEffect, useState } from "react";
+import {useRef, useEffect, useState } from "react";
 import PagerView from "react-native-pager-view";
 
 import { COLORS, FONT } from "../styles";
@@ -8,13 +8,49 @@ import Loading from "../styled/Loading";
 import {ForYouLaunch, ForYouEvent, ForYouEnd} from "../styled/ForYouItem";
 
 export default function ForYou(props) {
+  const pagerRef = useRef(null);
   let userData = props.data.userData;
   let launchData = props.data.launchData;
   let foryou = launchData.foryou;
   let news = launchData.news;
 
+  let timer = useRef(0);  
+  // timer to check if the user has not been in the For You page for a while
+  // Constantly ticking 1 second timer
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      // Your code here...
+      // console.log('This line is executed every second!');
+      timer.current += 1;
+      if (timer.current >= 60){
+        timer.current = 0;
+        setPage(0);
+      }
+    }, 1000); // 1000 milliseconds = 1 second
+
+    // Clear interval on re-render to avoid memory leaks
+    return () => clearInterval(intervalId);
+
+    // Specify empty array as second argument to run only when the component mounts and unmounts
+  }, []);
+
+  
+  const onPageScroll = (state) => {
+    timer.current = 0;
+  }
+
+  function setPage(page){
+    pagerRef.current.setPage(page);
+  }
+
   return(
-      <PagerView style={styles.immersiveSection} initialPage={0} orientation="vertical" >
+      <PagerView 
+        style={styles.immersiveSection} 
+        initialPage={0} 
+        orientation="vertical" 
+        ref={pagerRef}
+        onPageScroll={onPageScroll}
+        >
         {foryou.map((item: any) => {
             if (item.type == "launch"){
               return (

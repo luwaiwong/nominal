@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 
 import * as colors from "../styles";
+import { COLORS } from "../styles";
 import UserData from "../data/UserData";
 import { GestureDetector, Gesture} from "react-native-gesture-handler";
 
@@ -11,15 +12,34 @@ const MONTHS = ["January", "February", "March", "April", "May", "June", "July", 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function LaunchSimple(data) {
-  let launchInfo = data.data;  
+  let launch = data.data;  
   let userData = data.user;
-  let [launchTime, setLaunchTime] = useState<any>(new Date(launchInfo.net));
-  let [pinned, setPinned] = useState<any>(userData.getPinned().includes(launchInfo.id));
-  const togglePinned = () => {
-    let pinnedStatus = userData.togglePinned(launchInfo.id)
-    setPinned(pinnedStatus);
+  let [launchTime, setLaunchTime] = useState<any>(new Date(launch.net));
 
-  };
+  
+  const isPrecise = launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second";
+  // let [pinned, setPinned] = useState<any>(userData.getPinned().includes(launchInfo.id));
+  // const togglePinned = () => {
+  //   let pinnedStatus = userData.togglePinned(launchInfo.id)
+  //   setPinned(pinnedStatus);
+
+  // };
+
+  
+    // let status = "Upcoming Launch";
+    let statusColor = 'rgba(0,0,0,0)';
+    // Set Status for Time
+    if (launchTime.getTime() < Date.now()) {
+        // status = "Launched";
+    }
+    // Check Status for Launch
+    if (launch.status.id === 4) {
+        // status = "Failed Launch";
+        statusColor = COLORS.RED;
+    }   else if (launch.status.id === 7) {
+        // status = "Partial Failure";
+        statusColor = COLORS.YELLOW;
+    }  
 
   // ANIMATIONS
   const scale = useRef(new Animated.Value(1)).current;
@@ -73,55 +93,45 @@ export default function LaunchSimple(data) {
   singletap.onEnd(()=>console.log("open page"));
   
   // Status name
-  let status = launchInfo.status.name;
-  if (status === "To Be Confirmed"){
-    status = "TBC";
-  }
-  if (status === "To Be Determined"){
-    status = "TBD";
-  }
-  else if (status === "Go for Launch"){
-    status = "Go for Launch";
-  }
-  else if (status === "Launch Successful"){
-    status = "Launched";
-  }
+  let status = launch.status.name;
 
-  let tminus = calculateTminus(launchInfo.net, status);
-  if (status === "TBC" || status === "TBD"){
-    tminus = "T "+tminus;
-  }
-  else {
-    tminus = "T "+tminus;
-  }
+  let tminus = calculateTminus(launch.net, status);
+  tminus = "T "+tminus;
   
   // HTML
   return (
       // <GestureDetector gesture={Gesture.Exclusive(doubletap, singletap)} >
-      <Pressable onPress={()=> data.nav.navigate("Launch", {data: launchInfo})}>
+      <Pressable onPress={()=> data.nav.navigate("Launch", {data: launch})}>
           <Animated.View style={[styles.background, {transform:[{scale}]}]} collapsable={false}>
             {/* Header, Holds the title and t -  countdown */}
             {/* Body, Holds the launch info on left and image on right */}
             <View style={styles.bodySection}>
               <View style={styles.infoSection}>
 
-                <Text style={styles.titleText} numberOfLines={1}>{launchInfo.mission.name} </Text>
+                <Text style={[styles.titleText]} numberOfLines={1}>{launch.mission.name} </Text>
             
-                <Text style={styles.smallText}>{tminus}</Text>
+                {
+                  isPrecise ? <Text style={styles.smallText}>{tminus}</Text> : <Text style={styles.smallText}>{status}</Text>
+                }
 
                 <View style={styles.smallSpacer}></View>
-                <Text style={styles.smallText} numberOfLines={1}>{launchInfo.launch_provider.name}</Text>
-                <Text style={styles.smallText}>{launchInfo.rocket.configuration.full_name}</Text>
+                <Text style={styles.smallText}>{launch.rocket.configuration.full_name}</Text>
+                <Text style={styles.smallText} numberOfLines={1}>{launch.launch_provider.name}</Text>
                 {/* <Text style={styles.smallText} numberOfLines={1}>{launchInfo.launch_pad.name}</Text> */}
                 <View style={styles.smallSpacer}></View>
 
-                <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
+                { isPrecise ? 
+                  <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> 
+                  : 
+                  <Text style={styles.mediumText}>NET {MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> 
+                  }
+                
               </View>
               {/* Pinned Icon */}
               {/* {pinned ? 
                 <MaterialCommunityIcons name="bell-ring"  style={styles.notificationIconActive}  /> : 
                 <MaterialCommunityIcons name="bell-outline"  style={styles.notificationIcon}  />} */}
-              <Image style={styles.image} source={{uri: launchInfo.image}} /> 
+              <Image style={[styles.image,{borderColor: statusColor}]} source={{uri: launch.image}} /> 
             </View>
           </Animated.View>
       </Pressable>
@@ -206,6 +216,7 @@ image: {
   width: 140,
   height: 140,
   borderRadius: 10,
+  borderWidth: 2,
 },
 text: {
     flex: 1,

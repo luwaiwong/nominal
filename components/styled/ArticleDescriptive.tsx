@@ -1,5 +1,5 @@
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { StyleSheet, View, Image, Text, Animated, Linking} from "react-native";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { COLORS, FONT } from "../styles";
@@ -23,7 +23,16 @@ export default function ArticleDescriptive(props:{articleData:any}){
         articleDate = "Yesterday";
     }
     
-    Image.getSize(articleData.image_url, (width, height) => {setAspectRatio(width/height);})
+    // Get the aspect ratio of the image one time
+    useEffect(() => {
+        Image.getSize(articleData.image_url, (width, height) => {
+            let ratio = width/height;
+            if (ratio > 1.2){
+                setAspectRatio(1.2);
+            }else {
+                setAspectRatio(width/height);
+            }})
+    }, []);
 
 
     // ANIMATIONS
@@ -115,7 +124,7 @@ const styles = StyleSheet.create({
     
     image:{
         width: "100%",
-        resizeMode: "contain",
+        resizeMode: "cover",
         aspectRatio: 1,
         borderRadius: 10,
         // backgroundColor: COLORS.BACKGROUND,

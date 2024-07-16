@@ -106,7 +106,7 @@ export default function Dashboard(props) {
                     </Pressable>
                     {events.map((launch: any) => {
                     return (
-                        <Event key={launch.id} eventData={launch}  />
+                        <Event key={launch.id} eventData={launch} nav={nav} />
                     );
                     })} 
                   </View>

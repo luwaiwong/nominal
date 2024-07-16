@@ -64,7 +64,7 @@ export async function getRocketFamilies(){
     })
 }
 
-function processLaunchData(data: any){
+export function processLaunchData(data: any){
     let processedData = data.map((launch: any) => {
         // console.log(Object.keys(launch));
         return {
