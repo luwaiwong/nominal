@@ -437,6 +437,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         margin: 10,
         padding: 10,
+        paddingBottom: 5,
         marginBottom:0
     },
     
@@ -499,6 +500,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-around",
         // alignItems: "flex-start",
         width: "100%",
+        marginBottom: 10,
     },
     agencyTitleContainer:{
         display: "flex",
@@ -521,7 +523,7 @@ const styles = StyleSheet.create({
     agencyImage:{
         width: "45%",
         // height: 200,
-        resizeMode: "contain",
+        resizeMode: "cover",
         borderRadius: 15,
         marginLeft: "5%",
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,

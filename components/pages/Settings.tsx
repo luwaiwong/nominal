@@ -65,7 +65,7 @@ export default function Settings(){
         let setting = props.setting;
         let title = props.title;
         return (
-            <Pressable style={styles.buttonContainer} onPress={()=>toggleSetting(setting)}>
+            <Pressable style={styles.toggleContainer} onPress={()=>toggleSetting(setting)}>
                 <Text style={styles.buttonText}>{title}</Text>
                 <Switch
                     trackColor={{false: '#767577', true: '#81b0ff'}}
@@ -79,7 +79,7 @@ export default function Settings(){
     }
 
     function clearCache(){
-        Alert.alert("Clear Data", "Are you sure you want to clear data?\n\nThis action will delete all stored launch data, event data, and stored settings on your device.\n\nThis may result in being unable to load API data, and causing the app not to be able to load for up to one hour", [
+        Alert.alert("Clear Data", "Are you sure you want to clear data?\n\nThis action will delete all stored launch data, event data, and stored settings on your device.\n\nThis may result in being unable to load API data, causing the app to be unable to load for up to one hour, and instability\n\nPROCEED AT YOUR OWN RISK", [
             {
                 text: "Cancel",
                 style: "cancel"
@@ -99,23 +99,28 @@ export default function Settings(){
             <ScrollView>
                 <View style={styles.scrollContainer}>
                     <View>
+
                         <View style={styles.sectionContainer}>
                             <Text style={styles.title}>Notifications</Text>
                             <SettingToggle setting="enablenotifs" title={"Enable Notifications"}/>
+                            <Text style={styles.description}>Allow Notifications  *CURRENTLY NOT IMPLEMENTED</Text>
                         </View>
                         <View style={styles.sectionContainer}>
                             <Text style={styles.title}>For You</Text>
+                            
                             <SettingToggle setting="fyshowpastlaunches" title={"Show Past Launches"}  />
+                            <Text style={styles.description}>Show past launches in your For You feed. Reload Data to apply</Text>
                             <SettingToggle setting="fyshowpastevents"title={"Show Past Events"} />
+                            <Text style={styles.description}>Show past events in your For You feed. Reload Data to apply</Text>
+                            {/* <SettingToggle setting="fyshowupcomingevents"title={"Show Upcoming Events"} /> */}
                         </View>
                         <View style={styles.sectionContainer}>
                             <Text style={styles.title}>Developer</Text>
                             <SettingToggle setting="devmode" title={"Enable Dev Mode"} />
-                        </View>
+                            <Text style={styles.description}>Reveals additional debugging data throughout the app</Text>
+                        </View>  
                     </View>
                     
-                    {/* <View style={{height: 800}}></View> */}
-                    <View style={styles.buffer}></View>
                     <View>
                         <View style={styles.contactSection}>
                             <Text style={styles.title}>Contact Information</Text>
@@ -124,7 +129,11 @@ export default function Settings(){
                             <Text style={styles.subtext}>Please let me know if you find a bug, or if you have any feedback!</Text>
                         </View>
                         <View style={styles.horizontalContainer}>
-                            <Text style={styles.subtext}>Version: 0.2.2</Text>  
+                            <Text style={styles.subtext}>Note: Reloading data excessively may result in lag, reloading the app should fix the problem. </Text>
+                        </View>
+                        <View style={styles.smallBuffer}></View>
+                        <View style={styles.horizontalContainer}>
+                            <Text style={styles.subtext}>Version: 0.2.3</Text>  
                         </View>
                         {curSettings.devmode &&
                         <View style={styles.horizontalContainer}>
@@ -134,6 +143,9 @@ export default function Settings(){
                             </Pressable>
                         </View>
                         }
+                        <TouchableOpacity onPress={()=>{userContext.getData()}}>
+                            <Text style={styles.button}>Reload Data</Text>
+                        </TouchableOpacity> 
                         <TouchableOpacity onPress={()=>clearCache()}>
                             <Text style={styles.dangerButton}>Clear Data</Text>
                         </TouchableOpacity> 
@@ -161,10 +173,11 @@ const styles = StyleSheet.create({
     },
     scrollContainer:{
         // backgroundColor: 'white',
-        height: Dimensions.get('window').height - StatusBar.currentHeight- TOP_BAR_HEIGHT + BOTTOM_BAR_HEIGHT -20,
+        // height: Dimensions.get('window').height - StatusBar.currentHeight- TOP_BAR_HEIGHT + BOTTOM_BAR_HEIGHT -20,
         flex: 1,
         display: 'flex',
         justifyContent: 'space-between',
+        
 
     },
     sectionContainer:{
@@ -179,7 +192,7 @@ const styles = StyleSheet.create({
     },
     bottomPadding:
     {
-        height: BOTTOM_BAR_HEIGHT,
+        height: BOTTOM_BAR_HEIGHT+10,
     },
     horizontalContainer:{
         display: 'flex',
@@ -199,6 +212,16 @@ const styles = StyleSheet.create({
         textAlign: "left",
         marginLeft: 10,
 
+    },
+    description: {
+        fontSize: 14,
+        color: COLORS.SUBFOREGROUND,
+        fontFamily: FONT,
+        textAlign: "left",
+        marginLeft: 10,
+        marginTop: -5,
+        marginBottom: 10,
+        marginRight: 10,
     },
     subtext: {
         fontSize: 14,
@@ -221,7 +244,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
 
     },
-    buttonContainer:{
+    toggleContainer:{
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -241,7 +264,17 @@ const styles = StyleSheet.create({
     },
     dangerButton:{
         backgroundColor: COLORS.RED,
-        borderRadius: 10,
+        borderRadius: 20,
+        padding: 10,
+        margin: 10,
+        textAlign: "center",
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        fontSize: 20,
+    },
+    button:{
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        borderRadius: 20,
         padding: 10,
         margin: 10,
         textAlign: "center",

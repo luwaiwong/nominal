@@ -75,6 +75,7 @@ export async function getRocketFamilies(){
 }
 
 export function processLaunchData(data: any){
+    try {
     let processedData = data.map((launch: any) => {
         // console.log(Object.keys(launch));
         return {
@@ -110,8 +111,12 @@ export function processLaunchData(data: any){
             // Other information
             program: launch.program,
         }
-    });
+    })
     return processedData;
+    } catch (error){
+        console.log("Error processing launch data:", error);
+        return null
+    }
 }
 
 function convertTime(time: string){

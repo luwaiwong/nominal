@@ -31,9 +31,7 @@ import { UserContext } from "./components/data/UserContext";
 export default function Index(props) {
   // App Data Variables
   let userContext = useContext(UserContext);
-  let [immersive, setImmersive] = useState(false);
   let [launchData, setLaunchData]= useState(null)
-  let [pinnedLaunches, setPinnedLaunches] = useState([])
   let currentPage = useRef(0);
   let menuBarRef = useRef(null);
   
@@ -47,6 +45,7 @@ export default function Index(props) {
     }
 
     userContext.nav = props.navigation;
+    userContext.setPage = setPage;
     fetchData(userContext);
   }, [userContext]);
 
@@ -56,6 +55,11 @@ export default function Index(props) {
     await userContext.getData().then((data)=> {
       if (data == null){
         console.log("Data is null")
+        return;
+      }
+
+      if (JSON.stringify(data) == JSON.stringify(launchData)){
+        console.log("Data is the same, don't update")
         return;
       }
 
@@ -128,12 +132,10 @@ export default function Index(props) {
       // Data object fed into all pages
       // Includes current state of app
       let data = {
-        immersive: immersive,
         launchData: launchData, 
         upcoming: launchData.upcoming,
         previous: launchData.previous,
         pinned: launchData.pinned,
-        setPinned: setPinnedLaunches,
         reloadData: reloadData,
         nav: props.navigation,
         setPage: setPage,
@@ -167,7 +169,7 @@ export default function Index(props) {
     <GestureHandlerRootView>
       <View style={styles.container}>
         <StatusBar style="light" />
-        <TitleBar immersive={immersive} setImmersive={setImmersive} scrollState={pageScrollState}/>
+        <TitleBar scrollState={pageScrollState}/>
         <CurrentPage/>
         <MenuBar page={currentPage} setPage={setPage} ref={menuBarRef} />
       </View>

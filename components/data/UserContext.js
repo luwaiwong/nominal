@@ -90,7 +90,9 @@ export class UserData {
       let hasData =
         lastcall !== null &&
         launches !== null &&
+        launches.upcoming != [] &&
         events !== null &&
+        events.upcoming != [] &&
         news !== null;
 
       // Log the last call time
@@ -104,6 +106,9 @@ export class UserData {
         console.log("No cache or incomplete cache found");
       }
 
+      // Record last API time
+      this.lastcall = parseInt(lastcall);
+
       // Check if data is outdated, if not then use cache
       if (
         hasData &&
@@ -112,7 +117,6 @@ export class UserData {
         this.launchdata = JSON.parse(launches);
         this.events = JSON.parse(events);
         this.news = JSON.parse(news);
-        this.lastcall = parseInt(lastcall);
         console.log("Data fetched from cache");
 
         this.gettingdata = false;
@@ -121,7 +125,6 @@ export class UserData {
 
       // Record cache for further use
       this.cache = {
-        lastcall: lastcall,
         launches: launches,
         events: events,
         news: news,
@@ -395,8 +398,8 @@ export class UserData {
     ei = 0;
     li = 0;
     // Other info
-    const launches = this.launchdata.upcoming;
-    const data = [];
+    let launches = this.launchdata.upcoming;
+    let data = [];
 
     while (
       ei < this.events.upcoming.length ||
@@ -455,7 +458,18 @@ export class UserData {
       }
     }
 
-    return [...data, ...recent];
+    // loop through and remove duplicates
+    data = [...data, ...recent];
+    let unique = [];
+    let uniqueIds = [];
+    for (let i = 0; i < data.length; i++) {
+      if (!uniqueIds.includes(data[i].id)) {
+        unique.push(data[i]);
+        uniqueIds.push(data[i].id);
+      }
+    }
+
+    return unique;
   }
 
   // FOR DASHBOARD
@@ -465,7 +479,7 @@ export class UserData {
   // Return last 3 recently launched
   // #TODO Change to return recently launched from last week?
   #getDashboardRecentLaunches() {
-    return this.launchdata.previous.slice(0, 5);
+    return this.launchdata.previous.slice(0, 3);
   }
 
   #getDashboardFilteredLaunches() {

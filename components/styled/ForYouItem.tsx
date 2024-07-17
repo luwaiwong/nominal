@@ -137,13 +137,11 @@ export function ForYouEnd(props){
         <Text style={styles.eventTitle}>You're all caught up! </Text>    
         <Text style={styles.subtitle}>Here are some recent articles:</Text>    
       </View>
-      <View>
 
         {news.map((article) => {
           return <ArticleDescriptive articleData={article} key={article.id} />
         })
         }
-      </View>
     </View>
   </View>
   )
