@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
-import UserData from "../data/UserData";
+import UserData from "../data/UserContext";
 
 export default function TestLaunchData(data) {
   let userData = data.data;

@@ -1,19 +1,19 @@
 import { StyleSheet, View, Text, Image, Animated, Pressable } from "react-native";
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 
 import * as colors from "../styles";
 import { COLORS } from "../styles";
-import UserData from "../data/UserData";
+import UserData from "../data/UserContext";
 import { GestureDetector, Gesture} from "react-native-gesture-handler";
+// import { UserContext } from "../../App";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function LaunchSimple(data) {
   let launch = data.data;  
-  let userData = data.user;
   let [launchTime, setLaunchTime] = useState<any>(new Date(launch.net));
 
   

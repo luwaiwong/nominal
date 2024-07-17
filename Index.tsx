@@ -2,7 +2,7 @@ import { useFonts } from "expo-font";
 import { SpaceGrotesk_500Medium } from "@expo-google-fonts/space-grotesk";
 
 import { Platform, StyleSheet, Text, View } from "react-native";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { StatusBar } from "expo-status-bar";
 import PagerView from "react-native-pager-view";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -20,15 +20,16 @@ import ForYou from "./components/pages/ForYou";
 import Dashboard from "./components/pages/Dashboard";
 import News from "./components/pages/News"
 
-import UserData from "./components/data/UserData";
 
 import * as colors from "./components/styles";
 import { useSharedValue } from "react-native-reanimated";
 
+import { UserContext } from "./App";
+
 
 export default function Index(props) {
   // App Data Variables
-  let userData = useRef(null);
+  let userContext = useContext(UserContext);
   let [immersive, setImmersive] = useState(false);
   let [launchData, setLaunchData]= useState(null)
   let [pinnedLaunches, setPinnedLaunches] = useState([])
@@ -40,36 +41,36 @@ export default function Index(props) {
 
   // Called only once when the app is mounted
   useEffect(() => {
-    console.log("App Mounted");
-    // Create a new user data object
-    // This way the user data isn't reset every time the app is re-rendered
-    let data = new UserData();
-    userData.current = data;
-    fetchData(userData.current);
-  }, []);
+    if (userContext == null){
+      return;
+    }
+
+    userContext.navigator = props.navigation;
+    fetchData(userContext);
+  }, [userContext]);
 
   // Function to fetch data
-  async function fetchData(userData) {
+  async function fetchData(userContext) {
     console.log("Fetching Data");
-    await userData.getData().then((data)=> {
+    await userContext.getData().then((data)=> {
       setLaunchData(data);
-      setPinnedLaunches(data.pinned)
     }).catch((error)=>{
       console.log("Error Fetching Data", error)
+      fetchData(userContext)
     })
   }
 
   // Reload function called with pull down reload gesture
   async function reloadData(){
     console.log("Refreshing Page")
-    await fetchData(userData.current).catch((error)=>{console.log("Error Reloading Page", error)})
+    await fetchData(userContext).catch((error)=>{console.log("Error Reloading Page", error)})
   }
 
   // Checks if font is loaded, if the font is not loaded yet, just show a loading screen
   const [fontsLoaded] = useFonts({
     SpaceGrotesk_500Medium,
   });
-  if (!fontsLoaded || userData == null) {
+  if (!fontsLoaded || userContext == null) {
     return <Loading />;
   }
 
@@ -79,9 +80,7 @@ export default function Index(props) {
   function setPage(page){
     if (pagerRef.current != null){
       pagerRef.current.setPage(page);
-
     }
-
   }
 
   // Called when the page is scrolling
@@ -123,7 +122,6 @@ export default function Index(props) {
       // Data object fed into all pages
       // Includes current state of app
       let data = {
-        userData: userData.current,
         immersive: immersive,
         launchData: launchData, 
         upcoming: launchData.upcoming,

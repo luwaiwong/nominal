@@ -1,7 +1,12 @@
 import * as APIHandler from "./APIHandler";
 import Tags from "./Tags";
 
-export default class UserData {
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const twentyfivemin = 1000 * 60 * 25;
+const twomin = 1000 * 60 * 2;
+
+export default class UserContext {
   constructor() {
     // INFO
     this.name = "User Data";
@@ -10,6 +15,9 @@ export default class UserData {
     this.events = undefined;
     this.APIHandler = APIHandler;
     this.systemTags = Tags;
+    this.navigator = undefined;
+    this.lastCall = undefined;
+    this.cache = undefined;
 
     // USER DATA
     this.pinned = [];
@@ -28,28 +36,109 @@ export default class UserData {
   // Data Functions
   // Returns all required data
   async getData() {
-    // Check if data has been fetched
-    if (this.launchdata !== undefined) {
-      // If data has been fetched, return the top 10 upcoming launches
-      return this.#getData();
+    // Check cache for data
+    try {
+      const lastCall = await AsyncStorage.getItem("lastCall");
+      const launches = await AsyncStorage.getItem("launches");
+      const events = await AsyncStorage.getItem("events");
+      const news = await AsyncStorage.getItem("news");
+
+      let hasData =
+        lastCall !== null &&
+        launches !== null &&
+        events !== null &&
+        news !== null;
+
+      // Log the last call time
+      if (hasData) {
+        console.log(
+          "Cache Time: " +
+            (new Date().getTime() - parseInt(lastCall)) / 1000 +
+            "s ago"
+        );
+      }
+
+      // Check if data is outdated, if not then use cache
+      if (
+        hasData &&
+        new Date().getTime() - parseInt(lastCall) < twentyfivemin
+      ) {
+        this.launchdata = JSON.parse(launches);
+        this.events = JSON.parse(events);
+        this.news = JSON.parse(news);
+        console.log("Data fetched from cache");
+
+        return this.#getData();
+      }
+
+      // Record cache for further use
+      this.cache = {
+        lastCall: lastCall,
+        launches: launches,
+        events: events,
+        news: news,
+      };
+    } catch (error) {
+      console.log("Error getting data from cache: " + error);
     }
 
     // Fetch the data and return the upcoming launches
     // Get current time
-    let curTime = new Date().getTime();
-    return await this.getUpcomingData().then((data) => {
-      return this.getPreviousData().then((data) => {
-        return this.getEvents().then((data) => {
-          return this.getNews().then((data) => {
-            console.log("Data Fetched");
-            // How long did it take to fetch data?
-            let fetchTime = new Date().getTime() - curTime;
-            console.log("Data Fetch Time: " + fetchTime + "ms");
-            return this.#getData();
-          });
-        });
-      });
-    });
+    try {
+      let curTime = new Date().getTime();
+      await this.getUpcomingData();
+      await this.getPreviousData();
+      await this.getEvents();
+      await this.getNews();
+      console.log("Data Fetched");
+      // How long did it take to fetch data?
+      let fetchTime = new Date().getTime() - curTime;
+      console.log("Data Fetch Time: " + fetchTime / 1000 + "ms");
+
+      // Record the last call time
+      this.lastCall = new Date().getTime();
+
+      // Calls the storedata function after returning the data
+      setTimeout.bind(this, this.storeData(), 0);
+      return this.#getData();
+    } catch (error) {
+      console.log("Error getting data: " + error);
+      console.log("Returning cached data");
+      this.launchdata = JSON.parse(this.cache.launches);
+      this.events = JSON.parse(this.cache.events);
+      this.news = JSON.parse(this.cache.news);
+      return this.#getData();
+    }
+  }
+
+  async storeData() {
+    try {
+      await AsyncStorage.setItem("lastCall", this.lastCall.toString());
+      console.log("Last call stored");
+    } catch (error) {
+      console.log("Error storing last call: " + error);
+    }
+
+    try {
+      await AsyncStorage.setItem("launches", JSON.stringify(this.launchdata));
+      console.log("Launches stored");
+    } catch (error) {
+      console.log("Error storing data: " + error);
+    }
+
+    try {
+      await AsyncStorage.setItem("events", JSON.stringify(this.events));
+      console.log("Events stored");
+    } catch (error) {
+      console.log("Error storing events: " + error);
+    }
+
+    try {
+      await AsyncStorage.setItem("news", JSON.stringify(this.news));
+      console.log("News stored");
+    } catch (error) {
+      console.log("Error storing news: " + error);
+    }
   }
   async getPinnedLaunches() {
     let pinned = [];
@@ -70,28 +159,6 @@ export default class UserData {
       }
     }
     return pinned;
-  }
-
-  getUpcoming() {
-    return this.launchdata.upcoming;
-  }
-  getPrevious() {
-    return this.launchdata.previous;
-  }
-  getNews() {
-    return this.news;
-  }
-  getEvents() {
-    return this.events;
-  }
-
-  // Tags Functions
-  getTags() {
-    return this.tags;
-  }
-  setTags() {}
-  getSystemTags() {
-    return this.systemTags;
   }
 
   // Pinned Functions
@@ -133,7 +200,7 @@ export default class UserData {
 
     data.upcoming = this.#getUpcomingLaunches();
     data.previous = this.#getPreviousLaunches();
-    data.pinned = this.getPinnedLaunches();
+    // data.pinned = this.getPinnedLaunches();
 
     data.dashboardHighlights = this.#getDashboardHighlightLaunches();
     data.dashboardFiltered = this.#getDashboardFilteredLaunches();

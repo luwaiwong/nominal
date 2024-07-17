@@ -16,10 +16,6 @@ const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 export function ForYouLaunch(data) {
   let launchInfo = data.data;  
   let [launchTime, setLaunchTime] = useState<any>(new Date(launchInfo.net));
-  let [pinned, setPinned] = useState<any>(data.user.pinned.includes(launchInfo.id));
-  const togglePinned = () => {
-    setPinned(data.user.togglePinned(launchInfo.id));
-  };
 
   let [descriptionOpen, setDescriptionOpen] = useState(false);
 
@@ -47,7 +43,7 @@ export function ForYouLaunch(data) {
         <Image style={styles.image} source={{uri: launchInfo.image}} />
         <View style={styles.contentContainer}>
           <View>
-            <Text style={styles.title} numberOfLines={1} onPress={()=>togglePinned()} >{launchInfo.mission.name} </Text>
+            <Text style={styles.title} numberOfLines={1} >{launchInfo.mission.name} </Text>
             <Text style={[styles.subtitle,{color: statusColor}]} numberOfLines={1} >{status} </Text>
           </View>
 
@@ -231,7 +227,7 @@ const styles = StyleSheet.create({
       textAlign: "left",
 
       textShadowColor: 'rgba(0, 0, 0, 0.6)',
-      textShadowOffset: {width: 2, height: 2},
+      textShadowOffset: {width: 1.5, height: 1.5},
       textShadowRadius: 1,
       elevation: 200,
       

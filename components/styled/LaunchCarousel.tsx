@@ -7,7 +7,7 @@ import PagerView from 'react-native-pager-view';
 import {COLORS, FONT, FOREGROUND}from "../styles";
 import Launch from './LaunchSimple';
 
-const timerTickLength = 7.5
+const timerTickLength = 10
 export default function LaunchCarousel(props:{content, userData, type, nav}){
     let content = props.content;
     let length = content.length;
