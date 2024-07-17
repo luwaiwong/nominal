@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     },
     bottomPadding:
     {
-        height: BOTTOM_BAR_HEIGHT+10,
+        height: BOTTOM_BAR_HEIGHT,
     },
     horizontalContainer:{
         display: 'flex',
@@ -267,6 +267,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 10,
         margin: 10,
+        
         textAlign: "center",
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
@@ -277,6 +278,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 10,
         margin: 10,
+        marginBottom: 0,
         textAlign: "center",
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
