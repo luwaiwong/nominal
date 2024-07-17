@@ -50,9 +50,7 @@ export class UserData {
     this.clearData();
   }
 
-  // PUBLIC METHODS
-  // Data Functions
-
+  //#region PUBLIC DATA FUNCTIONS
   async clearData() {
     try {
       await AsyncStorage.removeItem("lastcall");
@@ -145,6 +143,7 @@ export class UserData {
     }
   }
 
+  // Stores the data in local storage
   async storeData() {
     try {
       await AsyncStorage.setItem("lastcall", this.lastCall.toString());
@@ -174,6 +173,8 @@ export class UserData {
       console.log("Error storing news: " + error);
     }
   }
+  // #endregion
+  //#region PINNED FUNCTIONS
   async getPinnedLaunches() {
     let pinned = [];
     for (let i = 0; i < this.launchdata.upcoming.length; i++) {
@@ -218,8 +219,9 @@ export class UserData {
     return this.pinned;
   }
 
-  // PRIVATE METHODS FOR SORTING DATA
-  // Returns all data used in app
+  //#endregion
+
+  // #region PRIVATE DATA FUNCTIONS
   #getData() {
     data = {
       foryou: [],
@@ -428,6 +430,9 @@ export class UserData {
     return this.news.slice(0, 2);
   }
 
+  //#endregion
+
+  //#region DATA FETCHING FUNCTIONS
   // Data fetching functions
   async getUpcomingData() {
     this.apiCallTimes += 1;
@@ -507,4 +512,6 @@ export class UserData {
         console.log("Error getting events: " + error);
       });
   }
+
+  //#endregion
 }
