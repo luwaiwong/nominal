@@ -55,7 +55,7 @@ export default function Index(props) {
     await userContext.getData().then((data)=> {
       setLaunchData(data);
     }).catch((error)=>{
-      console.log("Error Fetching Data", error)
+      console.log("Error when getting data (Index Page)", error)
       fetchData(userContext)
     })
   }

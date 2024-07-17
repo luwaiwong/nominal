@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
         // marginHorizontal: 8,
         // marginTop: 0,
         padding: 10,
-        borderRadius: 10,
+        // borderRadius: 10,
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
 
@@ -325,9 +325,10 @@ const styles = StyleSheet.create({
         aspectRatio: 1,
         // margin: 10,
         // marginHorizontal: 8,
-        borderRadius: 10,
+        // borderRadius: 10,
         borderBottomLeftRadius: 0,
         borderBottomRightRadius: 0,
+        
     },
     headerInfo:{
         position: 'absolute',

@@ -89,18 +89,25 @@ export function ForYouEvent(data) {
       status = "Recent Event";
   }
 
+  let [descriptionOpen, setDescriptionOpen] = useState(false);
+
   return (
+    <Pressable onPress={()=>data.nav.navigate("Event", {data: eventData})}>
+      
   <View style={styles.page}>
     <Image style={styles.image} source={{uri: eventData.feature_image}} />
     <View style={styles.contentContainer}>
-      <View>
+      <BlurView intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.eventSection}>
         <Text style={styles.eventTitle}>{eventData.name} </Text>
         <Text style={styles.subtitle} numberOfLines={1} >{status}</Text>        
-      </View>
+      </BlurView>
       <BlurView  intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView'
         style={styles.infoSection}>
         <View style={styles.infoTextSection}>
-          <Text style={styles.descriptionText} numberOfLines={3}>{eventData.description}</Text>
+          <Pressable onPress={()=>setDescriptionOpen(!descriptionOpen)}>
+            <Text style={styles.descriptionText} numberOfLines={descriptionOpen?10:3}>{eventData.description}</Text>
+
+          </Pressable>
           <Text style={styles.largeText} numberOfLines={1}>{name}</Text>
           <Text style={styles.text} numberOfLines={1}>{eventData.type.name}</Text>
 
@@ -114,6 +121,7 @@ export function ForYouEvent(data) {
 
     </View>
   </View>
+    </Pressable>
   )
 }
 
@@ -231,7 +239,7 @@ const styles = StyleSheet.create({
       textShadowRadius: 1,
       elevation: 200,
       
-      marginHorizontal: 12,
+      marginHorizontal: 10,
     },
 
     // INFO SECTION
@@ -319,6 +327,14 @@ const styles = StyleSheet.create({
       marginTop: 5,
     },
     // EVENT
+    eventSection:{
+      backgroundColor: 'rgba('+COLORS.BACKGROUND_RGB+'0.1)',
+      borderRadius: 10,
+      marginHorizontal: 10,
+      paddingBottom: 5,
+      overflow: "hidden",
+
+    },
     eventTitle:{
       fontSize: 30,
       color: COLORS.FOREGROUND,
@@ -326,12 +342,13 @@ const styles = StyleSheet.create({
       fontWeight: "600",
       textAlign: "left",
 
-      textShadowColor: 'rgba(0, 0, 0, 0.8)',
-      textShadowOffset: {width: 0, height: 1},
+      textShadowColor: 'rgba(0, 0, 0, 0.6)',
+      textShadowOffset: {width: 1, height: 1},
       textShadowRadius: 1,
       elevation: 200,
       
       marginHorizontal: 10,
+      marginRight: 10,
     },
 
     // TMinus

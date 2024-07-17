@@ -30,15 +30,30 @@ export default class UserContext {
 
     this.apiCallTimes = 0;
     console.log("Creating User Data");
+
+    this.clearData();
   }
 
   // PUBLIC METHODS
   // Data Functions
+
+  async clearData() {
+    try {
+      await AsyncStorage.removeItem("lastcall");
+      await AsyncStorage.removeItem("launches");
+      await AsyncStorage.removeItem("events");
+      await AsyncStorage.removeItem("news");
+      console.log("Data Cleared");
+    } catch (error) {
+      console.log("Error clearing data: " + error);
+    }
+  }
+
   // Returns all required data
   async getData() {
     // Check cache for data
     try {
-      const lastCall = await AsyncStorage.getItem("lastCall");
+      const lastCall = await AsyncStorage.getItem("lastcall");
       const launches = await AsyncStorage.getItem("launches");
       const events = await AsyncStorage.getItem("events");
       const news = await AsyncStorage.getItem("news");
@@ -56,6 +71,8 @@ export default class UserContext {
             (new Date().getTime() - parseInt(lastCall)) / 1000 +
             "s ago"
         );
+      } else {
+        console.log("No cache or incomplete cache found");
       }
 
       // Check if data is outdated, if not then use cache
@@ -88,6 +105,7 @@ export default class UserContext {
       let curTime = new Date().getTime();
       await this.getUpcomingData();
       await this.getPreviousData();
+      await this.getPreviousEvents();
       await this.getEvents();
       await this.getNews();
       console.log("Data Fetched");
@@ -113,7 +131,7 @@ export default class UserContext {
 
   async storeData() {
     try {
-      await AsyncStorage.setItem("lastCall", this.lastCall.toString());
+      await AsyncStorage.setItem("lastcall", this.lastCall.toString());
       console.log("Last call stored");
     } catch (error) {
       console.log("Error storing last call: " + error);
@@ -230,23 +248,70 @@ export default class UserContext {
     return this.news.slice(0, 5);
   }
   #getEventsData() {
-    return this.events;
+    return this.events.upcoming;
   }
   #getEventsDataHighlights() {
-    return this.events.slice(0, 2);
+    return this.events.upcoming.slice(0, 2);
   }
 
   // FOR YOU ALGORITHM
   #getForYouData() {
     const now = new Date().getTime();
 
-    let recents = [];
+    let recentLaunches = [];
+    let recentEvents = [];
+    let recent = [];
     // First, get recently launched launches within the last 7 days
     for (let i = 0; i < this.launchdata.previous.length; i++) {
       let launch = this.launchdata.previous[i];
       let launchTime = new Date(launch.net).getTime();
       if (now - launchTime < 1000 * 60 * 60 * 24 * 7) {
-        recents.push(launch);
+        recentLaunches.push(launch);
+      }
+    }
+    for (let i = 0; i < this.events.previous.length; i++) {
+      let event = this.events.previous[i];
+      let time = new Date(event.date).getTime();
+      if (now - time < 1000 * 60 * 60 * 24 * 7) {
+        recentEvents.push(event);
+      }
+    }
+
+    // Launch index and event index
+    let ei = 0;
+    let li = 0;
+
+    while (ei < recentEvents.length || li < recentLaunches.length) {
+      let einrange = ei < recentEvents.length;
+      let linrange = li < recentLaunches.length;
+
+      if (!einrange && !linrange) {
+        break;
+      }
+      // If out of events
+      else if (!einrange) {
+        recent.push(recentLaunches[li]);
+        li++;
+        continue;
+      }
+      // If out of launches
+      else if (!linrange) {
+        recent.push(recentEvents[ei]);
+        ei++;
+        continue;
+      }
+
+      // Compare time of event and launch
+      let eventTime = new Date(recentEvents[ei].date).getTime();
+      let launchTime = new Date(recentLaunches[li].net).getTime();
+
+      // Add whichever is closer
+      if (eventTime >= launchTime) {
+        recent.push(recentEvents[ei]);
+        ei++;
+      } else {
+        recent.push(recentLaunches[li]);
+        li++;
       }
     }
 
@@ -258,15 +323,17 @@ export default class UserContext {
     // If no event with date_precision of month, return one with date_precision of month
 
     // Launch index and event index
-    let ei = 0;
-    let li = 0;
-
+    ei = 0;
+    li = 0;
     // Other info
     const launches = this.launchdata.upcoming;
     const data = [];
 
-    while (ei < this.events.length || li < this.launchdata.upcoming.length) {
-      let einrange = ei < this.events.length;
+    while (
+      ei < this.events.upcoming.length ||
+      li < this.launchdata.upcoming.length
+    ) {
+      let einrange = ei < this.events.upcoming.length;
       let linrange = li < this.launchdata.upcoming.length;
 
       if (!einrange && !linrange) {
@@ -281,10 +348,10 @@ export default class UserContext {
       // If out of launches, and events are still accurate
       else if (
         !linrange &&
-        this.events[ei].date_precision != null &&
-        this.events[ei].date_precision.name != "Month"
+        this.events.upcoming[ei].date_precision != null &&
+        this.events.upcoming[ei].date_precision.name != "Month"
       ) {
-        data.push(this.events[ei]);
+        data.push(this.events.upcoming[ei]);
         ei++;
         continue;
       }
@@ -300,16 +367,16 @@ export default class UserContext {
         li = this.launchdata.upcoming.length + 1;
         continue;
       }
-      let eventTime = new Date(this.events[ei].date).getTime();
+      let eventTime = new Date(this.events.upcoming[ei].date).getTime();
       let launchTime = new Date(this.launchdata.upcoming[li].net).getTime();
 
       let eventHasPrecision =
-        this.events[ei].date_precision != null &&
-        this.events[ei].date_precision.name != "Month";
+        this.events.upcoming[ei].date_precision != null &&
+        this.events.upcoming[ei].date_precision.name != "Month";
 
       // Add whichever is closer, as long as the event has precision
       if (eventTime <= launchTime && eventHasPrecision) {
-        data.push(this.events[ei]);
+        data.push(this.events.upcoming[ei]);
         ei++;
         continue;
       } else {
@@ -319,7 +386,7 @@ export default class UserContext {
       }
     }
 
-    return [...data, ...recents];
+    return [...data, ...recent];
   }
 
   // FOR DASHBOARD
@@ -337,42 +404,9 @@ export default class UserContext {
     // Filter the launches based on the tags
     // Cutoff at launches that are more than 1 month away
     return this.launchdata.upcoming.slice(1, 3);
-
-    let curTime = new Date().getTime();
-    let cutoffTime = curTime + 1000 * 60 * 60 * 24 * 30;
-    let launches = [];
-
-    for (let i = 1; i < this.launchdata.upcoming.length; i++) {
-      let launch = this.launchdata.upcoming[i];
-
-      // Check if the launch is within the cutoff time
-      let launchTime = new Date(launch.net).getTime();
-      if (launchTime > cutoffTime) {
-        continue;
-      }
-
-      // Check if the launch is pinned
-      if (this.pinned.includes(launch.id)) {
-        continue;
-      }
-
-      // Check if the launch fufills the tags
-      if (this.tags.launchProviders.length > 0) {
-        if (!this.tags.launchProviders.includes(launch.launch_provider.name)) {
-          continue;
-        }
-      }
-
-      launches.push(launch);
-    }
-
-    if (launches.length > 2) {
-      return launches.slice(1, 3);
-    }
-    return launches;
   }
   #getDashboardEvents() {
-    return this.events.slice(0, 1);
+    return this.events.upcoming.slice(0, 1);
   }
   #getDashboardNews() {
     return this.news.slice(0, 2);
@@ -434,7 +468,23 @@ export default class UserContext {
     console.log("Getting Events, API Calls: " + this.apiCallTimes);
     return await this.APIHandler.getEvents()
       .then((data) => {
-        this.events = data.results;
+        if (this.events === undefined)
+          this.events = { upcoming: [], previous: [] };
+        this.events.upcoming = [...data.results];
+        return this.events;
+      })
+      .catch((error) => {
+        console.log("Error getting events: " + error);
+      });
+  }
+  async getPreviousEvents() {
+    this.apiCallTimes += 1;
+    console.log("Getting Previous Events, API Calls: " + this.apiCallTimes);
+    return await this.APIHandler.getPreviousEvents()
+      .then((data) => {
+        if (this.events === undefined)
+          this.events = { upcoming: [], previous: [] };
+        this.events.previous = [...data.results];
         return this.events;
       })
       .catch((error) => {

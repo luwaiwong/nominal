@@ -1,6 +1,6 @@
 const LAUNCH_DEV_API_URL = "https://lldev.thespacedevs.com/2.2.0/";
 const LAUNCH_PROD_API_URL = "https://ll.thespacedevs.com/2.2.0/";
-const LAUNCH_API_URL = LAUNCH_PROD_API_URL;
+const LAUNCH_API_URL = LAUNCH_DEV_API_URL;
 
 const NEWS_API_URL = "https://api.spaceflightnewsapi.net/v4/";
 
@@ -53,6 +53,16 @@ export async function getEvents(){
 
 }
 
+export async function getPreviousEvents(){
+    return await fetch(LAUNCH_API_URL+"event/previous")
+    .then((response) => {
+        return response.json();
+    })
+    .then((data) => {
+        return data;
+    })
+
+}
 
 export async function getRocketFamilies(){
     return await fetch(LAUNCH_API_URL+"launcher/")
