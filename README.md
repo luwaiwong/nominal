@@ -7,6 +7,6 @@ Commands
 // To run expo preview
 npm start
 
-// To build the app to apk
+// To build the app using expo to apk
 eas build -p android --profile preview
 ```
