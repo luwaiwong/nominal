@@ -1,3 +1,4 @@
+import React from "react";
 import * as APIHandler from "./APIHandler";
 import Tags from "./Tags";
 
@@ -6,7 +7,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const twentyfivemin = 1000 * 60 * 25;
 const twomin = 1000 * 60 * 2;
 
-export default class UserContext {
+export const UserContext = React.createContext(null);
+
+export function createUserContext() {
+  let context = new UserData();
+  return context;
+}
+
+export class UserData {
   constructor() {
     // INFO
     this.name = "User Data";
@@ -18,6 +26,14 @@ export default class UserContext {
     this.navigator = undefined;
     this.lastCall = undefined;
     this.cache = undefined;
+    this.nav = undefined;
+
+    this.settings = {
+      enablenofifs: true,
+      // FOR YOU SETTINGS
+      fyshowpastlaunches: true,
+      fyshowpastevents: true,
+    };
 
     // USER DATA
     this.pinned = [];

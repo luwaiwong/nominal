@@ -23,8 +23,9 @@ import News from "./components/pages/News"
 
 import * as colors from "./components/styles";
 import { useSharedValue } from "react-native-reanimated";
+import { UserContext } from "./components/data/UserContext";
 
-import { UserContext } from "./App";
+
 
 
 export default function Index(props) {
@@ -45,7 +46,7 @@ export default function Index(props) {
       return;
     }
 
-    userContext.navigator = props.navigation;
+    userContext.nav = props.navigation;
     fetchData(userContext);
   }, [userContext]);
 

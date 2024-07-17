@@ -3,16 +3,18 @@ import React, { useContext, useRef } from "react";
 import { useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 
+import { UserContext } from "../data/UserContext";
+
 import * as colors from "../styles";
 import { COLORS } from "../styles";
-import UserData from "../data/UserContext";
 import { GestureDetector, Gesture} from "react-native-gesture-handler";
-// import { UserContext } from "../../App";
+
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function LaunchSimple(data) {
+  let userContext = useContext(UserContext)
   let launch = data.data;  
   let [launchTime, setLaunchTime] = useState<any>(new Date(launch.net));
 
@@ -101,7 +103,7 @@ export default function LaunchSimple(data) {
   // HTML
   return (
       // <GestureDetector gesture={Gesture.Exclusive(doubletap, singletap)} >
-      <Pressable onPress={()=> data.nav.navigate("Launch", {data: launch})}>
+      <Pressable onPress={()=> userContext.nav.navigate("Launch", {data: launch})}>
           <Animated.View style={[styles.background, {transform:[{scale}]}]} collapsable={false}>
             {/* Header, Holds the title and t -  countdown */}
             {/* Body, Holds the launch info on left and image on right */}

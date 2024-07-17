@@ -13,12 +13,11 @@ import NewsPage from "./components/pages/subpages/NewsPages";
 import LaunchPage from "./components/pages/subpages/LaunchPage";
 import EventPage from "./components/pages/subpages/EventPage";
 
-import UserContextObject from "./components/data/UserContext";
+import {createUserContext, UserContext} from "./components/data/UserContext";
 
 import { COLORS } from "./components/styles";
 import { useEffect } from "react";
 
-export const UserContext = React.createContext(null);
 
 const Stack = createStackNavigator();
 
@@ -108,8 +107,7 @@ export default function App(props) {
   let user = useRef(null);
 
   useEffect(() => {
-    let context = new UserContextObject();
-    user.current = context; 
+    user.current = createUserContext(); 
 
 
   }, []);
@@ -138,7 +136,6 @@ export default function App(props) {
             <Stack.Screen 
               name="Index" 
               component={Index}></Stack.Screen>
-
             <Stack.Screen 
               name = "Launches"
               component = {LaunchesPage}

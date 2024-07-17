@@ -23,6 +23,7 @@ export default function EventPage(props) {
         status = "Past Event";
     }
     
+    console.log(Object.keys(event))
     const launches = processLaunchData(event.launches);
 
     // STATE
@@ -114,6 +115,7 @@ export default function EventPage(props) {
                     
                 </View>
                 }
+                
 
             </ScrollView>
             
@@ -210,8 +212,6 @@ function Program(props:{data}){
 
     let [descriptionShown, setDescriptionShown] = useState(false);
 
-    console.log(Object.keys(data));
-    console.log(data.info_url)
     return (
         <View>
             <Pressable onPress={() => Linking.openURL(info_url)}>   
