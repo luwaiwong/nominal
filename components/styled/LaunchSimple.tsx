@@ -64,7 +64,6 @@ export default function LaunchSimple(data) {
   };
 
   const toggle = () => {
-    console.log("Pinned")
     // togglePinned()
     Animated.sequence([
     Animated.timing(scale, {
@@ -92,7 +91,7 @@ export default function LaunchSimple(data) {
   doubletap.numberOfTaps(2);
 
   singletap.numberOfTaps(1);
-  singletap.onEnd(()=>console.log("open page"));
+  singletap.onEnd(()=>{});
   
   // Status name
   let status = launch.status.name;
@@ -230,7 +229,7 @@ text: {
 // Header Section Stuff
 titleText: {
     // flex: 1,
-    fontSize: 20,
+    fontSize: 21,
     color: colors.FOREGROUND,
     alignItems: 'center',
     justifyContent: 'center',
@@ -255,12 +254,12 @@ smallerText:{
 
 },
 smallText: {
-  fontSize: 16,
+  fontSize: 14,
   color: colors.FOREGROUND,
     fontFamily: colors.FONT,
 },
 mediumText:{
-  fontSize: 17,
+  fontSize: 16,
   color: colors.FOREGROUND,
 
     fontFamily: colors.FONT,

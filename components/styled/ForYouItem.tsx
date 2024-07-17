@@ -91,6 +91,8 @@ export function ForYouEvent(data) {
 
   let [descriptionOpen, setDescriptionOpen] = useState(false);
 
+  // console.log();
+
   return (
     <Pressable onPress={()=>data.nav.navigate("Event", {data: eventData})}>
       
@@ -105,11 +107,12 @@ export function ForYouEvent(data) {
         style={styles.infoSection}>
         <View style={styles.infoTextSection}>
           <Pressable onPress={()=>setDescriptionOpen(!descriptionOpen)}>
-            <Text style={styles.descriptionText} numberOfLines={descriptionOpen?10:3}>{eventData.description}</Text>
+            <Text style={styles.descriptionText} numberOfLines={descriptionOpen?15:3}>{eventData.description}</Text>
 
           </Pressable>
-          <Text style={styles.largeText} numberOfLines={1}>{name}</Text>
-          <Text style={styles.text} numberOfLines={1}>{eventData.type.name}</Text>
+          <Text style={styles.largeText} numberOfLines={1}>{eventData.type.name}</Text>
+          {name != "" && <Text style={styles.text} numberOfLines={1}>{name}</Text>}
+          
 
           <Text style={styles.timeText} >{DAYS[date.getDay()]+" "+MONTHS[date.getMonth()]+" "+date.getDate()+ ", "+date.getFullYear()} </Text>
         </View>
@@ -129,18 +132,18 @@ export function ForYouEnd(props){
   const news = props.data;
   return (
   <View style={styles.page}>
-    <View style={styles.contentContainer}>
+    <View style={styles.articleSection}>
       <View>
         <Text style={styles.eventTitle}>You're all caught up! </Text>    
         <Text style={styles.subtitle}>Here are some recent articles:</Text>    
       </View>
-      <FlatList
-        style={styles.articleSection}
-        data={news}
-        renderItem={({item}) => <ArticleDescriptive articleData={item} />}
-        keyExtractor={(item) => item.id}>
+      <View>
 
-      </FlatList>
+        {news.map((article) => {
+          return <ArticleDescriptive articleData={article} key={article.id} />
+        })
+        }
+      </View>
     </View>
   </View>
   )
@@ -375,11 +378,23 @@ const styles = StyleSheet.create({
     },
 
     // ARTICLES
+    articleContainer:{
+      display: "flex",
+      flexDirection: "column",
+      backgroundColor: 'white',
+      
+      // marginTop: 25,
+    },
     articleSection:{
       display: "flex",
       flexDirection: "column",
+      justifyContent: "space-around",
+      marginTop: StatusBar.currentHeight+TOP_BAR_HEIGHT,
+
+      // backgroundColor: 'white',
+
+      
       width: "100%",
-      height: "100%",
-      marginTop: 25,
+      height: Dimensions.get('window').height-StatusBar.currentHeight-BOTTOM_BAR_HEIGHT-20,
     },
 });

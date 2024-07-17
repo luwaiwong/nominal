@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { StyleSheet, View, Text, FlatList, StatusBar, Image, ScrollView, Pressable, Linking} from 'react-native';
 import { MaterialIcons } from 'react-native-vector-icons';
 import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
@@ -6,12 +6,14 @@ import Launch from '../../styled/Launch';
 import TMinus from '../../styled/TMinus';
 import LaunchSimple from '../../styled/LaunchSimple';
 import { processLaunchData } from '../../data/APIHandler';
+import { UserContext } from '../../data/UserContext';
 
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "January"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function EventPage(props) {
+    const userContext = useContext(UserContext);
     const event = props.route.params.data;
     const time = new Date(event.date);
     const isPrecise = event.date_precision.name === "Hour" || event.date_precision.name === "Minute" || event.date_precision.name === "Day"|| event.date_precision.name === "Second";
@@ -23,7 +25,6 @@ export default function EventPage(props) {
         status = "Past Event";
     }
     
-    console.log(Object.keys(event))
     const launches = processLaunchData(event.launches);
 
     // STATE
@@ -35,10 +36,8 @@ export default function EventPage(props) {
         Image.getSize(event.feature_image, (width, height) => {
         const aspectRatio = width/height;
         if (aspectRatio < 1) {
-            console.log("Aspect Ratio is less than 1")
             setAspectRatio(1.1)
         } else if (aspectRatio > 1.4) {
-            console.log("Aspect Ratio is less than 1")
             setAspectRatio(1.4)
         } else {
             setAspectRatio(width/height);}
@@ -95,11 +94,13 @@ export default function EventPage(props) {
                 <Text style={styles.descriptionTitle}>Info:</Text>
                     <Text style={styles.locationText}>{event.location}</Text>
                     <Text style={styles.typeText}>{event.type.name}</Text>
-
+                
+                { launches.length > 0 &&
                 <View style={styles.launchSection}>
                     <Text style={styles.launchSubtitle}>Related Launches:</Text>
                     {launches.map((launch, index) => {return <LaunchSimple key={index} data={launch} user={props.route.params.user} nav={props.navigation} />})}
-                </View>
+                </View> 
+                }
                 
 
                 { event.program.length > 0 &&
@@ -115,6 +116,23 @@ export default function EventPage(props) {
                     
                 </View>
                 }
+
+                {
+                    userContext.settings.devmode &&
+                    <View style={styles.section}>
+                        <Text style={styles.subtitle}>Developer Info</Text>
+                        <Text style={styles.test}>webcast_live: {JSON.stringify(event.webcast_live)}, vid_urls: {JSON.stringify(event.vid_urls)}</Text>
+                        <Text style={styles.test}>video_url: {JSON.stringify(event.video_url)}</Text>
+                        <Text style={styles.test}>info_urls: {JSON.stringify(event.info_urls)}</Text>
+
+                        <Text style={styles.test}>news_url: {JSON.stringify(event.news_url)}</Text>
+                        <Text style={styles.test}>location: {JSON.stringify(event.location)}</Text>
+                        <Text style={styles.test}>expeditions: {JSON.stringify(event.expeditions)}</Text>
+                        <Text style={styles.test}>spacestations: {JSON.stringify(event.spacestations)}</Text>
+                        <Text style={styles.test}>duration: {JSON.stringify(event.duration)}</Text>
+                        <Text style={styles.test}>updates: {JSON.stringify(event.updates)}</Text>
+                    </View>
+                }
                 
 
             </ScrollView>
@@ -123,7 +141,6 @@ export default function EventPage(props) {
     )
 }
 function Agency(props:{data}){
-    // console.log(props.data);
 
     const data = props.data;
     let country = data.country_code;
@@ -136,8 +153,6 @@ function Agency(props:{data}){
     if (data.name == "National Aeronautics and Space Administration") {
         name = "NASA";
     }
-    // console.log(Object.keys(data));
-    // console.log(data.name)
 
     let image = data.nation_url;
     // Pick image
@@ -163,10 +178,8 @@ function Agency(props:{data}){
         Image.getSize(image, (width, height) => {
             const aspectRatio = width/height;
             if (aspectRatio < 1) {
-                console.log("Aspect Ratio is less than 1")
                 setAspectRatio(1.1)
             } else if (aspectRatio > 1.4) {
-                console.log("Aspect Ratio is less than 1")
                 setAspectRatio(1.2)
             } else {
                 setAspectRatio(width/height);
@@ -259,11 +272,11 @@ const styles = StyleSheet.create({
         // zIndex: 100,
     },
     test:{
-        fontSize: 16,
+        fontSize: 14,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'auto',
-        marginLeft: 10,
+        // marginLeft: 10,
         marginTop: 5,
     },
 

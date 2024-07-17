@@ -54,10 +54,15 @@ export default function Index(props) {
   async function fetchData(userContext) {
     console.log("Fetching Data");
     await userContext.getData().then((data)=> {
+      if (data == null){
+        console.log("Data is null")
+        return;
+      }
+
       setLaunchData(data);
     }).catch((error)=>{
       console.log("Error when getting data (Index Page)", error)
-      fetchData(userContext)
+      // fetchData(userContext)
     })
   }
 

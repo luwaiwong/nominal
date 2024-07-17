@@ -24,15 +24,20 @@ export class UserData {
     this.APIHandler = APIHandler;
     this.systemTags = Tags;
     this.navigator = undefined;
-    this.lastCall = undefined;
+    this.lastcall = 0;
     this.cache = undefined;
     this.nav = undefined;
+    this.gettingdata = false;
 
     this.settings = {
-      enablenofifs: true,
+      enablenotifs: true,
       // FOR YOU SETTINGS
+      fyshowupcomingevents: true,
       fyshowpastlaunches: true,
       fyshowpastevents: true,
+
+      // DEV
+      devmode: false,
     };
 
     // USER DATA
@@ -47,7 +52,12 @@ export class UserData {
     this.apiCallTimes = 0;
     console.log("Creating User Data");
 
-    this.clearData();
+    // Get settings
+    this.getSettings().then((settings) => {
+      if (settings !== null) {
+        this.settings = settings;
+      }
+    });
   }
 
   //#region PUBLIC DATA FUNCTIONS
@@ -65,15 +75,20 @@ export class UserData {
 
   // Returns all required data
   async getData() {
+    if (this.gettingdata) {
+      return null;
+    }
+
+    this.gettingdata = true;
     // Check cache for data
     try {
-      const lastCall = await AsyncStorage.getItem("lastcall");
+      const lastcall = await AsyncStorage.getItem("lastcall");
       const launches = await AsyncStorage.getItem("launches");
       const events = await AsyncStorage.getItem("events");
       const news = await AsyncStorage.getItem("news");
 
       let hasData =
-        lastCall !== null &&
+        lastcall !== null &&
         launches !== null &&
         events !== null &&
         news !== null;
@@ -82,7 +97,7 @@ export class UserData {
       if (hasData) {
         console.log(
           "Cache Time: " +
-            (new Date().getTime() - parseInt(lastCall)) / 1000 +
+            (new Date().getTime() - parseInt(lastcall)) / 1000 +
             "s ago"
         );
       } else {
@@ -92,19 +107,21 @@ export class UserData {
       // Check if data is outdated, if not then use cache
       if (
         hasData &&
-        new Date().getTime() - parseInt(lastCall) < twentyfivemin
+        new Date().getTime() - parseInt(lastcall) < twentyfivemin
       ) {
         this.launchdata = JSON.parse(launches);
         this.events = JSON.parse(events);
         this.news = JSON.parse(news);
+        this.lastcall = parseInt(lastcall);
         console.log("Data fetched from cache");
 
+        this.gettingdata = false;
         return this.#getData();
       }
 
       // Record cache for further use
       this.cache = {
-        lastCall: lastCall,
+        lastcall: lastcall,
         launches: launches,
         events: events,
         news: news,
@@ -128,10 +145,12 @@ export class UserData {
       console.log("Data Fetch Time: " + fetchTime / 1000 + "ms");
 
       // Record the last call time
-      this.lastCall = new Date().getTime();
+      this.lastcall = new Date().getTime();
 
       // Calls the storedata function after returning the data
       setTimeout.bind(this, this.storeData(), 0);
+
+      this.gettingdata = false;
       return this.#getData();
     } catch (error) {
       console.log("Error getting data: " + error);
@@ -139,6 +158,8 @@ export class UserData {
       this.launchdata = JSON.parse(this.cache.launches);
       this.events = JSON.parse(this.cache.events);
       this.news = JSON.parse(this.cache.news);
+
+      this.gettingdata = false;
       return this.#getData();
     }
   }
@@ -146,7 +167,7 @@ export class UserData {
   // Stores the data in local storage
   async storeData() {
     try {
-      await AsyncStorage.setItem("lastcall", this.lastCall.toString());
+      await AsyncStorage.setItem("lastcall", this.lastcall.toString());
       console.log("Last call stored");
     } catch (error) {
       console.log("Error storing last call: " + error);
@@ -171,6 +192,29 @@ export class UserData {
       console.log("News stored");
     } catch (error) {
       console.log("Error storing news: " + error);
+    }
+  }
+  async getSettings() {
+    try {
+      const settings = await AsyncStorage.getItem("settings");
+      if (settings !== null) {
+        this.settings = JSON.parse(settings);
+        console.log("Settings fetched");
+      } else {
+        console.log("No settings found");
+      }
+    } catch (error) {
+      console.log("Error getting settings: " + error);
+    }
+    return this.settings;
+  }
+
+  async storeSettings() {
+    try {
+      await AsyncStorage.setItem("settings", JSON.stringify(this.settings));
+      console.log("Settings stored");
+    } catch (error) {
+      console.log("Error storing settings: " + error);
     }
   }
   // #endregion
@@ -299,6 +343,13 @@ export class UserData {
     let ei = 0;
     let li = 0;
 
+    // Check settings
+    if (!this.settings.fyshowpastlaunches) {
+      recentLaunches = [];
+    }
+    if (!this.settings.fyshowpastevents) {
+      recentEvents = [];
+    }
     while (ei < recentEvents.length || li < recentLaunches.length) {
       let einrange = ei < recentEvents.length;
       let linrange = li < recentLaunches.length;

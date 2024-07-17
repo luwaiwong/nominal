@@ -218,7 +218,7 @@ text: {
 // Header Section Stuff
 titleText: {
     // flex: 1,
-    fontSize: 20,
+    fontSize: 21,
     color: colors.FOREGROUND,
     alignItems: 'center',
     justifyContent: 'center',

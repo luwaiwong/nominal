@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
         marginTop: 0,
         padding: 5,
         paddingBottom: 3,
-        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        // backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         borderRadius: 12,
     },
     left:{

@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { StyleSheet, View, Text, FlatList, StatusBar, Image, ScrollView, Pressable, Linking} from 'react-native';
 import { MaterialIcons } from 'react-native-vector-icons';
+
+import { UserContext } from '../../data/UserContext';
 import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
 import Launch from '../../styled/Launch';
 import TMinus from '../../styled/TMinus';
@@ -10,6 +12,7 @@ const MONTHS = ["January", "February", "March", "April", "May", "June", "July", 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function LaunchPage(props) {
+    const userContext = useContext(UserContext);
     const launch = props.route.params.data;
     const launchTime = new Date(launch.net);
     const isPrecise = launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second";
@@ -32,8 +35,6 @@ export default function LaunchPage(props) {
         statusColor = COLORS.GREEN;
     }
     
-    // console.log(Object.keys(launch));
-    // console.log(launch.mission)
 
     // STATE
     const [locDescShown, setLocDescShown] = useState(false);
@@ -44,10 +45,8 @@ export default function LaunchPage(props) {
         Image.getSize(launch.image, (width, height) => {
         const aspectRatio = width/height;
         if (aspectRatio < 1) {
-            console.log("Aspect Ratio is less than 1")
             setAspectRatio(1.1)
         } else if (aspectRatio > 1.4) {
-            console.log("Aspect Ratio is less than 1")
             setAspectRatio(1.4)
         } else {
             setAspectRatio(width/height);}
@@ -164,8 +163,23 @@ export default function LaunchPage(props) {
                     
                 </View>
                 }
-                <Text style={styles.test}>webcast: {launch.webcast_live.toString()} vid_urls: {launch.mission.vid_urls}</Text>
-                <Text style={styles.test}>holdreason: {launch.holdreason}</Text>
+                {
+                    userContext.settings.devmode && <View style={styles.section}>
+                    <Text style={styles.subtitle}>Developer Info</Text>
+
+                    <Text style={styles.test}>webcast: {JSON.stringify(launch.webcast_live)},  vid_urls: {JSON.stringify(launch.mission.vid_urls)}</Text>
+                    <Text style={styles.test}>holdreason: {JSON.stringify(launch.holdreason)}</Text>
+                    <Text style={styles.test}>status: {JSON.stringify(launch.status)}</Text>
+                    <Text style={styles.test}>net_precision: {JSON.stringify(launch.net_precision)}</Text>
+                    <Text style={styles.test}>window_start: {JSON.stringify(launch.window_start)}</Text>
+                    <Text style={styles.test}>window_end: {JSON.stringify(launch.window_start)}</Text>
+                    <Text style={styles.test}>program: {JSON.stringify(launch.program)}</Text>
+                    <Text style={styles.test}>rocket: {JSON.stringify(launch.rocket)}</Text>
+                    <Text style={styles.test}>launch_provider: {JSON.stringify(launch.launch_provider)}</Text>
+                    <Text style={styles.test}>launch_pad: {JSON.stringify(launch.launch_pad)}</Text>
+                    <Text style={styles.test}>mission: {JSON.stringify(launch.mission)}</Text>
+                    </View>
+                }
 
 
             </ScrollView>
@@ -186,8 +200,6 @@ function Agency(props:{data}){
     // if (data.name == "National Aeronautics and Space Administration") {
     //     name = "NASA";
     // }
-    // console.log(Object.keys(data));
-    // console.log(data.name)
 
     let image = data.nation_url;
     // Pick image
@@ -262,11 +274,11 @@ const styles = StyleSheet.create({
         // zIndex: 100,
     },
     test:{
-        fontSize: 16,
+        fontSize: 14,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'auto',
-        marginLeft: 10,
+        // marginLeft: 10,
         marginTop: 5,
     },
 
