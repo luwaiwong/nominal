@@ -120,7 +120,8 @@ export default function Settings(){
                                     <TouchableOpacity onPress={()=>{sendTestNotification()}}>
                                         <Text style={styles.button}>Send Test Notification</Text>
                                     </TouchableOpacity> 
-                                    <Text style={styles.subtext}>Press "Send Test Notification" to also refresh scheduled notifications below</Text>
+                                    <Text style={styles.subtext}></Text>
+                                    <Text style={styles.subtext}>Sends a test notification to your device, and also get/refresh scheduled notifications below</Text>
                                     <Text style={styles.subtext}></Text>
                                     <Text style={styles.subtext}>Scheduled Notifications: </Text> 
                                     {notifs != null && notifs.length > 0 ? 
@@ -270,6 +271,7 @@ const styles = StyleSheet.create({
         fontFamily: FONT,
         textAlign: "left",
         marginLeft: 10,
+        marginRight: 10,
     },
     buffer:{
         height: 50,
