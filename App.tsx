@@ -127,14 +127,16 @@ export default function App(props) {
                 }}
               />),
               transitionSpec:{
-                open: {animation: 'timing', config: {duration: 0, delay: 100}},
-                close: {animation: 'timing', config: {duration: 200, delay: 100}},
+                open: {animation: 'timing', config: {duration: 0, delay: 0}},
+                close: {animation: 'timing', config: {duration: 300, delay: 0}},
               }
             }}
             >
             <Stack.Screen 
               name="Index" 
-              component={Index}>
+              component={Index}
+              options={{transitionSpec: {open: {animation: 'timing', config: {duration: 0, delay: 0}}, close: {animation: 'timing', config: {duration: 0, delay: 0}},}}}
+            >
             </Stack.Screen>
             <Stack.Screen 
               name = "Launches"
@@ -159,7 +161,6 @@ export default function App(props) {
             <Stack.Screen
               name = "First Load"
               component = {FirstLoad}
-
               options={{transitionSpec: {open: {animation: 'timing', config: {duration: 0, delay: 0}}, close: {animation: 'timing', config: {duration: 0, delay: 0}},}}}
             ></Stack.Screen>
           </Stack.Navigator>

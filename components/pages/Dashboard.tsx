@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, ScrollView, RefreshControl, StatusBar, Dimensions, Pressable } from "react-native";
+import { StyleSheet, View, Text, ScrollView, RefreshControl, StatusBar, Dimensions, Pressable, TouchableHighlight } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
@@ -10,6 +10,7 @@ import Loading from "../styled/Loading";
 import Event from "../styled/Event";
 import Article from "../styled/Article";
 import LaunchCarousel from "../styled/LaunchCarousel";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 
 export default function Dashboard(props) {
@@ -63,7 +64,7 @@ export default function Dashboard(props) {
 
                 {/* Upcoming Launches */}
                 <View style={[styles.contentSection]}>
-                  <Pressable onPress={()=>{nav.navigate('Launches', {data: launchData.upcoming,user: userData, title:"Upcoming" })}}>
+                  <TouchableOpacity onPress={()=>{nav.navigate('Launches', {data: launchData.upcoming,user: userData, title:"Upcoming" })}}>
                     <View style={styles.contentHeaderSection} >
                         <Text style={styles.contentHeaderText} >Upcoming </Text>
                         <View style={styles.seeMoreSection}>
@@ -74,7 +75,7 @@ export default function Dashboard(props) {
                           />
                         </View>
                     </View>
-                  </Pressable>
+                  </TouchableOpacity>
                   
                   {upcomingFiltered.map((launch: any) => {
                   return (
@@ -96,7 +97,7 @@ export default function Dashboard(props) {
                 </Pressable>
                 {/* Events */}
                 <View style={[styles.contentSection]}>
-                  <Pressable onPress={()=>nav.navigate("All Events", {data: launchData.events, title:"Events" })}>
+                  <TouchableOpacity onPress={()=>nav.navigate("All Events", {data: launchData.events, title:"Events" })}>
                     <View style={styles.contentHeaderSection} >
                         <Text style={styles.contentHeaderText} >Events </Text>
                         
@@ -109,7 +110,7 @@ export default function Dashboard(props) {
 
                         </View>
                     </View>
-                  </Pressable>
+                  </TouchableOpacity>
                   {events.map((launch: any) => {
                   return (
                       <Event key={launch.id} eventData={launch} nav={nav} />
@@ -118,7 +119,7 @@ export default function Dashboard(props) {
                 </View>
                 
                 <View style={[styles.contentSection]}>
-                  <Pressable onPress={()=>nav.navigate("All News", {data: launchData.news, title:"Articles" })}>
+                  <TouchableOpacity onPress={()=>nav.navigate("All News", {data: launchData.news, title:"Articles" })}>
                     <View style={styles.contentHeaderSection} >
                         <Text style={styles.contentHeaderText} >Articles </Text>
                         
@@ -131,7 +132,7 @@ export default function Dashboard(props) {
 
                         </View>
                     </View>
-                  </Pressable>
+                  </TouchableOpacity>
                 
                       {news.map((launch: any) => {
                       // console.log(launch)

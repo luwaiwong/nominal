@@ -38,7 +38,12 @@ export default function Index(props) {
   const pagerRef = useRef(null);
   const pageScrollState = useSharedValue(225);
 
-  // Called only once when the app is mounted
+  // Check to reload data every time app is loaded
+  // If data hasn't been called in 2 hours, reload data
+
+  
+
+  // Called whenever userContext is updated
   useEffect(() => {
     if (userContext == null){
       return;
@@ -53,6 +58,7 @@ export default function Index(props) {
     checkFirstLoad();
 
     fetchData(userContext);
+
   }, [userContext]);
 
   async function checkFirstLoad(){

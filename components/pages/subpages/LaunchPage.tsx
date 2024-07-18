@@ -71,7 +71,13 @@ export default function LaunchPage(props) {
                     <Text style={styles.launchTitle}>{launch.mission.name}</Text>
                     
                     { (isPrecise) ? 
-                        <Text style={styles.launchTime}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
+                        <Text style={styles.launchTime}>{launchTime.toLocaleString([],{
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric',
+                            weekday: 'long',})}</Text>
                         : 
                         <Text style={styles.launchTime}>{MONTHS[launchTime.getMonth()+1]+" "+launchTime.getFullYear()}</Text>
                         }
@@ -95,7 +101,16 @@ export default function LaunchPage(props) {
                         : 
                         <Text style={styles.timeText}> NET {MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
                         }
-                    
+                </View>
+                <View style={styles.infoUrls}>
+                    {launch.vid_urls != null && launch.vid_urls[0] != null && launch.vid_urls[0].url != null &&
+                        <TouchableOpacity  onPress={() => Linking.openURL(launch.vid_url[0].url)} >
+                            <View style={styles.infoUrl}>
+                                <Text style={styles.infoUrlText}>{launch.webcast_live?"Livestream":"Watch Video"}</Text>
+                                <MaterialCommunityIcons name="video-outline" style={styles.infoUrlIcon} />
+                            </View>
+                        </TouchableOpacity>
+                    }
                 </View>
 
 
@@ -356,12 +371,12 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         marginTop: 10,
         textShadowColor: 'rgba(0, 0, 0, 0.8)',
-        textShadowOffset: {width: 1, height: 1},
+        textShadowOffset: {width: 1, height: 2},
         textShadowRadius: 1,
         elevation: 200,
     },
     launchTime:{
-        fontSize: 20,
+        fontSize: 18,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
@@ -371,7 +386,7 @@ const styles = StyleSheet.create({
         width: "100%",
 
         textShadowColor: 'rgba(0, 0, 0, 0.8)',
-        textShadowOffset: {width: 1, height: 1},
+        textShadowOffset: {width: 1, height: 2},
         textShadowRadius: 1,
         elevation: 200,
     },
@@ -469,6 +484,38 @@ const styles = StyleSheet.create({
       paddingHorizontal: 5,
       paddingBottom: 2,
       marginTop: 5,
+    },
+    infoUrl:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        marginRight: 5,
+        marginTop: 10,
+        padding: 5,
+        paddingHorizontal: 10,
+        borderRadius: 10,
+    },
+    infoUrlText:{
+        
+      fontSize: 14,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+      backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+      borderRadius: 10,
+
+    },
+    infoUrlIcon:{
+      fontSize: 25,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+      marginLeft: 5,
+      marginTop: 2,
     },
     // #endregion
 

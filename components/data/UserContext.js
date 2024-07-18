@@ -115,6 +115,7 @@ export class UserData {
       await AsyncStorage.removeItem("events");
       await AsyncStorage.removeItem("news");
       await AsyncStorage.removeItem("settings");
+      await AsyncStorage.removeItem("hasused");
       console.log("Data Cleared");
     } catch (error) {
       console.log("Error clearing data: " + error);
@@ -222,8 +223,8 @@ export class UserData {
 
   async forceFetchData() {
     // if last fetch < 10 minutes ago, return cache
-    if (new Date().getTime() - this.lastcall < 1000 * 60 * 10) {
-      console.log("Last fetch < 10 minutes ago, returning cache");
+    if (new Date().getTime() - this.lastcall < 1000 * 60 * 15) {
+      console.log("Last fetch < 15 minutes ago, returning cache");
       return this.#getData();
     }
     console.log("Forcing Data Fetch");
@@ -425,7 +426,10 @@ export class UserData {
         notifs += 1;
         schedulePushNotification(
           launch.mission.name + " Launch Tomorrow",
-          "Launch in 24 hours",
+          "Launch scheduled tomorrow at " +
+            launchTime.toLocaleTimeString([], {
+              hour: "2-digit",
+            }),
           new Date(launchTime.getTime() - 1000 * 60 * 60 * 24)
         );
       }
@@ -440,7 +444,10 @@ export class UserData {
         notifs += 1;
         schedulePushNotification(
           launch.mission.name + " Launch in 1 Hour",
-          "Launch in 1 hour",
+          launch.mission.name +
+            " launching on a " +
+            launch.mission.name +
+            " soon!",
           new Date(launchTime.getTime() - 1000 * 60 * 60)
         );
       }

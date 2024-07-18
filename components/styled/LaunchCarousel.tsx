@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { useEffect, useState } from 'react';
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
 import {COLORS, FONT, FOREGROUND}from "../styles";
@@ -44,7 +44,7 @@ export default function LaunchCarousel(props:{content, type, nav}){
     return (
         <>
             <View style={[styles.contentSection , {marginTop: 0}]}>
-            <Pressable onPress={() => props.nav.navigate("Launches", {data:userContext.launchdata.previous,title:"Recent Launches"})}>
+            <TouchableOpacity onPress={() => props.nav.navigate("Launches", {data:userContext.launchdata.previous,title:"Recent Launches"})}>
                 <View style={styles.contentHeaderSection} >
                     <Text style={styles.contentHeaderText} >Recent </Text>
 
@@ -57,7 +57,7 @@ export default function LaunchCarousel(props:{content, type, nav}){
 
                     </View>
                 </View>
-            </Pressable>
+            </TouchableOpacity>
             <PagerView 
                 
                 ref={pagerRef} 

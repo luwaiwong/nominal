@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { StyleSheet, View, Text, FlatList, StatusBar, Image, ScrollView, Pressable, Linking} from 'react-native';
+import { StyleSheet, View, Text, FlatList, StatusBar, Image, ScrollView, Pressable, Linking, TouchableOpacity} from 'react-native';
 import { MaterialIcons } from 'react-native-vector-icons';
 import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
 import Launch from '../../styled/Launch';
@@ -7,6 +7,9 @@ import TMinus from '../../styled/TMinus';
 import LaunchSimple from '../../styled/LaunchSimple';
 import { processLaunchData } from '../../data/APIHandler';
 import { UserContext } from '../../data/UserContext';
+import { BlurView } from 'expo-blur';
+
+import {MaterialCommunityIcons} from 'react-native-vector-icons';
 
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "January"];
@@ -57,16 +60,22 @@ export default function EventPage(props) {
             </View>
             <ScrollView>
                 {/* Title and date */}
-                <View style={styles.headerInfo}>
+                <BlurView intensity={1} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.headerInfo}>
                     <Text style={styles.launchTitle}>{event.name}</Text>
                     
                     { (isPrecise) ? 
-                        <Text style={styles.launchTime}>{DAYS[time.getDay()]+" "+MONTHS[time.getMonth()]+" "+time.getDate()+ ", "+time.getFullYear()}</Text>
+                        <Text style={styles.launchTime}>{time.toLocaleString([],{
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric',
+                            weekday: 'long',})}</Text>
                         : 
                         <Text style={styles.launchTime}>{MONTHS[time.getMonth()+1]+" "+time.getFullYear()}</Text>
                         }
 
-                </View>
+                </BlurView>
 
                 {/* Launch Image */}
                 <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: event.feature_image}} />
@@ -80,7 +89,28 @@ export default function EventPage(props) {
                         : 
                         <Text style={styles.timeText}> NET {MONTHS[time.getMonth()]+" "+time.getDate()+ ", "+time.getFullYear()}</Text>
                         }
-                    
+                </View>
+
+                {/* Info URLs */}
+                <View style={styles.infoUrls}>
+                    {
+                        event.video_url != null && 
+                        <TouchableOpacity  onPress={() => Linking.openURL(event.video_url)} >
+                            <View style={styles.infoUrl}>
+                                <Text style={styles.infoUrlText}>{event.webcast_live?"Livestream":"Watch Video"}</Text>
+                                <MaterialCommunityIcons name="video-outline" style={styles.infoUrlIcon} />
+                            </View>
+                        </TouchableOpacity>
+                    }
+                    { event.info_urls.length > 0 && event.info_urls.map((url, index) => {
+                        return <TouchableOpacity key={index} onPress={() => Linking.openURL(url.url)} >
+                            <View style={styles.infoUrl}>
+                                <Text style={styles.infoUrlText}>{url.source}</Text>
+                                <MaterialCommunityIcons name="link" style={styles.infoUrlIcon} />
+                            </View>
+                        </TouchableOpacity>
+                    })}
+
                 </View>
 
 
@@ -343,25 +373,28 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         zIndex: 100,
-        backgroundColor: "rgba("+COLORS.BACKGROUND_RGB+"0.5)",
+        backgroundColor: "rgba("+COLORS.BACKGROUND_RGB+"0.6)",
         width: "96%",
         borderRadius: 10,
-        margin: "2%",
+        // margin: "2%",
+        margin: 10,
+
+        overflow: 'hidden',
     },
     launchTitle:{
-        fontSize: 30,
+        fontSize: 24,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
         marginHorizontal: 10,
         marginTop: 10,
         textShadowColor: 'rgba(0, 0, 0, 0.8)',
-        textShadowOffset: {width: 1, height: 1},
+        textShadowOffset: {width: 1, height: 2},
         textShadowRadius: 1,
         elevation: 200,
     },
     launchTime:{
-        fontSize: 20,
+        fontSize: 18,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
@@ -371,7 +404,7 @@ const styles = StyleSheet.create({
         width: "100%",
 
         textShadowColor: 'rgba(0, 0, 0, 0.8)',
-        textShadowOffset: {width: 1, height: 1},
+        textShadowOffset: {width: 1, height: 2},
         textShadowRadius: 1,
         elevation: 200,
     },
@@ -406,28 +439,48 @@ const styles = StyleSheet.create({
         // marginTop: 15,
     },
     
-    tagsSection:{
+    infoUrls:{
         display: "flex",
         flexDirection: "row",
         justifyContent: "flex-start",
         flexWrap: "wrap",
         width: "100%",
         marginLeft: 11,
-        marginTop: 5,
+        // marginTop: 5,
         // marginBottom: 20,
+        
     },
-    tag:{
-      fontSize: 15,
+    infoUrl:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        marginRight: 5,
+        marginTop: 10,
+        padding: 5,
+        paddingHorizontal: 10,
+        borderRadius: 10,
+    },
+    infoUrlText:{
+        
+      fontSize: 14,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "400",
       textAlign: "left",
-      backgroundColor: COLORS.ACCENT,
+      backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
       borderRadius: 10,
 
-      marginRight: 5,
-      paddingHorizontal: 5,
-      paddingBottom: 2,
+    },
+    infoUrlIcon:{
+      fontSize: 25,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+      marginLeft: 5,
+      marginTop: 2,
     },
     // #endregion
 

@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, Dimensions, Pressable} from "react-native";
+import { View, Text, Image, StyleSheet, Dimensions, Pressable, TouchableOpacity} from "react-native";
 import { BlurView } from "expo-blur";
 
 import {COLORS, FONT} from '../styles';
@@ -17,7 +17,7 @@ export default function HighlightLaunch(props) {
         status = "Just Launched";
     }
     return (
-        <Pressable onPress={()=>nav.navigate("Launch", {data: data})}>
+        <TouchableOpacity onPress={()=>nav.navigate("Launch", {data: data})}>
             <View style={styles.container}>
                 <Image style={styles.image} blurRadius={1} source={{uri: data.image}} />   
                 <View style={styles.overlay} />
@@ -38,7 +38,7 @@ export default function HighlightLaunch(props) {
                 </View>
             </View>
             
-        </Pressable>
+        </TouchableOpacity>
     );
 }
 
@@ -127,8 +127,8 @@ typeText:{
 
     color: COLORS.FOREGROUND,
     fontFamily: FONT,
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: {width: 0, height: 1},
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: {width: 1, height: 2},
     textShadowRadius: 1,
     elevation: 200,
 },
@@ -137,8 +137,8 @@ title:{
     color: COLORS.FOREGROUND,
     fontFamily: FONT,
     
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: {width: 0, height: 1},
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: {width: 1, height: 2},
     textShadowRadius: 1,
     elevation: 200,
 },
@@ -146,8 +146,8 @@ rocket:{
     fontSize:22,
     color: COLORS.FOREGROUND,
     fontFamily: FONT,
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: {width: 0, height: 1},
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: {width: 1, height: 2},
     textShadowRadius: 1,
     elevation: 200,
 },
@@ -157,8 +157,8 @@ launchProvider:{
     color: COLORS.FOREGROUND,
     fontFamily: FONT,
     
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: {width: 0, height: 1},
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: {width: 1, height: 2},
     textShadowRadius: 1,
     elevation: 200,
 },

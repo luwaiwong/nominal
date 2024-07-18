@@ -71,13 +71,13 @@ export default function Event(props){
                         <Text style={styles.source} numberOfLines={1}>{eventData.location}</Text>
                         {/* Show time and date */}
                         <Text style={styles.source}>{new Date(eventData.date).toLocaleString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    weekday: 'short',
-  })}</Text>
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                            weekday: 'short',
+                        })}</Text>
 
                     </View>
                 </View>

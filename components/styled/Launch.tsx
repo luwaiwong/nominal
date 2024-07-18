@@ -115,7 +115,11 @@ export default function Launch(data) {
             <Text style={styles.smallText} numberOfLines={2}>{launch.launch_pad.location.name}</Text>
             {/* <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> */}
             { isPrecise ? 
-              <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> 
+                <Text style={styles.mediumText}>{launchTime.toLocaleString([],{
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    month: 'short',
+                    day: 'numeric',weekday: 'short'})}</Text>
               : 
               <Text style={styles.mediumText}>NET {MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> 
               }

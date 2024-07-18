@@ -1,5 +1,5 @@
 import React, { useEffect , useState} from 'react';
-import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Switch, Dimensions, Pressable, Alert} from 'react-native';
+import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Switch, Dimensions, Pressable, Alert, TouchableHighlight, TouchableNativeFeedback} from 'react-native';
 import { BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT } from '../styles';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -73,21 +73,24 @@ export default function Settings(){
         let setting = props.setting;
         let title = props.title;
         return (
-            <Pressable style={styles.toggleContainer} onPress={()=>toggleSetting(setting)}>
-                <Text style={styles.buttonText}>{title}</Text>
-                <Switch
-                    trackColor={{false: '#767577', true: '#81b0ff'}}
-                    thumbColor={COLORS.FOREGROUND}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={()=>toggleSetting(setting)}
-                    value={curSettings != null && curSettings[setting]}
-                />
-            </Pressable>
+            <TouchableNativeFeedback onPress={()=>toggleSetting(setting)}>
+                <View style={styles.toggleContainer} >
+                    <Text style={styles.buttonText}>{title}</Text>
+                    <Switch
+                        trackColor={{false: '#767577', true: '#81b0ff'}}
+                        thumbColor={COLORS.FOREGROUND}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={()=>toggleSetting(setting)}
+                        value={curSettings != null && curSettings[setting]}
+                    />
+
+                </View>
+            </TouchableNativeFeedback>
         )
     }
 
     function clearCache(){
-        Alert.alert("Clear Data", "Are you sure you want to clear data?\n\nThis action will delete all stored launch data, event data, and stored settings on your device.\n\nThis may result in being unable to load API data, causing the app to be unable to load for up to one hour, and instability\n\nPROCEED AT YOUR OWN RISK", [
+        Alert.alert("Clear Data", "Are you sure you want to clear data?\n\nThis action will delete all stored launch data, event data, and stored settings on your device.\n\nThis may result in being unable to load data, causing instability and the app to be unable to load for up to one hour\n\nPROCEED AT YOUR OWN RISK", [
             {
                 text: "Cancel",
                 style: "cancel"
@@ -170,12 +173,12 @@ export default function Settings(){
                         </View>
                         <View style={styles.smallBuffer}></View>
                         <View style={styles.horizontalContainer}>
-                            <Text style={styles.subtext}>Version: 0.2.5</Text>  
+                            <Text style={styles.subtext}>Version: 0.2.6</Text>  
                         </View>
                         {curSettings.devmode &&
                         <View style={styles.horizontalContainer}>
                             <Pressable onPress={()=>{setLastCallTime(getLastCallText())}}>
-                                <Text style={styles.subtext}>Last API Call: {lastCallTime}, (Tap to refresh)</Text>  
+                                <Text style={styles.subtext}>Last API Call: {lastCallTime}, (tap to refresh)</Text>  
                                 <Text style={styles.subtext}>API Link: https://ll.thespacedevs.com/2.2.0</Text>
                             </Pressable>
                         </View>

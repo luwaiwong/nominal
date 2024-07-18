@@ -122,7 +122,12 @@ export default function LaunchSimple(data) {
                 <View style={styles.smallSpacer}></View>
 
                 { isPrecise ? 
-                  <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> 
+                  <Text style={styles.mediumText}>{launchTime.toLocaleString([],{
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      month: 'short',
+                      day: 'numeric',
+                      weekday:'long'})}</Text>
                   : 
                   <Text style={styles.mediumText}>NET {MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> 
                   }
@@ -259,7 +264,7 @@ smallText: {
     fontFamily: colors.FONT,
 },
 mediumText:{
-  fontSize: 16,
+  fontSize: 14,
   color: colors.FOREGROUND,
 
     fontFamily: colors.FONT,

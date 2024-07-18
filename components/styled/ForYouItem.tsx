@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, StatusBar, Dimensions, FlatList, Pressable } from "react-native";
+import { StyleSheet, View, Text, Image, StatusBar, Dimensions, FlatList, Pressable, TouchableOpacity, TouchableHighlight, TouchableNativeFeedback } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
@@ -50,9 +50,9 @@ export function ForYouLaunch(data) {
           <View>
             <BlurView  intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView'
               style={styles.infoSection}>
-                <Pressable onPress={()=>setDescriptionOpen(!descriptionOpen)}>
+                <TouchableOpacity onPress={()=>setDescriptionOpen(!descriptionOpen)}>
                   <Text style={styles.descriptionText} numberOfLines={descriptionOpen?10:2}>{launchInfo.mission.description}</Text>
-                </Pressable>
+                </TouchableOpacity>
               <View style={styles.infoTextSection}>
                 <Text style={styles.launcherText} numberOfLines={1}>{launchInfo.rocket.configuration.full_name}</Text>
 
@@ -94,7 +94,7 @@ export function ForYouEvent(data) {
   // console.log();
 
   return (
-    <Pressable onPress={()=>data.nav.navigate("Event", {data: eventData})}>
+  <Pressable onPress={()=>data.nav.navigate("Event", {data: eventData})}>
       
   <View style={styles.page}>
     <Image style={styles.image} source={{uri: eventData.feature_image}} />
@@ -106,10 +106,10 @@ export function ForYouEvent(data) {
       <BlurView  intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView'
         style={styles.infoSection}>
         <View style={styles.infoTextSection}>
-          <Pressable onPress={()=>setDescriptionOpen(!descriptionOpen)}>
+          <TouchableOpacity onPress={()=>setDescriptionOpen(!descriptionOpen)}>
             <Text style={styles.descriptionText} numberOfLines={descriptionOpen?15:3}>{eventData.description}</Text>
 
-          </Pressable>
+          </TouchableOpacity>
           <Text style={styles.largeText} numberOfLines={1}>{eventData.type.name}</Text>
           {name != "" && <Text style={styles.text} numberOfLines={1}>{name}</Text>}
           
