@@ -108,8 +108,6 @@ export default function App(props) {
 
   useEffect(() => {
     user.current = createUserContext(); 
-
-
   }, []);
 
   return (

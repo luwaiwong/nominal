@@ -1,8 +1,9 @@
 import React from "react";
 import * as APIHandler from "./APIHandler";
-import Tags from "./Tags";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Notifications from "expo-notifications";
+
+import Tags from "./Tags";
 
 const twentyfivemin = 1000 * 60 * 25;
 const twomin = 1000 * 60 * 2;
@@ -12,6 +13,17 @@ export const UserContext = React.createContext(null);
 export function createUserContext() {
   let context = new UserData();
   return context;
+}
+
+//#region NOTIFICATIONS
+async function schedulePushNotification(title, description, time) {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: title,
+      body: description,
+    },
+    trigger: { date: time },
+  });
 }
 
 export class UserData {
@@ -30,7 +42,22 @@ export class UserData {
     this.gettingdata = false;
 
     this.settings = {
+      // Notifications
       enablenotifs: true,
+      notiflaunch24hbefore: true,
+      notiflaunch12hbefore: false,
+      notiflaunch1hbefore: true,
+      notiflaunch30mbefore: false,
+      notiflaunch10mbefore: true,
+      notiflaunch0mbefore: false,
+
+      notifevent24hbefore: true,
+      notifevent12hbefore: false,
+      notifevent1hbefore: true,
+      notifevent30mbefore: false,
+      notifevent10mbefore: true,
+      notifevent0mbefore: false,
+
       // FOR YOU SETTINGS
       fyshowupcomingevents: true,
       fyshowpastlaunches: true,
@@ -80,6 +107,7 @@ export class UserData {
     }
 
     this.gettingdata = true;
+
     // Check cache for data
     try {
       const lastcall = await AsyncStorage.getItem("lastcall");
@@ -123,7 +151,7 @@ export class UserData {
         return this.#getData();
       }
 
-      // Record cache for further use
+      // Otherwise record cache for further use if unable to pull data
       this.cache = {
         launches: launches,
         events: events,
@@ -133,8 +161,7 @@ export class UserData {
       console.log("Error getting data from cache: " + error);
     }
 
-    // Fetch the data and return the upcoming launches
-    // Get current time
+    // Try fetching the data and return the upcoming launches
     try {
       let curTime = new Date().getTime();
       await this.getUpcomingData();
@@ -142,6 +169,7 @@ export class UserData {
       await this.getPreviousEvents();
       await this.getEvents();
       await this.getNews();
+
       console.log("Data Fetched");
       // How long did it take to fetch data?
       let fetchTime = new Date().getTime() - curTime;
@@ -152,10 +180,12 @@ export class UserData {
 
       // Calls the storedata function after returning the data
       setTimeout.bind(this, this.storeData(), 0);
+      setTimeout.bind(this, this.scheduleNotifications(), 0);
 
       this.gettingdata = false;
       return this.#getData();
     } catch (error) {
+      // If unable to pull data
       console.log("Error getting data: " + error);
       console.log("Returning cached data");
       this.launchdata = JSON.parse(this.cache.launches);
@@ -266,6 +296,175 @@ export class UserData {
     return this.pinned;
   }
 
+  //#endregion
+
+  //#region NOTIFICATION FUNCTIONS
+  async scheduleNotifications() {
+    console.log("Notifications enabled:", this.settings.enablenotifs);
+
+    console.log("Cancelling Notifications");
+    try {
+      await Notifications.cancelAllScheduledNotificationsAsync();
+    } catch (error) {
+      console.log("Error cancelling notifications: " + error);
+    }
+
+    // Don't schedule notifications if notifications are disabled
+    if (!this.settings.enablenotifs) {
+      return;
+    }
+
+    console.log("Scheduling Notifications");
+    // Load notifications for launches & events within the next 2 weeks
+    // Loop through launches
+    for (let i = 0; i < this.launchdata.upcoming.length; i++) {
+      let launch = this.launchdata.upcoming[i];
+      let launchTime = new Date(launch.net);
+      let today = new Date();
+      let preciseMinute = launch.net_precision.name == "Minute";
+      let preciseHour = launch.net_precision.name == "Hour";
+      let preciseDay = launch.net_precision.name == "Day";
+      let preciseMonth = launch.net_precision.name == "Month";
+
+      let timeDiff = launchTime.getTime() - today.getTime();
+
+      // Check if launch is before today
+      if (timeDiff < 0) {
+        // Skip
+        continue;
+      }
+
+      // Check if launch is within 2 weeks
+      if (timeDiff > 1000 * 60 * 60 * 24 * 14) {
+        // Skip
+        continue;
+      }
+
+      // ignore if precise month
+      if (preciseMonth) {
+        continue;
+      }
+
+      // Schedule 24 hour
+      if (
+        this.settings.notiflaunch24hbefore &&
+        timeDiff > 1000 * 60 * 60 * 24
+      ) {
+        schedulePushNotification(
+          launch.mission.name + " Launch Tomorrow",
+          "Launch in 24 hours",
+          new Date(launchTime.getTime() - 1000 * 60 * 60 * 24)
+        );
+      }
+
+      // If not precise, skip next notifications
+      if (preciseDay) {
+        continue;
+      }
+
+      // Schedule 1 hour
+      if (this.settings.notiflaunch1hbefore) {
+        schedulePushNotification(
+          launch.mission.name + " Launch in 1 Hour",
+          "Launch in 1 hour",
+          new Date(launchTime.getTime() - 1000 * 60 * 60)
+        );
+      }
+
+      // If not precise, skip next notifications
+      if (preciseHour) {
+        continue;
+      }
+
+      // Schedule 10 minutes
+      if (this.settings.notiflaunch10mbefore) {
+        schedulePushNotification(
+          launch.mission.name + " Launch in 10 Minutes",
+          "Launching Soon!",
+          new Date(launchTime.getTime() - 1000 * 60 * 10)
+        );
+      }
+    }
+
+    console.log("Scheduled Launch Notifications");
+    // Loop through events
+    for (let i = 0; i < this.events.upcoming.length; i++) {
+      let event = this.events.upcoming[i];
+      let eventTime = new Date(event.date);
+      let today = new Date();
+      let preciseMinute = event.date_precision.name == "Minute";
+      let preciseHour = event.date_precision.name == "Hour";
+      let preciseDay = event.date_precision.name == "Day";
+      let preciseMonth = event.date_precision.name == "Month";
+
+      let timeDiff = eventTime.getTime() - today.getTime();
+
+      // Check if launch is before today
+      if (timeDiff < 1) {
+        // Skip
+        continue;
+      }
+
+      // Check if launch is within 2 weeks
+      if (timeDiff > 1000 * 60 * 60 * 24 * 14) {
+        // Skip
+        continue;
+      }
+
+      // ignore if precise month
+      if (preciseMonth) {
+        continue;
+      }
+
+      // Schedule 24 hour
+      if (this.settings.notifevent24hbefore && timeDiff > 1000 * 60 * 60 * 24) {
+        schedulePushNotification(
+          event.name + " Launch Tomorrow",
+          "Launch in 24 hours",
+          new Date(eventTime.getTime() - 1000 * 60 * 60 * 24)
+        );
+      }
+
+      // If not precise, skip next notifications
+      if (preciseDay) {
+        continue;
+      }
+
+      // Schedule 1 hour
+      if (this.settings.notifevent1hbefore) {
+        schedulePushNotification(
+          event.name + " Launch in 1 Hour",
+          "Launch in 1 hour",
+          new Date(eventTime.getTime() - 1000 * 60 * 60)
+        );
+      }
+
+      // If not precise, skip next notifications
+      if (preciseHour) {
+        continue;
+      }
+
+      // Schedule 10 minutes
+      if (this.settings.notifevent10mbefore) {
+        schedulePushNotification(
+          event.name + " Launch in 10 Minutes",
+          "Launching Soon!",
+          new Date(eventTime.getTime() - 1000 * 60 * 10)
+        );
+      }
+    }
+
+    console.log("Scheduled Event Notifications");
+
+    // Set notification for 3 days away for news
+    schedulePushNotification(
+      "Check out the Latest Spaceflight Articles",
+      "Stay up to date with the latest news",
+      new Date(Date.now() + 1000 * 60 * 60 * 24 * 3)
+    );
+    // Set reminder notification 1 week ago
+    // Set notification for 2 weeks away for sadge
+  }
   //#endregion
 
   // #region PRIVATE DATA FUNCTIONS
