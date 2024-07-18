@@ -8,7 +8,9 @@ import { UserContext } from '../data/UserContext';
 export default function Settings(){
     let userContext = React.useContext(UserContext);
     const [lastCallTime, setLastCallTime] = useState(getLastCallText());
+    const [notifs, setNotifs] = useState([]);
     const [curSettings, setSettings] = useState(null);
+
     
     // Get user settings when loading
     useEffect(()=>{
@@ -58,6 +60,12 @@ export default function Settings(){
         userContext.storeSettings();
     }
 
+    async function sendTestNotification(){
+        let notifs = await userContext.sendTestNotification();
+        setNotifs(notifs);
+    }
+
+
 
 
     function SettingToggle(props:{setting: string, title?: string}){
@@ -100,11 +108,39 @@ export default function Settings(){
                 <View style={styles.scrollContainer}>
                     <View>
 
+                        
                         <View style={styles.sectionContainer}>
                             <Text style={styles.title}>Notifications</Text>
                             <SettingToggle setting="enablenotifs" title={"Enable Notifications"}/>
-                            <Text style={styles.description}>Allow Notifications  *CURRENTLY NOT IMPLEMENTED</Text>
+                            <Text style={styles.description}>Allow Notifications</Text>
+
+                            <TouchableOpacity onPress={()=>{sendTestNotification()}}>
+                                <Text style={styles.button}>Send Test Notification</Text>
+                            </TouchableOpacity> 
+
+                            {curSettings.devmode && 
+                                <View>
+                                    <Text style={styles.subtext}>Press "Send Test Notification" to refresh scheduled notifications below</Text>
+                                    <Text style={styles.subtext}></Text>
+                                    <Text style={styles.subtext}>Scheduled Notifications: </Text> 
+                                    {notifs != null && notifs.length > 0 ? 
+                                        notifs.sort((a,b)=> a.trigger.value - b.trigger.value).map((notif, index) => {
+                                            return (
+                                            <View key={notif.identifier}>
+                                                <Text style={styles.subtext} >{notif.content.title}</Text>
+                                                <Text style={styles.subtext} >{new Date(notif.trigger.value).toISOString()}</Text>
+                                            </View>)
+                                                
+                                        })
+                                        :
+                                        <Text style={styles.subtext}>No Notifications Scheduled</Text>
+                                    }
+                                </View>
+                            }
+
+                            <View style={styles.smallBuffer}></View>
                         </View>
+                        
                         <View style={styles.sectionContainer}>
                             <Text style={styles.title}>For You</Text>
                             
@@ -133,7 +169,7 @@ export default function Settings(){
                         </View>
                         <View style={styles.smallBuffer}></View>
                         <View style={styles.horizontalContainer}>
-                            <Text style={styles.subtext}>Version: 0.2.3</Text>  
+                            <Text style={styles.subtext}>Version: 0.2.4</Text>  
                         </View>
                         {curSettings.devmode &&
                         <View style={styles.horizontalContainer}>
@@ -143,6 +179,7 @@ export default function Settings(){
                             </Pressable>
                         </View>
                         }
+                        
                         <TouchableOpacity onPress={()=>{userContext.getData()}}>
                             <Text style={styles.button}>Reload Data</Text>
                         </TouchableOpacity> 
@@ -182,12 +219,16 @@ const styles = StyleSheet.create({
     },
     sectionContainer:{
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-        margin: 10,
+        // margin: 10,
+        marginHorizontal: 10,
+        marginTop: 20,
         // paddingVertical: 10,
         paddingTop: 10,
         // marginBottom: 15,
 
         borderRadius: 10,
+        borderWidth: 4,
+        borderColor: COLORS.BACKGROUND_HIGHLIGHT,
 
     },
     bottomPadding:
@@ -283,10 +324,13 @@ const styles = StyleSheet.create({
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         fontSize: 20,
+
+        
     },
     contactSection:{
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         margin: 10,
+        marginTop: 20,
         paddingVertical: 10,
         marginBottom: 15,
 

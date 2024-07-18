@@ -40,6 +40,7 @@ export class UserData {
     this.cache = undefined;
     this.nav = undefined;
     this.gettingdata = false;
+    this.notifs = [];
 
     this.settings = {
       // Notifications
@@ -102,6 +103,8 @@ export class UserData {
 
   // Returns all required data
   async getData() {
+    // Check scheduled notifications
+
     if (this.gettingdata) {
       return null;
     }
@@ -243,6 +246,16 @@ export class UserData {
   }
 
   async storeSettings() {
+    // Apply notification setting
+    if (!this.settings.enablenotifs) {
+      console.log("Cancelling Notifications");
+      try {
+        await Notifications.cancelAllScheduledNotificationsAsync();
+      } catch (error) {
+        console.log("Error cancelling notifications: " + error);
+      }
+    } else setTimeout.bind(this, this.scheduleNotifications(), 0);
+
     try {
       await AsyncStorage.setItem("settings", JSON.stringify(this.settings));
       console.log("Settings stored");
@@ -464,6 +477,19 @@ export class UserData {
     );
     // Set reminder notification 1 week ago
     // Set notification for 2 weeks away for sadge
+  }
+
+  async sendTestNotification() {
+    console.log("Sending Test Notification");
+    if (this.settings.enablenotifs) {
+      schedulePushNotification(
+        "Test Notification",
+        "Rockets are cool!",
+        new Date(Date.now() + 500)
+      );
+    }
+
+    return await Notifications.getAllScheduledNotificationsAsync();
   }
   //#endregion
 

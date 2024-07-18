@@ -170,6 +170,7 @@ export default function LaunchPage(props) {
                     <Text style={styles.test}>webcast: {JSON.stringify(launch.webcast_live)},  vid_urls: {JSON.stringify(launch.mission.vid_urls)}</Text>
                     <Text style={styles.test}>holdreason: {JSON.stringify(launch.holdreason)}</Text>
                     <Text style={styles.test}>status: {JSON.stringify(launch.status)}</Text>
+                    <Text style={styles.test}>net: {JSON.stringify(launch.net)}</Text>
                     <Text style={styles.test}>net_precision: {JSON.stringify(launch.net_precision)}</Text>
                     <Text style={styles.test}>window_start: {JSON.stringify(launch.window_start)}</Text>
                     <Text style={styles.test}>window_end: {JSON.stringify(launch.window_start)}</Text>
