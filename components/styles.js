@@ -19,5 +19,10 @@ export const ACCENT = "#5E81AC";
 
 export const FONT = "SpaceGrotesk_500Medium";
 
+export const TIME_OPTIONS = {
+  hours: "2-digit",
+  minute: "2-digit",
+};
+
 export const BOTTOM_BAR_HEIGHT = 70;
 export const TOP_BAR_HEIGHT = 60;

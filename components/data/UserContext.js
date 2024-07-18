@@ -81,11 +81,7 @@ export class UserData {
     console.log("Creating User Data");
 
     // Get settings
-    this.getSettings().then((settings) => {
-      if (settings !== null) {
-        this.settings = settings;
-      }
-    });
+    this.getSettings();
   }
 
   //#region PUBLIC DATA FUNCTIONS
@@ -234,7 +230,13 @@ export class UserData {
     try {
       const settings = await AsyncStorage.getItem("settings");
       if (settings !== null) {
-        this.settings = JSON.parse(settings);
+        // Apply settings
+        let cacheSettings = JSON.parse(settings);
+
+        // Loop through all settings in cache and replace current settings
+        for (let key in cacheSettings) {
+          this.settings[key] = cacheSettings[key];
+        }
         console.log("Settings fetched");
       } else {
         console.log("No settings found");
@@ -328,6 +330,7 @@ export class UserData {
     }
 
     console.log("Scheduling Notifications");
+    let notifs = 0;
     // Load notifications for launches & events within the next 2 weeks
     // Loop through launches
     for (let i = 0; i < this.launchdata.upcoming.length; i++) {
@@ -363,6 +366,7 @@ export class UserData {
         this.settings.notiflaunch24hbefore &&
         timeDiff > 1000 * 60 * 60 * 24
       ) {
+        notifs += 1;
         schedulePushNotification(
           launch.mission.name + " Launch Tomorrow",
           "Launch in 24 hours",
@@ -377,6 +381,7 @@ export class UserData {
 
       // Schedule 1 hour
       if (this.settings.notiflaunch1hbefore) {
+        notifs += 1;
         schedulePushNotification(
           launch.mission.name + " Launch in 1 Hour",
           "Launch in 1 hour",
@@ -391,6 +396,7 @@ export class UserData {
 
       // Schedule 10 minutes
       if (this.settings.notiflaunch10mbefore) {
+        notifs += 1;
         schedulePushNotification(
           launch.mission.name + " Launch in 10 Minutes",
           "Launching Soon!",
@@ -399,7 +405,7 @@ export class UserData {
       }
     }
 
-    console.log("Scheduled Launch Notifications");
+    console.log("Scheduled " + notifs + " Launch Notifications");
     // Loop through events
     for (let i = 0; i < this.events.upcoming.length; i++) {
       let event = this.events.upcoming[i];
@@ -471,12 +477,28 @@ export class UserData {
 
     // Set notification for 3 days away for news
     schedulePushNotification(
-      "Check out the Latest Spaceflight Articles",
-      "Stay up to date with the latest news",
+      "New Spaceflight Articles",
+      "Keep up to date with recent space news",
       new Date(Date.now() + 1000 * 60 * 60 * 24 * 3)
     );
-    // Set reminder notification 1 week ago
-    // Set notification for 2 weeks away for sadge
+    // Set notification for 5 days away for rockets and events
+    schedulePushNotification(
+      "Check out upcoming launches and events",
+      "Stay on top of the latest spaceflight events",
+      new Date(Date.now() + 1000 * 60 * 60 * 24 * 5)
+    );
+    // Set notification for 5 days away for rockets and events
+    schedulePushNotification(
+      "Are you ready for the next launch?",
+      "Check out launches and events happening soon",
+      new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
+    );
+    // Set notification for 5 days away for rockets and events
+    schedulePushNotification(
+      "Are you still there?",
+      "H…hey! Just checking in… you haven’t opened me in a while. But it’s not like I want you to or anything!",
+      new Date(Date.now() + 1000 * 60 * 60 * 24 * 14)
+    );
   }
 
   async sendTestNotification() {

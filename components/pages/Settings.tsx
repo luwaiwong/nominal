@@ -114,13 +114,13 @@ export default function Settings(){
                             <SettingToggle setting="enablenotifs" title={"Enable Notifications"}/>
                             <Text style={styles.description}>Allow Notifications</Text>
 
-                            <TouchableOpacity onPress={()=>{sendTestNotification()}}>
-                                <Text style={styles.button}>Send Test Notification</Text>
-                            </TouchableOpacity> 
 
                             {curSettings.devmode && 
                                 <View>
-                                    <Text style={styles.subtext}>Press "Send Test Notification" to refresh scheduled notifications below</Text>
+                                    <TouchableOpacity onPress={()=>{sendTestNotification()}}>
+                                        <Text style={styles.button}>Send Test Notification</Text>
+                                    </TouchableOpacity> 
+                                    <Text style={styles.subtext}>Press "Send Test Notification" to also refresh scheduled notifications below</Text>
                                     <Text style={styles.subtext}></Text>
                                     <Text style={styles.subtext}>Scheduled Notifications: </Text> 
                                     {notifs != null && notifs.length > 0 ? 
@@ -152,8 +152,8 @@ export default function Settings(){
                         </View>
                         <View style={styles.sectionContainer}>
                             <Text style={styles.title}>Developer</Text>
-                            <SettingToggle setting="devmode" title={"Enable Dev Mode"} />
-                            <Text style={styles.description}>Reveals additional debugging data throughout the app</Text>
+                            <SettingToggle setting="devmode" title={"Enable Developer Mode"} />
+                            <Text style={styles.description}>Reveals additional debugging data in the app</Text>
                         </View>  
                     </View>
                     
