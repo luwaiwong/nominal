@@ -51,10 +51,10 @@ export default function ForYou(props) {
         ref={pagerRef}
         onPageScroll={onPageScroll}
         >
-        {foryou.map((item: any) => {
+        {foryou.map((item: any, index) => {
             if (item.type == "launch"){
               return (
-                <ForYouLaunch key={item.id} data={item} user={userData} nav={props.data.nav}/>
+                <ForYouLaunch first={index == 0} key={item.id} data={item} user={userData} nav={props.data.nav}/>
               );
             } else {
               return (<ForYouEvent key={item.id} data={item} user={userData}  nav={props.data.nav}/>);

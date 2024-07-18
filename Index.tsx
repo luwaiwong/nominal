@@ -53,27 +53,43 @@ export default function Index(props) {
   async function fetchData(userContext) {
     console.log("Fetching Data");
     await userContext.getData().then((data)=> {
+      console.log("Returning Data")
       if (data == null){
         console.log("Data is null")
-        return;
+        return true;
       }
 
       if (JSON.stringify(data) == JSON.stringify(launchData)){
         console.log("Data is the same, don't update")
-        return;
+        return true;
       }
 
       setLaunchData(data);
     }).catch((error)=>{
       console.log("Error when getting data (Index Page)", error)
-      // fetchData(userContext)
+      return false;
     })
   }
 
   // Reload function called with pull down reload gesture
   async function reloadData(){
     console.log("Refreshing Page")
-    await fetchData(userContext).catch((error)=>{console.log("Error Reloading Page", error)})
+    await userContext.forceFetchData().then((data)=> {
+      console.log("Returning Data")
+      if (data == null){
+        return true;
+      }
+
+      if (JSON.stringify(data) == JSON.stringify(launchData)){
+        return true;
+      }
+
+      setLaunchData(data);
+      return true;
+    }).catch((error)=>{
+      console.log("Error when getting data (Index Page)", error)
+      return false;
+    })
   }
 
   // Checks if font is loaded, if the font is not loaded yet, just show a loading screen

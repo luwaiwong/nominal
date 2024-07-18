@@ -196,6 +196,38 @@ export class UserData {
     }
   }
 
+  async forceFetchData() {
+    // if last fetch < 10 minutes ago, return cache
+    // if (new Date().getTime() - this.lastcall < 1000 * 60 * 10) {
+    //   console.log("Last fetch < 10 minutes ago, returning cache");
+    //   return this.#getData();
+    // }
+    console.log("Forcing Data Fetch");
+
+    // Try fetching the data and return the upcoming launches
+
+    let curTime = new Date().getTime();
+    await this.getUpcomingData();
+    await this.getPreviousData();
+    await this.getPreviousEvents();
+    await this.getEvents();
+    await this.getNews();
+
+    console.log("Data Fetched");
+    // How long did it take to fetch data?
+    let fetchTime = new Date().getTime() - curTime;
+    console.log("Data Fetch Time: " + fetchTime / 1000 + "ms");
+
+    // Record the last call time
+    this.lastcall = new Date().getTime();
+
+    // Calls the storedata function after returning the data
+    setTimeout.bind(this, this.storeData(), 0);
+    setTimeout.bind(this, this.scheduleNotifications(), 0);
+
+    this.gettingdata = false;
+    return this.#getData();
+  }
   // Stores the data in local storage
   async storeData() {
     try {
@@ -411,6 +443,11 @@ export class UserData {
       let event = this.events.upcoming[i];
       let eventTime = new Date(event.date);
       let today = new Date();
+
+      if (event.date_precision == null) {
+        continue;
+      }
+
       let preciseMinute = event.date_precision.name == "Minute";
       let preciseHour = event.date_precision.name == "Hour";
       let preciseDay = event.date_precision.name == "Day";

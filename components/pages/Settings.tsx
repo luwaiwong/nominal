@@ -170,7 +170,7 @@ export default function Settings(){
                         </View>
                         <View style={styles.smallBuffer}></View>
                         <View style={styles.horizontalContainer}>
-                            <Text style={styles.subtext}>Version: 0.2.4</Text>  
+                            <Text style={styles.subtext}>Version: 0.2.5</Text>  
                         </View>
                         {curSettings.devmode &&
                         <View style={styles.horizontalContainer}>

@@ -30,8 +30,13 @@ export default function Dashboard(props) {
 
   let pinnedLaunches = props.data.launchData.pinned._j // I DON'T KNOW WHY _J IS REQUIRED
 
+  const [refreshing, setRefreshing] = useState(false)
   async function refreshData(){
-    props.data.reloadData()
+    setRefreshing(true)
+    await props.data.reloadData().then((data)=> {
+      console.log("Finishing Refresh")
+      setRefreshing(false)
+    })
   }
     
   function Content(){
@@ -44,7 +49,8 @@ export default function Dashboard(props) {
               <ScrollView 
                 // Refresh Control
                 refreshControl={
-                  <RefreshControl refreshing={false} onRefresh={()=>{refreshData()}} />
+                  <RefreshControl refreshing={refreshing} onRefresh={()=>{refreshData()}
+                  } colors={[COLORS.FOREGROUND]} progressBackgroundColor={COLORS.BACKGROUND_HIGHLIGHT}/>
                 }
               >
                 <View style={{height: 10}}/>
