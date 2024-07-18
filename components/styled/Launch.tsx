@@ -4,22 +4,39 @@ import { useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 
 import * as colors from "../styles";
-import UserData from "../data/UserData";
+import { COLORS } from "../styles";
 import { GestureDetector, Gesture} from "react-native-gesture-handler";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 export default function Launch(data) {
   let nav = data.nav;
-  let launchInfo = data.data;  
+  let launch = data.data;  
   let userData = data.user;
-  let [launchTime, setLaunchTime] = useState<any>(new Date(launchInfo.net));
-  let [pinned, setPinned] = useState<any>(userData.getPinned().includes(launchInfo.id));
-  const togglePinned = () => {
-    let pinnedStatus = userData.togglePinned(launchInfo.id)
-    setPinned(pinnedStatus);
+  let [launchTime, setLaunchTime] = useState<any>(new Date(launch.net));
+  // let [pinned, setPinned] = useState<any>(userData.getPinned().includes(launchInfo.id));
+  // const togglePinned = () => {
+  //   let pinnedStatus = userData.togglePinned(launchInfo.id)
+  //   setPinned(pinnedStatus);
 
-  };
+  // };
+
+    // let status = "Upcoming Launch";
+  let statusColor = 'rgba(0,0,0,0)';
+  // Set Status for Time
+  if (launchTime.getTime() < Date.now()) {
+      // status = "Launched";
+  }
+  // Check Status for Launch
+  if (launch.status.id === 4) {
+      // status = "Failed Launch";
+      statusColor = COLORS.RED;
+  }   else if (launch.status.id === 7) {
+      // status = "Partial Failure";
+      statusColor = COLORS.YELLOW;
+  }  
+  
+  const isPrecise = launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second";
 
   // ANIMATIONS
   const scale = useRef(new Animated.Value(1)).current;
@@ -42,7 +59,7 @@ export default function Launch(data) {
   };
 
   const toggle = () => {
-    togglePinned()
+    // togglePinned()
     Animated.sequence([
     Animated.timing(scale, {
       toValue: 0.8,
@@ -68,55 +85,46 @@ export default function Launch(data) {
   tap.numberOfTaps(2);
   
   // Status name
-  let status = launchInfo.status.name;
-  if (status === "To Be Confirmed"){
-    status = "TBC";
-  }
-  if (status === "To Be Determined"){
-    status = "TBD";
-  }
-  else if (status === "Go for Launch"){
-    status = "Go for Launch";
-  }
-  else if (status === "Launch Successful"){
-    status = "Launched";
-  }
+  let status = launch.status.name;
 
-  let tminus = calculateTminus(launchInfo.net, status);
-  if (status === "TBC" || status === "TBD"){
-    tminus = "T "+tminus;
-  }
-  else {
-    tminus = "T "+tminus;
-  }
-  
+  let tminus = calculateTminus(launch.net, status);
+  tminus = "T "+tminus;
   // HTML
   return (
-    <Pressable onPress={()=> nav.navigate("Launch", {data: launchInfo})}>
+    <Pressable onPress={()=> nav.navigate("Launch", {data: launch})}>
       <Animated.View style={[styles.background, {transform:[{scale}]}]}>
         {/* Header, Holds the title and t -  countdown */}
         {/* Body, Holds the launch info on left and image on right */}
         <View style={styles.bodySection}>
           <View style={styles.infoSection}>
+            <View>
+              <Text style={styles.titleText} numberOfLines={1}>{launch.mission.name} </Text>
+          
+              {
+                isPrecise ? <Text style={styles.smallText}>{tminus}</Text> : <Text style={styles.smallText}>{status}</Text>
+              }
 
-            <Text style={styles.titleText} numberOfLines={1}>{launchInfo.mission.name} </Text>
-        
-            <View style={styles.horizontalInfoContainer}>
-                {/* <Text style={styles.smallText}>{status}</Text> */}
-                <Text style={styles.smallText}>{tminus}</Text>
             </View>
             <View style={styles.smallSpacer}></View>
-            <Text style={styles.smallText} numberOfLines={1}>{launchInfo.launch_provider.name}</Text>
-            <Text style={styles.smallText}>{launchInfo.rocket.configuration.full_name}</Text>
-            <Text style={styles.smallText} numberOfLines={2}>{launchInfo.launch_pad.location.name}</Text>
+            <View>
+              <Text style={styles.mediumText}>{launch.rocket.configuration.full_name}</Text>
+              <Text style={styles.smallText} numberOfLines={1}>{launch.launch_provider.name}</Text>
+
+            </View>
             <View style={styles.smallSpacer}></View>
-            <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
+            <Text style={styles.smallText} numberOfLines={2}>{launch.launch_pad.location.name}</Text>
+            {/* <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> */}
+            { isPrecise ? 
+              <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> 
+              : 
+              <Text style={styles.mediumText}>NET {MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> 
+              }
           </View>
           {/* Pinned Icon */}
           {/* {pinned ? 
             <MaterialCommunityIcons name="bell-ring"  style={styles.notificationIconActive}  /> : 
             <MaterialCommunityIcons name="bell-outline"  style={styles.notificationIcon}  />} */}
-          <Image style={styles.image} source={{uri: launchInfo.image}} /> 
+          <Image style={[styles.image, {borderColor: statusColor}]} source={{uri: launch.image}} /> 
         </View>
       </Animated.View>
 
@@ -129,6 +137,13 @@ function calculateTminus(launchTime: Date, status: string = "TBC"){
   let currentTime = new Date();
   let launchDate = new Date(launchTime);
   let timeDifference = launchDate.getTime() - currentTime.getTime();
+  let isnegative = false;
+
+  if (timeDifference < 0){
+    timeDifference = currentTime.getTime() - launchDate.getTime();
+    isnegative = true;
+  }
+
   let days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
   let hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   let minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
@@ -138,27 +153,21 @@ function calculateTminus(launchTime: Date, status: string = "TBC"){
   if (status === "TBC" || status === "TBD"){
     prefix = "~ ";
   }
+  if (isnegative){
+    prefix = "+ ";
+  }
 
-  if (days < 0){
-    return "+ "+ (-days) + "d, "  + (-hours) + "h ";;
-  }
-  if (hours < 0){
-    return "+ "+ (-hours) + "h, "  + (-minutes) + "m ";;
-  }
-  if (minutes < 0){
-    return "+ "+ minutes + "m ";
-  }
   if (days <= 0 && hours <= 0){
-    return prefix+ minutes + "m ";
+    return prefix+ minutes + " minutes ";
   }
   if (days <= 0){
-    return prefix+hours + "h, " + minutes + "m ";
+    return prefix+hours + " hours, " + minutes + " min ";
   }
   if (days == 1){
-    return prefix+days + "d, " + hours + "h ";
+    return prefix+days + " day, " + hours + " hours ";
   }
   
-  return prefix+days + "d, " + hours + "h ";
+  return prefix+days + " days, " + hours + " hours ";
 }
 
 const styles = StyleSheet.create({
@@ -197,6 +206,7 @@ image: {
   width: 165,
   height: 165,
   borderRadius: 10,
+  borderWidth: 2,
 },
 text: {
     flex: 1,
@@ -208,7 +218,7 @@ text: {
 // Header Section Stuff
 titleText: {
     // flex: 1,
-    fontSize: 20,
+    fontSize: 21,
     color: colors.FOREGROUND,
     alignItems: 'center',
     justifyContent: 'center',
@@ -233,12 +243,12 @@ smallerText:{
 
 },
 smallText: {
-  fontSize: 16,
+  fontSize: 14,
   color: colors.FOREGROUND,
     fontFamily: colors.FONT,
 },
 mediumText:{
-  fontSize: 17,
+  fontSize: 16,
   color: colors.FOREGROUND,
 
     fontFamily: colors.FONT,

@@ -12,6 +12,7 @@ export default function Launch(props){
     const upcomingLaunches = props.data.upcoming;
     const previousLaunches = props.data.previous;
 
+    //#region Animation & Input for Top Bar
     let upcoming = Gesture.Tap();
     let previous = Gesture.Tap();
 
@@ -62,6 +63,8 @@ export default function Launch(props){
       
     }
 
+    //#endregion
+
     return (
         <View>
           <View style={styles.topPadding}></View>
@@ -74,28 +77,19 @@ export default function Launch(props){
               <Text style={styles.topSelectionText}>Previous</Text> 
             </GestureDetector>
           </View>
-
           {/* Animated Bar */}
           <Animated.View style={[styles.topSelectionBar, {marginLeft:animatedBarMargin}]}></Animated.View>
+
           {/* Content Section */}
           <Animated.View style={[styles.contentContainer, {marginLeft:animatedPageMargin}]}>
             {/* Upcoming Section */}
             <View style={[styles.contentSection]}>
-            <FlatList
-                data={upcomingLaunches}
-                keyExtractor={(item, index) => index.toString()}
-                ListFooterComponent={<View style={styles.bottomPadding}></View>}
-                renderItem={({ item }) => <LaunchInfo data={item} user={userData} nav={nav}> </LaunchInfo>}>
-            </FlatList>
-              {/* <ScrollView >  x
-              {upcomingLaunches.length == 0  && <Loading/>}  
-                {upcomingLaunches.map((launch: any) => {
-                  return (
-                    <LaunchInfo key={launch.id} data={launch} user={userData}/>
-                  );
-              })}
-                <View style={styles.bottomPadding}></View>
-              </ScrollView> */}
+              <FlatList
+                  data={upcomingLaunches}
+                  keyExtractor={(item, index) => index.toString()}
+                  ListFooterComponent={<View style={styles.bottomPadding}></View>}
+                  renderItem={({ item }) => <LaunchInfo data={item} user={userData} nav={nav}> </LaunchInfo>}>
+              </FlatList>
             </View>
             {/* Previous Section */}
             <View style={[styles.contentSection]}>
@@ -105,18 +99,8 @@ export default function Launch(props){
                   ListFooterComponent={<View style={styles.bottomPadding}></View>}
                   renderItem={({ item }) => <LaunchInfo data={item} user={userData} nav={nav}></LaunchInfo>}>
               </FlatList>
-              {/* <ScrollView>  
-                {previousLaunches.length == 0 && <Loading/>}
-                  {previousLaunches.map((launch: any) => {
-                    return (
-                      <LaunchInfo key={launch.id} data={launch} user={userData}/>
-                    );
-                })}
-                <View style={styles.bottomPadding}></View>
-              </ScrollView> */}
             </View> 
           </Animated.View>
-
         </View>
       );
 }
@@ -153,7 +137,7 @@ const styles = StyleSheet.create({
     
     },
     bottomPadding:{
-      height: BOTTOM_BAR_HEIGHT+10,
+      height: BOTTOM_BAR_HEIGHT+20,
       width: "100%",
     },
 

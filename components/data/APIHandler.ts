@@ -53,6 +53,16 @@ export async function getEvents(){
 
 }
 
+export async function getPreviousEvents(){
+    return await fetch(LAUNCH_API_URL+"event/previous")
+    .then((response) => {
+        return response.json();
+    })
+    .then((data) => {
+        return data;
+    })
+
+}
 
 export async function getRocketFamilies(){
     return await fetch(LAUNCH_API_URL+"launcher/")
@@ -64,7 +74,8 @@ export async function getRocketFamilies(){
     })
 }
 
-function processLaunchData(data: any){
+export function processLaunchData(data: any){
+    try {
     let processedData = data.map((launch: any) => {
         // console.log(Object.keys(launch));
         return {
@@ -100,8 +111,12 @@ function processLaunchData(data: any){
             // Other information
             program: launch.program,
         }
-    });
+    })
     return processedData;
+    } catch (error){
+        console.log("Error processing launch data:", error);
+        return null
+    }
 }
 
 function convertTime(time: string){

@@ -2,7 +2,7 @@ import { useFonts } from "expo-font";
 import { SpaceGrotesk_500Medium } from "@expo-google-fonts/space-grotesk";
 
 import { Platform, StyleSheet, Text, View } from "react-native";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { StatusBar } from "expo-status-bar";
 import PagerView from "react-native-pager-view";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -20,55 +20,67 @@ import ForYou from "./components/pages/ForYou";
 import Dashboard from "./components/pages/Dashboard";
 import News from "./components/pages/News"
 
-import UserData from "./components/data/UserData";
 
 import * as colors from "./components/styles";
 import { useSharedValue } from "react-native-reanimated";
+import { UserContext } from "./components/data/UserContext";
+
+
+
 
 export default function Index(props) {
   // App Data Variables
-  let userData = useRef(null);
-  let [immersive, setImmersive] = useState(false);
+  let userContext = useContext(UserContext);
   let [launchData, setLaunchData]= useState(null)
-  let [pinnedLaunches, setPinnedLaunches] = useState([])
-  let currentPage = useRef(2);
+  let currentPage = useRef(0);
   let menuBarRef = useRef(null);
   
   const pagerRef = useRef(null);
-  const pageScrollState = useSharedValue(0);
+  const pageScrollState = useSharedValue(225);
 
   // Called only once when the app is mounted
   useEffect(() => {
-    console.log("App Mounted");
-    // Create a new user data object
-    // This way the user data isn't reset every time the app is re-rendered
-    let data = new UserData();
-    userData.current = data;
-    fetchData(userData.current);
-  }, []);
+    if (userContext == null){
+      return;
+    }
+
+    userContext.nav = props.navigation;
+    userContext.setPage = setPage;
+    fetchData(userContext);
+  }, [userContext]);
 
   // Function to fetch data
-  async function fetchData(userData) {
+  async function fetchData(userContext) {
     console.log("Fetching Data");
-    await userData.getData().then((data)=> {
+    await userContext.getData().then((data)=> {
+      if (data == null){
+        console.log("Data is null")
+        return;
+      }
+
+      if (JSON.stringify(data) == JSON.stringify(launchData)){
+        console.log("Data is the same, don't update")
+        return;
+      }
+
       setLaunchData(data);
-      setPinnedLaunches(data.pinned)
     }).catch((error)=>{
-      console.log("Error Fetching Data", error)
+      console.log("Error when getting data (Index Page)", error)
+      // fetchData(userContext)
     })
   }
 
   // Reload function called with pull down reload gesture
   async function reloadData(){
     console.log("Refreshing Page")
-    await fetchData(userData.current).catch((error)=>{console.log("Error Reloading Page", error)})
+    await fetchData(userContext).catch((error)=>{console.log("Error Reloading Page", error)})
   }
 
   // Checks if font is loaded, if the font is not loaded yet, just show a loading screen
   const [fontsLoaded] = useFonts({
     SpaceGrotesk_500Medium,
   });
-  if (!fontsLoaded || userData == null) {
+  if (!fontsLoaded || userContext == null) {
     return <Loading />;
   }
 
@@ -78,9 +90,7 @@ export default function Index(props) {
   function setPage(page){
     if (pagerRef.current != null){
       pagerRef.current.setPage(page);
-
     }
-
   }
 
   // Called when the page is scrolling
@@ -96,7 +106,7 @@ export default function Index(props) {
     // Handle page scroll state changes (e.g., idle, settling, dragging)
     // Example: Log the state change
     // console.log('Page scroll state:', state["nativeEvent"]);
-    pageScrollState.value = (state["nativeEvent"]["offset"]+state["nativeEvent"]["position"]) * -150 + 300;
+    pageScrollState.value = (state["nativeEvent"]["offset"]+state["nativeEvent"]["position"]) * -150 + 225;
     // Can be 
   }
   // Called when the page is changed
@@ -110,6 +120,7 @@ export default function Index(props) {
     if (menuBarRef.current != null){
       menuBarRef.current.updatePage();
     }
+
   };
 
   // Returns current page
@@ -121,13 +132,10 @@ export default function Index(props) {
       // Data object fed into all pages
       // Includes current state of app
       let data = {
-        userData: userData.current,
-        immersive: immersive,
         launchData: launchData, 
         upcoming: launchData.upcoming,
         previous: launchData.previous,
         pinned: launchData.pinned,
-        setPinned: setPinnedLaunches,
         reloadData: reloadData,
         nav: props.navigation,
         setPage: setPage,
@@ -142,11 +150,15 @@ export default function Index(props) {
           onPageScroll={onPageScroll}
           onPageSelected={onPageSelected}
         >
-          <Settings/>
+          {/* <Settings/>
           <Launches data={data} />
           <ForYou data={data}/>
           <Dashboard data={data} />
-          <News data={data}/>
+          <News data={data}/> */}
+          <ForYou data={data}/>
+          <Dashboard data={data}/>
+          <Launches data={data}/>
+          <Settings />
         </PagerView>
       )
     }
@@ -157,7 +169,7 @@ export default function Index(props) {
     <GestureHandlerRootView>
       <View style={styles.container}>
         <StatusBar style="light" />
-        <TitleBar immersive={immersive} setImmersive={setImmersive} scrollState={pageScrollState}/>
+        <TitleBar scrollState={pageScrollState}/>
         <CurrentPage/>
         <MenuBar page={currentPage} setPage={setPage} ref={menuBarRef} />
       </View>

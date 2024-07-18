@@ -4,9 +4,9 @@ import { StyleSheet, View, Image, Text, Animated, Linking} from "react-native";
 
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
-import { COLORS, FONT } from "../styles";
+import { COLORS, FONT, TIME_OPTIONS } from "../styles";
 
-export default function Event(props:{eventData:any}){
+export default function Event(props){
     const eventData = props.eventData;
     const [aspectRatio, setAspectRatio] = useState(1);
 
@@ -38,7 +38,7 @@ export default function Event(props:{eventData:any}){
     // Create an animation that scales the view back to its original size when released
     const animateOut = (open: boolean) => {
         if (open){
-        Linking.openURL(url);
+            props.nav.navigate("Event", {data: eventData});
         }
         Animated.timing(scale, {
         toValue: 1,
@@ -66,7 +66,20 @@ export default function Event(props:{eventData:any}){
                 </View>
                 <View style={styles.bottom}>
                     <Text numberOfLines={4} style={styles.title}>{eventData.name}</Text>
-                    <Text style={styles.source}>{eventData.location}</Text>
+                    <Text style={styles.source}>{eventData.type.name}</Text>
+                    <View style={styles.horizontalContainer}>
+                        <Text style={styles.source} numberOfLines={1}>{eventData.location}</Text>
+                        {/* Show time and date */}
+                        <Text style={styles.source}>{new Date(eventData.date).toLocaleString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    weekday: 'short',
+  })}</Text>
+
+                    </View>
                 </View>
             </Animated.View>
 
@@ -105,7 +118,13 @@ const styles = StyleSheet.create({
         width: "100%",
 
     },
-    
+    horizontalContainer:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+    },
     image:{
         width: "100%",
         resizeMode: "contain",

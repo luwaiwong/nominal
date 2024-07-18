@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useEffect, useState } from 'react';
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
@@ -6,11 +6,15 @@ import PagerView from 'react-native-pager-view';
 
 import {COLORS, FONT, FOREGROUND}from "../styles";
 import Launch from './LaunchSimple';
+import { UserContext } from '../data/UserContext';
 
-export default function LaunchCarousel(props:{content, userData, type, nav}){
+const timerTickLength = 12
+export default function LaunchCarousel(props:{content, type, nav}){
+    let userContext = useContext(UserContext);
     let content = props.content;
     let length = content.length;
     let [currentPage, setCurrentPage] = useState(0);
+    let pagerRef = React.useRef(null);
         
     // Called when the page is changed
     const onPageSelected = (event) => {
@@ -19,10 +23,28 @@ export default function LaunchCarousel(props:{content, userData, type, nav}){
 
         setCurrentPage(position);
     };
+
+    // Ticking function
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setPage((currentPage + 1) % length);
+        }, timerTickLength * 1000);
+        return () => clearInterval(interval);
+    }, [currentPage]);
+
+    function setPage(page){
+        // console.log(page)
+        if (pagerRef.current != null){
+            pagerRef.current.setPage(page); 
+        }
+
+    }
+
+  
     return (
         <>
             <View style={[styles.contentSection , {marginTop: 0}]}>
-            <Pressable onPress={() => props.nav.navigate("Launches", {data:props.userData.getPrevious(),user: props.userData, title:"Recent Launches"})}>
+            <Pressable onPress={() => props.nav.navigate("Launches", {data:userContext.launchdata.previous,title:"Recent Launches"})}>
                 <View style={styles.contentHeaderSection} >
                     <Text style={styles.contentHeaderText} >Recent </Text>
 
@@ -38,13 +60,15 @@ export default function LaunchCarousel(props:{content, userData, type, nav}){
             </Pressable>
             <PagerView 
                 
+                ref={pagerRef} 
                 style={{height: 145}} 
                 initialPage={0}
                 onPageSelected={onPageSelected}>
                 
+                
                 {props.type == "launch" && content.map((launch: any) => {
                 return (
-                    <Launch key={launch.id} data={launch} user={props.userData} nav={props.nav}/>
+                    <Launch key={launch.id} data={launch} nav={props.nav}/>
 
                 );
             })}
@@ -146,6 +170,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.FOREGROUND,
 
         margin: 5,
+        marginHorizontal: 10,
 
     },
     scrollIndicatorDisabled:{
@@ -159,5 +184,6 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
 
         margin: 5,
+        marginHorizontal: 10,
     }
 });

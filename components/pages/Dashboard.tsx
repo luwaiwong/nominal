@@ -30,125 +30,125 @@ export default function Dashboard(props) {
 
   let pinnedLaunches = props.data.launchData.pinned._j // I DON'T KNOW WHY _J IS REQUIRED
 
-    async function refreshData(){
-      props.data.reloadData()
-    }
+  async function refreshData(){
+    props.data.reloadData()
+  }
     
-    function Content(){
-      return (
-            <View style={styles.container}>
-                {/* Padding for title bar */}
-                <View style={styles.topBackground} />
-                <View style={styles.topPadding}/>
-                {/* Scolling Area */}
-                <ScrollView 
-                  // Refresh Control
-                  refreshControl={
-                    <RefreshControl refreshing={false} onRefresh={()=>{refreshData()}} />
-                  }
-                >
-                  <View style={{height: 10}}/>
-                  {/* Highlight Launch */}
-                  {highlights[0] != undefined && <HighlightLaunch data={highlights[0]} nav={nav}  />}
+  function Content(){
+    return (
+          <View style={styles.container}>
+              {/* Padding for title bar */}
+              <View style={styles.topBackground} />
+              <View style={styles.topPadding}/>
+              {/* Scolling Area */}
+              <ScrollView 
+                // Refresh Control
+                refreshControl={
+                  <RefreshControl refreshing={false} onRefresh={()=>{refreshData()}} />
+                }
+              >
+                <View style={{height: 10}}/>
+                {/* Highlight Launch */}
+                {highlights[0] != undefined && <HighlightLaunch data={highlights[0]} nav={nav}  />}
 
-                  {/* <View style={{marginTop: -10}}></View> */}
+                {/* <View style={{marginTop: -10}}></View> */}
 
-                  <LaunchCarousel content={recentlyLaunched} userData={userData} type="launch" nav={nav} />
+                <LaunchCarousel content={recentlyLaunched} type="launch" nav={nav} />
 
-                  {/* Upcoming Launches */}
-                  <View style={[styles.contentSection]}>
-                    <Pressable onPress={()=>{nav.navigate('Launches', {data: launchData.upcoming,user: userData, title:"Upcoming" })}}>
-                      <View style={styles.contentHeaderSection} >
-                          <Text style={styles.contentHeaderText} >Upcoming </Text>
-                          <View style={styles.seeMoreSection}>
-                            <Text style={styles.contentSeeMore} >See All </Text>
-                            <MaterialIcons 
-                            name="arrow-forward-ios" 
-                            style={styles.contentHeaderIcon} 
-                            />
-                          </View>
-                      </View>
-                    </Pressable>
-                    
-                    {upcomingFiltered.map((launch: any) => {
-                    return (
-                        <LaunchInfo key={launch.id} data={launch} user={userData} nav={nav} />
-                    );
-                    })}
-                  </View>
-
-
-                  <View style={[styles.buffer]}></View>
-
-                  {/* Show events here */}
-                  
-                  <Pressable onPress={()=>props.data.setPage(4)}>
-                    <View style={styles.newsHeaderSection} >
-                        <Text style={styles.sectionHeaderText} >News & Events </Text>
-              
+                {/* Upcoming Launches */}
+                <View style={[styles.contentSection]}>
+                  <Pressable onPress={()=>{nav.navigate('Launches', {data: launchData.upcoming,user: userData, title:"Upcoming" })}}>
+                    <View style={styles.contentHeaderSection} >
+                        <Text style={styles.contentHeaderText} >Upcoming </Text>
+                        <View style={styles.seeMoreSection}>
+                          <Text style={styles.contentSeeMore} >See All </Text>
+                          <MaterialIcons 
+                          name="arrow-forward-ios" 
+                          style={styles.contentHeaderIcon} 
+                          />
+                        </View>
                     </View>
                   </Pressable>
-                  {/* Events */}
-                  <View style={[styles.contentSection]}>
-                    <Pressable onPress={()=>nav.navigate("All Events", {data: launchData.events, title:"Events" })}>
-                      <View style={styles.contentHeaderSection} >
-                          <Text style={styles.contentHeaderText} >Events </Text>
-                          
-                          <View style={styles.seeMoreSection}>
-                            <Text style={styles.contentSeeMore} >See All </Text>
-                            <MaterialIcons 
-                            name="arrow-forward-ios" 
-                            style={styles.contentHeaderIcon} 
-                            />
+                  
+                  {upcomingFiltered.map((launch: any) => {
+                  return (
+                      <LaunchInfo key={launch.id} data={launch} user={userData} nav={nav} />
+                  );
+                  })}
+                </View>
 
-                          </View>
-                      </View>
-                    </Pressable>
-                    {events.map((launch: any) => {
-                    return (
-                        <Event key={launch.id} eventData={launch}  />
-                    );
-                    })} 
+
+                <View style={[styles.buffer]}></View>
+
+                {/* Show events here */}
+                
+                <Pressable onPress={()=>props.data.setPage(4)}>
+                  <View style={styles.newsHeaderSection} >
+                      <Text style={styles.sectionHeaderText} >News & Events </Text>
+            
                   </View>
-                  
-                  <View style={[styles.contentSection]}>
-                    <Pressable onPress={()=>nav.navigate("All News", {data: launchData.news, title:"Articles" })}>
-                      <View style={styles.contentHeaderSection} >
-                          <Text style={styles.contentHeaderText} >Articles </Text>
-                          
-                          <View style={styles.seeMoreSection}>
-                            <Text style={styles.contentSeeMore} >See All </Text>
-                            <MaterialIcons 
-                            name="arrow-forward-ios" 
-                            style={styles.contentHeaderIcon} 
-                            />
+                </Pressable>
+                {/* Events */}
+                <View style={[styles.contentSection]}>
+                  <Pressable onPress={()=>nav.navigate("All Events", {data: launchData.events, title:"Events" })}>
+                    <View style={styles.contentHeaderSection} >
+                        <Text style={styles.contentHeaderText} >Events </Text>
+                        
+                        <View style={styles.seeMoreSection}>
+                          <Text style={styles.contentSeeMore} >See All </Text>
+                          <MaterialIcons 
+                          name="arrow-forward-ios" 
+                          style={styles.contentHeaderIcon} 
+                          />
 
-                          </View>
-                      </View>
-                    </Pressable>
-                  
-                        {news.map((launch: any) => {
-                        // console.log(launch)
-                        return (
+                        </View>
+                    </View>
+                  </Pressable>
+                  {events.map((launch: any) => {
+                  return (
+                      <Event key={launch.id} eventData={launch} nav={nav} />
+                  );
+                  })} 
+                </View>
+                
+                <View style={[styles.contentSection]}>
+                  <Pressable onPress={()=>nav.navigate("All News", {data: launchData.news, title:"Articles" })}>
+                    <View style={styles.contentHeaderSection} >
+                        <Text style={styles.contentHeaderText} >Articles </Text>
+                        
+                        <View style={styles.seeMoreSection}>
+                          <Text style={styles.contentSeeMore} >See All </Text>
+                          <MaterialIcons 
+                          name="arrow-forward-ios" 
+                          style={styles.contentHeaderIcon} 
+                          />
 
-                            <Article key={launch.id} articleData={launch}  />
-                        );
-                    })}
-                  </View>
-                  
-                  
-                  <View style={[styles.buffer]}></View>
-                  <View style={styles.bottomPadding}></View>
-                </ScrollView>
-            </View>
-      );
-        
-    }
+                        </View>
+                    </View>
+                  </Pressable>
+                
+                      {news.map((launch: any) => {
+                      // console.log(launch)
+                      return (
 
-    if (launchData === undefined){
-      return <Loading/>
-    }
-    return <Content/>;
+                          <Article key={launch.id} articleData={launch}  />
+                      );
+                  })}
+                </View>
+                
+                
+                <View style={[styles.buffer]}></View>
+                <View style={styles.bottomPadding}></View>
+              </ScrollView>
+          </View>
+    );
+      
+  }
+
+  if (launchData === undefined){
+    return <Loading/>
+  }
+  return <Content/>;
     
 }
 
