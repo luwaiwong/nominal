@@ -44,11 +44,28 @@ export default function Index(props) {
       return;
     }
 
+
+    // Load User Context
     userContext.nav = props.navigation;
     userContext.setPage = setPage;
+
+    // Check first load
+    checkFirstLoad();
+
     fetchData(userContext);
   }, [userContext]);
 
+  async function checkFirstLoad(){
+    if (userContext == null){
+      return;
+    }
+
+    let firstLoad = await userContext.checkFirstLoad();
+    console.log("First Load", firstLoad)
+    if (firstLoad){
+      userContext.nav.navigate("First Load");
+    }
+  }
   // Function to fetch data
   async function fetchData(userContext) {
     console.log("Fetching Data");

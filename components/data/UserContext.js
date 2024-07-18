@@ -5,7 +5,9 @@ import * as Notifications from "expo-notifications";
 
 import Tags from "./Tags";
 
-const twentyfivemin = 1000 * 60 * 25;
+// Set cache call time
+// If last call less than 45 minutes ago, use cache
+const cachecalltime = 1000 * 60 * 45;
 const twomin = 1000 * 60 * 2;
 
 export const UserContext = React.createContext(null);
@@ -30,17 +32,21 @@ export class UserData {
   constructor() {
     // INFO
     this.name = "User Data";
+    this.APIHandler = APIHandler;
+    this.systemTags = Tags;
+
+    // State
+    this.lastcall = 0;
+    this.cache = undefined;
+    this.notifs = [];
+    this.gettingdata = false;
+
+    // Current User Data
     this.launchdata = undefined;
     this.news = undefined;
     this.events = undefined;
-    this.APIHandler = APIHandler;
-    this.systemTags = Tags;
     this.navigator = undefined;
-    this.lastcall = 0;
-    this.cache = undefined;
     this.nav = undefined;
-    this.gettingdata = false;
-    this.notifs = [];
 
     this.settings = {
       // Notifications
@@ -85,12 +91,30 @@ export class UserData {
   }
 
   //#region PUBLIC DATA FUNCTIONS
+  async checkFirstLoad() {
+    // return true;
+    return await AsyncStorage.getItem("hasused")
+      .then((data) => {
+        if (data === null) {
+          AsyncStorage.setItem("hasused", "true");
+          console.log("First Load");
+          return true;
+        }
+        return false;
+      })
+      .catch((error) => {
+        console.log("Error checking first load: " + error);
+        return false;
+      });
+  }
+
   async clearData() {
     try {
       await AsyncStorage.removeItem("lastcall");
       await AsyncStorage.removeItem("launches");
       await AsyncStorage.removeItem("events");
       await AsyncStorage.removeItem("news");
+      await AsyncStorage.removeItem("settings");
       console.log("Data Cleared");
     } catch (error) {
       console.log("Error clearing data: " + error);
@@ -139,7 +163,7 @@ export class UserData {
       // Check if data is outdated, if not then use cache
       if (
         hasData &&
-        new Date().getTime() - parseInt(lastcall) < twentyfivemin
+        new Date().getTime() - parseInt(lastcall) < cachecalltime
       ) {
         this.launchdata = JSON.parse(launches);
         this.events = JSON.parse(events);
@@ -198,10 +222,10 @@ export class UserData {
 
   async forceFetchData() {
     // if last fetch < 10 minutes ago, return cache
-    // if (new Date().getTime() - this.lastcall < 1000 * 60 * 10) {
-    //   console.log("Last fetch < 10 minutes ago, returning cache");
-    //   return this.#getData();
-    // }
+    if (new Date().getTime() - this.lastcall < 1000 * 60 * 10) {
+      console.log("Last fetch < 10 minutes ago, returning cache");
+      return this.#getData();
+    }
     console.log("Forcing Data Fetch");
 
     // Try fetching the data and return the upcoming launches

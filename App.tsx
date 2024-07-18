@@ -17,6 +17,7 @@ import {createUserContext, UserContext} from "./components/data/UserContext";
 
 import { COLORS } from "./components/styles";
 import { useEffect } from "react";
+import FirstLoad from "./components/pages/FirstLoad";
 
 
 const Stack = createStackNavigator();
@@ -126,14 +127,15 @@ export default function App(props) {
                 }}
               />),
               transitionSpec:{
-                open: {animation: 'timing', config: {duration: 200, delay: 0}},
-                close: {animation: 'timing', config: {duration: 200, delay: 0}},
+                open: {animation: 'timing', config: {duration: 0, delay: 100}},
+                close: {animation: 'timing', config: {duration: 200, delay: 100}},
               }
             }}
             >
             <Stack.Screen 
               name="Index" 
-              component={Index}></Stack.Screen>
+              component={Index}>
+            </Stack.Screen>
             <Stack.Screen 
               name = "Launches"
               component = {LaunchesPage}
@@ -153,6 +155,11 @@ export default function App(props) {
             <Stack.Screen 
               name = "All News"
               component = {NewsPage}
+            ></Stack.Screen>
+            <Stack.Screen
+              name = "First Load"
+              component = {FirstLoad}
+
               options={{transitionSpec: {open: {animation: 'timing', config: {duration: 0, delay: 0}}, close: {animation: 'timing', config: {duration: 0, delay: 0}},}}}
             ></Stack.Screen>
           </Stack.Navigator>
