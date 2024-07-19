@@ -23,7 +23,7 @@ export default function ForYou(props) {
       // Your code here...
       // console.log('This line is executed every second!');
       timer.current += 1;
-      if (timer.current >= 60){
+      if (timer.current >= 75){
         timer.current = 0;
         setPage(0);
       }

@@ -48,7 +48,7 @@ export default function Index(props) {
           fadeAnim,
           {
             toValue: 1,
-            duration: 1000,
+            duration: 750,
             useNativeDriver: true,
             delay: 0,
           }
@@ -57,7 +57,7 @@ export default function Index(props) {
           fadeAnim,
           {
             toValue: 0,
-            duration: 1000,
+            duration: 750,
             useNativeDriver: true,
             delay: 0,
           }
@@ -142,7 +142,7 @@ export default function Index(props) {
 
   // Reload function called with pull down reload gesture
   async function reloadData(){
-    fadeAnim.setValue(0)
+    
     setRefreshing(true)
 
     console.log("Refreshing Page")
