@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, Animated, Pressable } from "react-native";
+import { StyleSheet, View, Text, Image, Animated, Pressable, TouchableOpacity } from "react-native";
 import React, { useRef } from "react";
 import { useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
@@ -77,10 +77,10 @@ export default function Launch(data) {
   // Gestures
   const tap = Gesture.Tap();
 
-  // tap.onTouchesDown(()=>animateIn());
-  // tap.onTouchesUp(()=>animateOut());
-  // tap.onTouchesMove(()=>animateIn());
-  // tap.onTouchesCancelled(()=>animateOut());
+  tap.onTouchesDown(()=>animateIn());
+  tap.onTouchesUp(()=>animateOut());
+  tap.onTouchesMove(()=>animateIn());
+  tap.onTouchesCancelled(()=>animateOut());
   // tap.onEnd(()=>toggle()); // UNCOMMENT TO RESTORE PINNED
   tap.numberOfTaps(2);
   
@@ -91,7 +91,7 @@ export default function Launch(data) {
   tminus = "T "+tminus;
   // HTML
   return (
-    <Pressable onPress={()=> nav.navigate("Launch", {data: launch})}>
+    <TouchableOpacity onPress={()=> nav.navigate("Launch", {data: launch})}>
       <Animated.View style={[styles.background, {transform:[{scale}]}]}>
         {/* Header, Holds the title and t -  countdown */}
         {/* Body, Holds the launch info on left and image on right */}
@@ -132,7 +132,7 @@ export default function Launch(data) {
         </View>
       </Animated.View>
 
-    </Pressable>
+    </TouchableOpacity>
   );
 
 }

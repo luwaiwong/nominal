@@ -15,7 +15,6 @@ export default function ForYou(props) {
   let foryou = launchData.foryou;
   let news = launchData.news;
 
-  console.log(curPage.current);
   let timer = useRef(0);  
   // timer to check if the user has not been in the For You page for a while
   // Constantly ticking 1 second timer

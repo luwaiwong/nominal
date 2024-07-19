@@ -1,7 +1,7 @@
 import { useFonts } from "expo-font";
 import { SpaceGrotesk_500Medium } from "@expo-google-fonts/space-grotesk";
 
-import { AppState, Platform, StyleSheet, Text, View } from "react-native";
+import { AppState, Dimensions, Platform, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View, Animated } from "react-native";
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { StatusBar } from "expo-status-bar";
 import PagerView from "react-native-pager-view";
@@ -33,11 +33,38 @@ export default function Index(props) {
   let userContext = useContext(UserContext);
   let appState = useRef(AppState.currentState);
   let [launchData, setLaunchData]= useState(null)
+  let [refreshing , setRefreshing] = useState(false);
   let currentPage = useRef(0);
   let menuBarRef = useRef(null);
   
   const pagerRef = useRef(null);
   const pageScrollState = useSharedValue(225);
+
+  const fadeAnim = useRef(new Animated.Value(0)).current
+  useEffect(()=> {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(
+          fadeAnim,
+          {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+            delay: 0,
+          }
+        ),
+        Animated.timing(
+          fadeAnim,
+          {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: true,
+            delay: 0,
+          }
+        )
+      ])
+    ).start();
+  }, [fadeAnim])
 
   // Subscribe and check app state
   useEffect(()=>{
@@ -61,6 +88,7 @@ export default function Index(props) {
       subscription.remove();
     }
   }, [])
+
   // Called whenever userContext is updated
   useEffect(() => {
     if (userContext == null){
@@ -114,9 +142,14 @@ export default function Index(props) {
 
   // Reload function called with pull down reload gesture
   async function reloadData(){
+    fadeAnim.setValue(0)
+    setRefreshing(true)
+
     console.log("Refreshing Page")
     await userContext.forceFetchData().then((data)=> {
       console.log("Returning Data")
+      setRefreshing(false)
+      
       if (data == null){
         return true;
       }
@@ -129,6 +162,7 @@ export default function Index(props) {
       return true;
     }).catch((error)=>{
       console.log("Error when getting data (Index Page)", error)
+      // setRefreshing(false)
       return false;
     })
   }
@@ -229,6 +263,9 @@ export default function Index(props) {
         <TitleBar scrollState={pageScrollState}/>
         <CurrentPage/>
         <MenuBar page={currentPage} setPage={setPage} ref={menuBarRef} />
+        {refreshing && 
+            <Animated.Text style={[styles.reloadingDataText, {opacity: fadeAnim}]}>Refreshing Data...</Animated.Text>
+        }
       </View>
     </GestureHandlerRootView>
   );
@@ -244,5 +281,32 @@ const styles = StyleSheet.create({
     flex: 1,
     zIndex: 100,
   },
+  reloadingDataIndicator:{
+    position: "absolute",
+    bottom: colors.BOTTOM_BAR_HEIGHT+50,
+    // width: "100%",
+    height: 5,
+    backgroundColor: colors.FOREGROUND,
+    zIndex: 1000,
+  },
+  reloadingDataText:{
+    position: "absolute",
+    bottom: colors.BOTTOM_BAR_HEIGHT+ 20,
+
+    backgroundColor: colors.BACKGROUND_HIGHLIGHT,
+    width: 200,
+    // height: 50,
+    fontSize: 20,
+
+    borderRadius: 15,
+    paddingVertical: 5,
+
+    marginLeft: Dimensions.get("window").width/2-100,
+    // width: "100%",
+    textAlign: "center",
+    color: colors.FOREGROUND,
+    fontFamily: colors.FONT,
+    zIndex: 10000,
+  }
 
 });

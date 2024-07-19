@@ -10,6 +10,9 @@ export default function Event(props){
     const eventData = props.eventData;
     const [aspectRatio, setAspectRatio] = useState(1);
 
+    const isPrecise = eventData.date_precision.name === "Hour" || eventData.date_precision.name === "Minute" || eventData.date_precision.name === "Day"|| eventData.date_precision.name === "Second";
+
+
     Image.getSize(eventData.feature_image, (width, height) => {setAspectRatio(width/height);})
 
     let url = eventData.url;
@@ -70,19 +73,25 @@ export default function Event(props){
                     <View style={styles.horizontalContainer}>
                         <Text style={styles.sourceLeft} numberOfLines={1}>{eventData.location}</Text>
                         {/* Show time and date */}
-                        <Text style={styles.sourceRight}>{new Date(eventData.date).toLocaleString([], {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                            weekday: 'short',
-                        })}</Text>
-
+                        {
+                            isPrecise?
+                            <Text style={styles.sourceRight}>{new Date(eventData.date).toLocaleString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                                weekday: 'short',
+                            })}</Text> :
+                            <Text style={styles.sourceRight}>NET {new Date(eventData.date).toLocaleString([], {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric',
+                            })}</Text>
+                        }
                     </View>
                 </View>
             </Animated.View>
-
         </GestureDetector>
     );
 }

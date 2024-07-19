@@ -2,7 +2,7 @@
   "expo": {
     "name": "Nominal",
     "slug": "nominal",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "orientation": "portrait",
     "icon": "./assets/icon-temp.png",
     "userInterfaceStyle": "light",
@@ -28,7 +28,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon-temp-adaptive.png",
-        "backgroundColor": "#1e1e1e"
+        "backgroundColor": "#000000"
       },
       "package": "com.luwaiwong.nominal"
     },

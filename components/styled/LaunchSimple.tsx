@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, Animated, Pressable } from "react-native";
+import { StyleSheet, View, Text, Image, Animated, Pressable, TouchableOpacity } from "react-native";
 import React, { useContext, useRef } from "react";
 import { useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
@@ -102,7 +102,7 @@ export default function LaunchSimple(data) {
   // HTML
   return (
       // <GestureDetector gesture={Gesture.Exclusive(doubletap, singletap)} >
-      <Pressable onPress={()=> userContext.nav.navigate("Launch", {data: launch})}>
+      <TouchableOpacity onPress={()=> userContext.nav.navigate("Launch", {data: launch})}>
           <Animated.View style={[styles.background, {transform:[{scale}]}]} collapsable={false}>
             {/* Header, Holds the title and t -  countdown */}
             {/* Body, Holds the launch info on left and image on right */}
@@ -140,7 +140,7 @@ export default function LaunchSimple(data) {
               <Image style={[styles.image,{borderColor: statusColor}]} source={{uri: launch.image}} /> 
             </View>
           </Animated.View>
-      </Pressable>
+      </TouchableOpacity>
 
 
   );
