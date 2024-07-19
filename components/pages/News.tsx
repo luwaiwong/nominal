@@ -49,6 +49,7 @@ export default function News(props){
                     </TouchableOpacity>
                     <View style={{height:10}}></View>
                     {news != undefined && news.map((item, index) => {return (<Article articleData={item} key={index}/>);})}
+                    {/* <Article articleData={news[4]}></Article> */}
                 </View>
                 {/* <Text style={styles.eventsTitle}>Events</Text>  */}
                     {upcomingEvents != undefined && upcomingEvents.length != 0 && 

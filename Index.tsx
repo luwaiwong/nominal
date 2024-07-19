@@ -69,8 +69,8 @@ export default function Index(props) {
   // Subscribe and check app state
   useEffect(()=>{
     const subscription = AppState.addEventListener("change", nextAppState => {
-      // console.log("App State", appState.current, nextAppState)
-      if (appState.current.match(/inactive|background/) && nextAppState === "active") {
+      console.log("App State", appState.current, nextAppState)
+      if (appState.current.match(/inactive|background/) && nextAppState === "active" && launchData != null) {
         console.log("App focused")
         try {
           reloadData()
@@ -118,6 +118,7 @@ export default function Index(props) {
       userContext.nav.navigate("First Load");
     }
   }
+
   // Function to fetch data
   async function fetchData(userContext) {
     console.log("Fetching Data");
@@ -162,7 +163,7 @@ export default function Index(props) {
       return true;
     }).catch((error)=>{
       console.log("Error when getting data (Index Page)", error)
-      // setRefreshing(false)
+      setRefreshing(false)
       return false;
     })
   }

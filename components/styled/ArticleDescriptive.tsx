@@ -6,6 +6,7 @@ import { COLORS, FONT } from "../styles";
 
 export default function ArticleDescriptive(props:{articleData:any}){
     const articleData = props.articleData;
+    let hasgif = articleData.image_url != null && articleData.image_url.search(".gif") != -1;
     
     const [aspectRatio, setAspectRatio] = useState(1);
 
@@ -81,7 +82,8 @@ export default function ArticleDescriptive(props:{articleData:any}){
                     <Text style={styles.time}>{articleDate}</Text>
                 </View>
                 <View style={styles.right}>
-                    <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: articleData.image_url}} />        
+                    {!hasgif &&  <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: articleData.image_url}} /> }
+                           
                     <Text style={styles.source}>{articleData.news_site}</Text>
 
                 </View>

@@ -187,7 +187,7 @@ export default function Settings(){
                         }
                         
                         <TouchableOpacity onPress={()=>{userContext.getData()}}>
-                            <Text style={styles.button}>Reload Data</Text>
+                            <Text style={styles.button}>Reload Internal Data</Text>
                         </TouchableOpacity> 
                         <TouchableOpacity onPress={()=>clearCache()}>
                             <Text style={styles.dangerButton}>Clear Data</Text>

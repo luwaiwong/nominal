@@ -1,12 +1,11 @@
 
 import { useState, useRef, useEffect } from "react";
 import { StyleSheet, View, Image, Text, Animated, Linking, TouchableOpacity, Alert} from "react-native";
-import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { COLORS, FONT } from "../styles";
 
 export default function Article(props:{articleData:any}){
     const articleData = props.articleData;
-    
+    let hasgif = articleData.image_url != null && articleData.image_url.search(".gif") != -1;
     const [aspectRatio, setAspectRatio] = useState(1);
 
     const today = new Date();
@@ -23,6 +22,7 @@ export default function Article(props:{articleData:any}){
         articleDate = "Yesterday";
     }
     
+    // console.log(articleData.image_url.search(".gif") != -1);
     // Get the aspect ratio of the image one time
     useEffect(() => {
         Image.getSize(articleData.image_url, (width, height) => {
@@ -35,13 +35,7 @@ export default function Article(props:{articleData:any}){
     }, []);
 
     async function openLink(url: string){
-        const supported = await Linking.canOpenURL(url);
-        if (supported){
-            await Linking.openURL(url);
-        }
-        else {
-            Alert.alert("Error", "Cannot open link");
-        }
+        Linking.openURL(url);
     }
 
     
@@ -55,7 +49,7 @@ export default function Article(props:{articleData:any}){
                     <Text style={styles.time}>{articleDate}</Text>
                 </View>
                 <View style={styles.right}>
-                    <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: articleData.image_url}} />        
+                    {!hasgif &&<Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: articleData.image_url}} />  }      
                     <Text style={styles.source} >{articleData.news_site}</Text>
 
                 </View>
@@ -100,7 +94,7 @@ const styles = StyleSheet.create({
     
     image:{
         width: "100%",
-        resizeMode: "cover",
+        // resizeMode: "cover",
         aspectRatio: 1,
         borderRadius: 10,
         // backgroundColor: COLORS.BACKGROUND,
