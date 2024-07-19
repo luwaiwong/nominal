@@ -45,7 +45,11 @@ export default function Index(props) {
       // console.log("App State", appState.current, nextAppState)
       if (appState.current.match(/inactive|background/) && nextAppState === "active") {
         console.log("App focused")
-        reloadData();
+        try {
+          reloadData()
+        } catch(e){
+          console.log("Error when reloading data", e)
+        }
       }
       else {
         // console.log('App state', nextAppState);

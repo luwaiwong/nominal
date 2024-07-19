@@ -26,7 +26,7 @@ export default function ForYou(props) {
       timer.current += 1;
       if (timer.current >= 60){
         timer.current = 0;
-        // setPage(0);
+        setPage(0);
       }
     }, 1000); // 1000 milliseconds = 1 second
 
@@ -49,7 +49,6 @@ export default function ForYou(props) {
     // Handle page selection
     const { position } = event.nativeEvent;
 
-    console.log('Page changed to:', position);
     curPage.current = position;
 
 
