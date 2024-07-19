@@ -5,6 +5,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 import { UserContext } from '../data/UserContext';
 
+const versioncode = "0.3.0";
+
 export default function Settings(){
     let userContext = React.useContext(UserContext);
     const [lastCallTime, setLastCallTime] = useState(getLastCallText());
@@ -173,7 +175,7 @@ export default function Settings(){
                         </View>
                         <View style={styles.smallBuffer}></View>
                         <View style={styles.horizontalContainer}>
-                            <Text style={styles.subtext}>Version: 0.2.6</Text>  
+                            <Text style={styles.subtext}>Version: {versioncode}</Text>  
                         </View>
                         {curSettings.devmode &&
                         <View style={styles.horizontalContainer}>

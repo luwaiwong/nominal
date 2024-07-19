@@ -89,14 +89,14 @@ export default function Dashboard(props) {
 
                 {/* Show events here */}
                 
-                <Pressable onPress={()=>props.data.setPage(4)}>
+                {/* <Pressable onPress={()=>props.data.setPage(4)}>
                   <View style={styles.newsHeaderSection} >
                       <Text style={styles.sectionHeaderText} >News & Events </Text>
             
                   </View>
-                </Pressable>
+                </Pressable> */}
                 {/* Events */}
-                <View style={[styles.contentSection]}>
+                {/* <View style={[styles.contentSection]}>
                   <TouchableOpacity onPress={()=>nav.navigate("All Events", {data: launchData.events, title:"Events" })}>
                     <View style={styles.contentHeaderSection} >
                         <Text style={styles.contentHeaderText} >Events </Text>
@@ -141,10 +141,10 @@ export default function Dashboard(props) {
                           <Article key={launch.id} articleData={launch}  />
                       );
                   })}
-                </View>
+                </View> */}
                 
                 
-                <View style={[styles.buffer]}></View>
+                {/* <View style={[styles.buffer]}></View> */}
                 <View style={styles.bottomPadding}></View>
               </ScrollView>
           </View>

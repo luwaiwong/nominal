@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
         
     },
     description:{
-        fontSize: 13,
+        fontSize: 12,
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
         paddingRight: 10,

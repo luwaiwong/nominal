@@ -1,6 +1,6 @@
 {
   "name": "nominal",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -13,7 +13,7 @@
     "@expo/metro-runtime": "~3.2.1",
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-navigation/native": "^6.1.17",
-    "@react-navigation/native-stack": "^6.10.0",
+    "@react-navigation/native-stack": "^6.10.1",
     "@react-navigation/stack": "^6.4.0",
     "@types/react": "~18.2.45",
     "eas-cli": "^10.2.0",

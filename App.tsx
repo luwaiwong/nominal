@@ -114,28 +114,29 @@ export default function App(props) {
   return (
     <View style={{flex:1, backgroundColor:COLORS.BACKGROUND}}>
       <UserContext.Provider value={user.current}>
-        <NavigationContainer>
+        <NavigationContainer >
           <Stack.Navigator
             screenOptions={{
               headerShown:false, 
+              presentation: 'modal',
               cardOverlay: () => (
                 <View
                   style={{
                   flex: 1,
-                  // backgroundColor: 'rgba(38,38,38,0.5)',
-                  backgroundColor: COLORS.BACKGROUND,
+                  backgroundColor: 'rgba('+COLORS.BACKGROUND_RGB+'0.5)',
+                  // opacity: 0
+                  // backgroundColor: COLORS.BACKGROUND,
                 }}
               />),
               transitionSpec:{
-                open: {animation: 'timing', config: {duration: 0, delay: 0}},
-                close: {animation: 'timing', config: {duration: 300, delay: 0}},
+                open: {animation: 'timing', config: {duration: 150, delay: 100}},
+                close: {animation: 'timing', config: {duration: 150, delay: 100}},
               }
             }}
             >
             <Stack.Screen 
               name="Index" 
               component={Index}
-              options={{transitionSpec: {open: {animation: 'timing', config: {duration: 0, delay: 0}}, close: {animation: 'timing', config: {duration: 0, delay: 0}},}}}
             >
             </Stack.Screen>
             <Stack.Screen 
@@ -151,7 +152,7 @@ export default function App(props) {
               component = {EventPage}
             ></Stack.Screen>
             <Stack.Screen 
-              name = "All Events"
+              name = "Events"
               component = {EventsPage}
             ></Stack.Screen>
             <Stack.Screen 

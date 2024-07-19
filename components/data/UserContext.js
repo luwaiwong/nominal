@@ -7,7 +7,7 @@ import Tags from "./Tags";
 
 // Set cache call time
 // If last call less than 45 minutes ago, use cache
-const cachecalltime = 1000 * 60 * 45;
+const cachecalltime = 1000 * 60 * 60;
 const twomin = 1000 * 60 * 2;
 
 export const UserContext = React.createContext(null);
@@ -446,7 +446,7 @@ export class UserData {
           launch.mission.name + " Launch in 1 Hour",
           launch.mission.name +
             " launching on a " +
-            launch.mission.name +
+            launch.rocket.configuration.full_name +
             " soon!",
           new Date(launchTime.getTime() - 1000 * 60 * 60)
         );
@@ -593,6 +593,7 @@ export class UserData {
       dashboardRecent: [],
       upcoming: [],
       previous: [],
+      events: [],
       news: [],
     };
 
@@ -628,7 +629,7 @@ export class UserData {
     return this.news.slice(0, 5);
   }
   #getEventsData() {
-    return this.events.upcoming;
+    return this.events;
   }
   #getEventsDataHighlights() {
     return this.events.upcoming.slice(0, 2);
@@ -801,7 +802,7 @@ export class UserData {
     // return this.launchdata.upcoming.slice(0, 5);
     // Filter the launches based on the tags
     // Cutoff at launches that are more than 1 month away
-    return this.launchdata.upcoming.slice(1, 3);
+    return this.launchdata.upcoming.slice(1, 5);
   }
   #getDashboardEvents() {
     return this.events.upcoming.slice(0, 1);

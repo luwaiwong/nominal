@@ -14,7 +14,7 @@ export default function FirstLoad(props) {
         Animated.sequence([
             Animated.timing(opacity, {
                 toValue: 1,
-                duration: 2000,
+                duration: 800,
                 useNativeDriver: true,
             }),
             
@@ -25,7 +25,7 @@ export default function FirstLoad(props) {
     function fadeOut(){
         Animated.timing(opacity, {
             toValue: 0,
-            duration: 100,
+            duration: 800,
             useNativeDriver: true,
         }).start(()=>props.navigation.navigate("Index"));
     }

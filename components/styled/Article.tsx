@@ -1,6 +1,6 @@
 
 import { useState, useRef, useEffect } from "react";
-import { StyleSheet, View, Image, Text, Animated, Linking} from "react-native";
+import { StyleSheet, View, Image, Text, Animated, Linking, TouchableOpacity, Alert} from "react-native";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { COLORS, FONT } from "../styles";
 
@@ -27,50 +27,28 @@ export default function Article(props:{articleData:any}){
     useEffect(() => {
         Image.getSize(articleData.image_url, (width, height) => {
             let ratio = width/height;
-            if (ratio > 1.5){
-                setAspectRatio(1.5);
+            if (ratio < 1.25){
+                setAspectRatio(1.25);
             }else {
                 setAspectRatio(width/height);
             }})
     }, []);
 
-
-    // ANIMATIONS
-    const scale = useRef(new Animated.Value(1)).current;
-    // Create an animation that scales the view to 1.2 times its original size when pressed
-    const animateIn = () => {
-        Animated.timing(scale, {
-        toValue: 0.95,
-        duration: 200,
-        useNativeDriver: true, // Add this to improve performance
-        }).start();
-    };
-
-    // Create an animation that scales the view back to its original size when released
-    const animateOut = (open: boolean) => {
-        if (open) Linking.openURL(articleData.url);
-        Animated.timing(scale, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true, // Add this to improve performance
-        }).start();
-    };
-
-
-    // Gestures
-    const tap = Gesture.Tap();
-
-    tap.onTouchesDown(()=>animateIn());
-    tap.onEnd(()=>animateOut(true));
-    // tap.onTouchesMove(()=>animateIn());
-    tap.onTouchesCancelled(()=>animateOut(false));
-    // tap.onEnd(()=>toggle()); // UNCOMMENT TO RESTORE PINNED
-    tap.numberOfTaps(1);
+    async function openLink(url: string){
+        const supported = await Linking.canOpenURL(url);
+        if (supported){
+            await Linking.openURL(url);
+        }
+        else {
+            Alert.alert("Error", "Cannot open link");
+        }
+    }
 
     
     return (
-        <GestureDetector gesture={tap}>
-            <Animated.View style={[styles.container,{transform:[{scale}]}]}>
+        // <GestureDetector gesture={tap}>
+        <TouchableOpacity onPress={()=>openLink(articleData.url)}>
+            <View style={[styles.container]}>
                 <View style={styles.left}>
                     <Text numberOfLines={4} style={styles.title}>{articleData.title}</Text>
 
@@ -78,11 +56,13 @@ export default function Article(props:{articleData:any}){
                 </View>
                 <View style={styles.right}>
                     <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: articleData.image_url}} />        
-                    <Text style={styles.source}>{articleData.news_site}</Text>
+                    <Text style={styles.source} >{articleData.news_site}</Text>
 
                 </View>
-            </Animated.View>
-        </GestureDetector>
+            </View>
+
+        </TouchableOpacity>
+        // </GestureDetector>
     );
 }
 
@@ -120,7 +100,7 @@ const styles = StyleSheet.create({
     
     image:{
         width: "100%",
-        resizeMode: "contain",
+        resizeMode: "cover",
         aspectRatio: 1,
         borderRadius: 10,
         // backgroundColor: COLORS.BACKGROUND,
@@ -142,7 +122,7 @@ const styles = StyleSheet.create({
         
     },
     source:{
-        fontSize: 14,
+        fontSize: 12,
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
         textAlign: "right",
@@ -150,7 +130,7 @@ const styles = StyleSheet.create({
     },
     time:{
 
-        fontSize: 14,
+        fontSize: 12,
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
         marginRight: 2,

@@ -1,7 +1,8 @@
 import { useEffect, useState, useContext } from 'react';
-import { StyleSheet, View, Text, FlatList, StatusBar, Image, ScrollView, Pressable, Linking} from 'react-native';
+import { StyleSheet, View, Text, FlatList, StatusBar, Image, ScrollView, Pressable, Linking, TouchableOpacity} from 'react-native';
 import { MaterialIcons } from 'react-native-vector-icons';
 
+import {MaterialCommunityIcons} from 'react-native-vector-icons';
 import { UserContext } from '../../data/UserContext';
 import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
 import Launch from '../../styled/Launch';
@@ -12,6 +13,7 @@ const MONTHS = ["January", "February", "March", "April", "May", "June", "July", 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function LaunchPage(props) {
+    // console.log("Launch Page");
     const userContext = useContext(UserContext);
     const launch = props.route.params.data;
     const launchTime = new Date(launch.net);
@@ -484,6 +486,17 @@ const styles = StyleSheet.create({
       paddingHorizontal: 5,
       paddingBottom: 2,
       marginTop: 5,
+    },
+    infoUrls:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        flexWrap: "wrap",
+        width: "100%",
+        marginLeft: 11,
+        // marginTop: 5,
+        // marginBottom: 20,
+        
     },
     infoUrl:{
         display: "flex",

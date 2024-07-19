@@ -8,7 +8,7 @@ import {COLORS, FONT, FOREGROUND}from "../styles";
 import Launch from './LaunchSimple';
 import { UserContext } from '../data/UserContext';
 
-const timerTickLength = 12
+const timerTickLength = 20;
 export default function LaunchCarousel(props:{content, type, nav}){
     let userContext = useContext(UserContext);
     let content = props.content;

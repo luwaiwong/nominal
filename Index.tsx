@@ -1,7 +1,7 @@
 import { useFonts } from "expo-font";
 import { SpaceGrotesk_500Medium } from "@expo-google-fonts/space-grotesk";
 
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { AppState, Platform, StyleSheet, Text, View } from "react-native";
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { StatusBar } from "expo-status-bar";
 import PagerView from "react-native-pager-view";
@@ -31,6 +31,7 @@ import { UserContext } from "./components/data/UserContext";
 export default function Index(props) {
   // App Data Variables
   let userContext = useContext(UserContext);
+  let appState = useRef(AppState.currentState);
   let [launchData, setLaunchData]= useState(null)
   let currentPage = useRef(0);
   let menuBarRef = useRef(null);
@@ -38,11 +39,24 @@ export default function Index(props) {
   const pagerRef = useRef(null);
   const pageScrollState = useSharedValue(225);
 
-  // Check to reload data every time app is loaded
-  // If data hasn't been called in 2 hours, reload data
+  // Subscribe and check app state
+  useEffect(()=>{
+    const subscription = AppState.addEventListener("change", nextAppState => {
+      // console.log("App State", appState.current, nextAppState)
+      if (appState.current.match(/inactive|background/) && nextAppState === "active") {
+        console.log("App focused")
+        reloadData();
+      }
+      else {
+        // console.log('App state', nextAppState);
+      }
+        appState.current = nextAppState;
+    })
 
-  
-
+    return () => {
+      subscription.remove();
+    }
+  }, [])
   // Called whenever userContext is updated
   useEffect(() => {
     if (userContext == null){
@@ -196,7 +210,7 @@ export default function Index(props) {
           <News data={data}/> */}
           <ForYou data={data}/>
           <Dashboard data={data}/>
-          <Launches data={data}/>
+          <News data={data}/>
           <Settings />
         </PagerView>
       )

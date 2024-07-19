@@ -9,11 +9,13 @@ import {ForYouLaunch, ForYouEvent, ForYouEnd} from "../styled/ForYouItem";
 
 export default function ForYou(props) {
   const pagerRef = useRef(null);
+  const curPage = useRef(0);
   let userData = props.data.userData;
   let launchData = props.data.launchData;
   let foryou = launchData.foryou;
   let news = launchData.news;
 
+  console.log(curPage.current);
   let timer = useRef(0);  
   // timer to check if the user has not been in the For You page for a while
   // Constantly ticking 1 second timer
@@ -24,7 +26,7 @@ export default function ForYou(props) {
       timer.current += 1;
       if (timer.current >= 60){
         timer.current = 0;
-        setPage(0);
+        // setPage(0);
       }
     }, 1000); // 1000 milliseconds = 1 second
 
@@ -42,14 +44,26 @@ export default function ForYou(props) {
   function setPage(page){
     pagerRef.current.setPage(page);
   }
+  // Called when the page is changed
+  const onPageSelected = (event) => {
+    // Handle page selection
+    const { position } = event.nativeEvent;
+
+    console.log('Page changed to:', position);
+    curPage.current = position;
+
+
+  };
 
   return(
       <PagerView 
         style={styles.immersiveSection} 
-        initialPage={0} 
+        initialPage={curPage.current} 
         orientation="vertical" 
         ref={pagerRef}
         onPageScroll={onPageScroll}
+        onPageSelected={onPageSelected}
+
         >
         {foryou.map((item: any, index) => {
             if (item.type == "launch"){

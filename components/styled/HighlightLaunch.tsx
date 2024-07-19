@@ -13,6 +13,7 @@ export default function HighlightLaunch(props) {
     const isNext = props.isNext;
     const launchTime = new Date(data.net);
     let status = "Next Launch";
+    status = "Just Launched";
     if (launchTime.getTime() < Date.now()) {
         status = "Just Launched";
     }
@@ -121,7 +122,7 @@ bottomSection:{
 typeText:{
     // backgroundColor: 'rgba(0, 0, 0, 0.3)',
 
-    width: 110,
+    width: 300,
     borderRadius: 5,
     fontSize: 16,
 

@@ -66,11 +66,11 @@ export default function Event(props){
                 </View>
                 <View style={styles.bottom}>
                     <Text numberOfLines={4} style={styles.title}>{eventData.name}</Text>
-                    <Text style={styles.source}>{eventData.type.name}</Text>
+                    <Text style={styles.sourceLeft}>{eventData.type.name}</Text>
                     <View style={styles.horizontalContainer}>
-                        <Text style={styles.source} numberOfLines={1}>{eventData.location}</Text>
+                        <Text style={styles.sourceLeft} numberOfLines={1}>{eventData.location}</Text>
                         {/* Show time and date */}
-                        <Text style={styles.source}>{new Date(eventData.date).toLocaleString([], {
+                        <Text style={styles.sourceRight}>{new Date(eventData.date).toLocaleString([], {
                             hour: '2-digit',
                             minute: '2-digit',
                             month: 'short',
@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
+        overflow: "hidden",
     },
     image:{
         width: "100%",
@@ -148,12 +149,21 @@ const styles = StyleSheet.create({
         
         
     },
-    source:{
+    sourceLeft:{
+        fontSize: 14,
+        fontFamily: FONT,
+        color: COLORS.FOREGROUND,
+        textAlign: "left",
+        marginRight: 2,
+        flex: 1,
+    },
+    sourceRight:{
         fontSize: 14,
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
         textAlign: "right",
         marginRight: 2,
+        flex: 1,
     },
     
 });
