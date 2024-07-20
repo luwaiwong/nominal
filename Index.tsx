@@ -67,6 +67,10 @@ export default function Index(props) {
 
   // Subscribe and check app state
   useEffect(()=>{
+    if (userContext == null){
+      return;
+    }
+
     const subscription = AppState.addEventListener("change", nextAppState => {
       console.log("App State", appState.current, nextAppState)
       if (appState.current.match(/inactive|background/) && nextAppState === "active") {
@@ -86,7 +90,7 @@ export default function Index(props) {
     return () => {
       subscription.remove();
     }
-  }, [])
+  }, [userContext])
 
   // Called whenever userContext is updated
   useEffect(() => {

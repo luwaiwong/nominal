@@ -22,16 +22,20 @@ export default function Article(props:{articleData:any}){
         articleDate = "Yesterday";
     }
     
-    // console.log(articleData.image_url.search(".gif") != -1);
     // Get the aspect ratio of the image one time
     useEffect(() => {
-        Image.getSize(articleData.image_url, (width, height) => {
-            let ratio = width/height;
-            if (ratio < 1.25){
-                setAspectRatio(1.25);
-            }else {
-                setAspectRatio(width/height);
-            }})
+        try {
+            Image.getSize(articleData.image_url, (width, height) => {
+                let ratio = width/height;
+                if (ratio < 1.25){
+                    setAspectRatio(1.25);
+                }else {
+                    setAspectRatio(width/height);
+                }})
+                
+        } catch (error){
+            console.log("Error getting image size:", error)
+        }
     }, []);
 
     async function openLink(url: string){

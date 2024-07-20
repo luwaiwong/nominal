@@ -1,11 +1,16 @@
-import { StyleSheet, View, Text, FlatList, StatusBar } from 'react-native';
+import { StyleSheet, View, Text, FlatList, StatusBar, Pressable } from 'react-native';
 import { MaterialIcons } from 'react-native-vector-icons';
 import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
 import Launch from '../../styled/Launch';
+import { useContext, useState } from 'react';
+import { UserContext } from '../../data/UserContext';
 
 export default function LaunchesPage(props) {
+    let userContext = useContext(UserContext);
     const data = props.route.params.data;
     const user = props.route.params.user;
+    const title = props.route.params.title;
+    const [devMode, setDevmode] = useState(false);
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -14,15 +19,32 @@ export default function LaunchesPage(props) {
                     style={styles.back} 
                     onPress={() => props.navigation.goBack()}>
                 </MaterialIcons>
-                <Text style={styles.title}>{props.route.params.title}</Text>
+                <Pressable onPress={()=>setDevmode(!devMode)} style={styles.title}>
+                    <Text style={styles.title}>{title}</Text>
+                </Pressable>
             </View>
-            
-            <FlatList
+            { (userContext.settings.devmode && devMode)?<FlatList
+                data={title == "Upcoming"?userContext.launchdata.upcoming:userContext.launchdata.previous}
+                keyExtractor={(item, index) => index.toString()}
+                style={styles.list}
+                renderItem={({ item }) => <DevText item={item}></DevText>}>
+            </FlatList>: <FlatList
                 data={data}
                 keyExtractor={(item, index) => index.toString()}
                 style={styles.list}
                 renderItem={({ item }) => <Launch data={item} user={user} nav={props.navigation}>{item.name}</Launch>}>
-            </FlatList>
+            </FlatList>}
+            
+            
+        </View>
+    )
+}
+
+function DevText(data){
+    return (
+        <View>
+            <Text style={styles.text}>{data.item.name}</Text>
+            <Text style={styles.dev}>{JSON.stringify(data.item)}</Text>
         </View>
     )
 }
@@ -52,7 +74,18 @@ const styles = StyleSheet.create({
 
         fontFamily: FONT,
 
-        marginBottom: 10,
+        marginBottom: 5,
+    },
+    dev:{
+        fontSize: 14,
+        color: COLORS.FOREGROUND,
+        width: "100%",
+        textAlign: 'center',
+        alignContent: 'center',
+
+        fontFamily: FONT,
+
+        marginBottom: 20,
     },
     text: {
         fontSize: 20,
