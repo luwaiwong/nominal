@@ -19,7 +19,7 @@ export default function HighlightLaunch(props) {
     return (
         <TouchableOpacity onPress={()=>nav.navigate("Launch", {data: data})}>
             <View style={styles.container}>
-                <Image style={styles.image} blurRadius={1} source={{uri: data.image}} />   
+                <Image style={styles.image}  source={{uri: data.image}} />   
                 <View style={styles.overlay} />
                 <View style={styles.infoContainer}>
                     <View style={styles.topSection}>
@@ -30,7 +30,7 @@ export default function HighlightLaunch(props) {
                         <Text style={styles.launchPad} numberOfLines={1}>{data.launch_pad.location.name}</Text>
                     </View>
                     <BlurView intensity={0} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.bottomSection}>
-                        <Text style={styles.dateText} >{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
+                        <Text style={styles.dateText} >{launchTime.toLocaleString([], {year: 'numeric', month: 'long', weekday: 'short', day: 'numeric', minute: 'numeric', hour: 'numeric'})}</Text>
                         <TMinus time={launchTime} />
             
 
@@ -66,7 +66,7 @@ overlay:{
     width: "100%",
     height: "100%",
 
-    backgroundColor: 'rgba(0, 0, 0, 0.15)',
+    // backgroundColor: 'rgba(0, 0, 0, 0)',
 
     borderRadius: 10,
 
