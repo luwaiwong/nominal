@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 import { UserContext } from '../data/UserContext';
 
-const versioncode = "0.3.1";
+const versioncode = "0.3.2";
 
 export default function Settings(){
     let userContext = React.useContext(UserContext);
@@ -118,6 +118,12 @@ export default function Settings(){
                             <Text style={styles.title}>Notifications</Text>
                             <SettingToggle setting="enablenotifs" title={"Enable Notifications"}/>
                             <Text style={styles.description}>Allow Notifications</Text>
+                            <SettingToggle setting="notif24hbefore" title={"24 Hour Notification"}/>
+                            <Text style={styles.description}>Get notifications for launches and events 24 hours before they happen</Text>
+                            <SettingToggle setting="notif1hbefore" title={"1 Hour Notification"}/>
+                            <Text style={styles.description}>Get notifications for launches and events 1 hour before they happen</Text>
+                            <SettingToggle setting="notif10mbefore" title={"10 Minute Notification"}/>
+                            <Text style={styles.description}>Get notifications for launches and events 10 minutes before they happen</Text>
 
 
                             {curSettings.devmode && 
@@ -134,7 +140,8 @@ export default function Settings(){
                                             return (
                                             <View key={notif.identifier}>
                                                 <Text style={styles.subtext} >{notif.content.title}</Text>
-                                                <Text style={styles.subtext} >{new Date(notif.trigger.value).toISOString()}</Text>
+                                                <Text style={styles.subtext} >{notif.content.body}</Text>
+                                                <Text style={styles.subtext} >{new Date(notif.trigger.value).toLocaleString()}</Text>
                                             </View>)
                                                 
                                         })
@@ -151,15 +158,20 @@ export default function Settings(){
                             <Text style={styles.title}>For You</Text>
                             
                             <SettingToggle setting="fyshowpastlaunches" title={"Show Past Launches"}  />
-                            <Text style={styles.description}>Show past launches in your For You feed. Reload Data to apply</Text>
+                            <Text style={styles.description}>Show past launches in your For You feed. Refresh data to apply</Text>
                             <SettingToggle setting="fyshowpastevents"title={"Show Past Events"} />
-                            <Text style={styles.description}>Show past events in your For You feed. Reload Data to apply</Text>
+                            <Text style={styles.description}>Show past events in your For You feed. Refresh data to apply</Text>
                             {/* <SettingToggle setting="fyshowupcomingevents"title={"Show Upcoming Events"} /> */}
                         </View>
                         <View style={styles.sectionContainer}>
                             <Text style={styles.title}>Developer</Text>
                             <SettingToggle setting="devmode" title={"Enable Developer Mode"} />
                             <Text style={styles.description}>Reveals additional debugging data in the app</Text>
+                            { curSettings.devmode && <View>
+
+                            <SettingToggle setting="waitbeforerefreshing" title={"Wait Before Refreshing Data"} />
+                            <Text style={styles.description}>If refreshing data, only fetch data if the last API call is more than 15 minutes ago</Text>
+                            </View>}
                         </View>  
                     </View>
                     
@@ -303,7 +315,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginHorizontal: 10,
         marginVertical: 0,
-        marginBottom: 5,
+        // marginBottom: 5,
     },
     buttonText:{
         fontSize: 20,

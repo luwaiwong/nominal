@@ -6,7 +6,7 @@ import Event from '../../styled/Event';
 export default function EventsPage(props) {
     const data = props.route.params.data;
     const user = props.route.params.user;
-    // console.log(data);
+    // console.log(data.length);
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>

@@ -129,8 +129,8 @@ export default function App(props) {
                 }}
               />),
               transitionSpec:{
-                open: {animation: 'timing', config: {duration: 100, delay: 0}},
-                close: {animation: 'timing', config: {duration: 100, delay: 0}},
+                open: {animation: 'timing', config: {duration: 150, delay: 0}},
+                close: {animation: 'timing', config: {duration: 150, delay: 0}},
               }
             }}
             >

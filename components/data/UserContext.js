@@ -6,8 +6,8 @@ import * as Notifications from "expo-notifications";
 import Tags from "./Tags";
 
 // Set cache call time
-// If last call less than 45 minutes ago, use cache
-const cachecalltime = 1000 * 60 * 60;
+// If last call less than x minutes ago, use cache
+const cachecalltime = 1000 * 60 * 30;
 const twomin = 1000 * 60 * 2;
 
 export const UserContext = React.createContext(null);
@@ -51,6 +51,13 @@ export class UserData {
     this.settings = {
       // Notifications
       enablenotifs: true,
+      notif24hbefore: true,
+      notif12hbefore: false,
+      notif1hbefore: true,
+      notif30mbefore: false,
+      notif10mbefore: true,
+      notif0mbefore: false,
+
       notiflaunch24hbefore: true,
       notiflaunch12hbefore: false,
       notiflaunch1hbefore: true,
@@ -72,6 +79,7 @@ export class UserData {
 
       // DEV
       devmode: false,
+      waitbeforerefreshing: true,
     };
 
     // USER DATA
@@ -211,8 +219,13 @@ export class UserData {
     } catch (error) {
       // If unable to pull data
       console.log("Error getting data: " + error);
-      console.log("Returning cached data");
-      this.launchdata = JSON.parse(this.cache.launches);
+      console.log("Getting and returning cached data");
+      const lastcall = await AsyncStorage.getItem("lastcall");
+      const launches = await AsyncStorage.getItem("launches");
+      const events = await AsyncStorage.getItem("events");
+      const news = await AsyncStorage.getItem("news");
+
+      this.launchdata = JSON.parse();
       this.events = JSON.parse(this.cache.events);
       this.news = JSON.parse(this.cache.news);
 
@@ -223,35 +236,92 @@ export class UserData {
 
   async forceFetchData() {
     // if last fetch < 10 minutes ago, return cache
-    if (new Date().getTime() - this.lastcall < 1000 * 60 * 15) {
+    if (
+      this.settings.waitbeforerefreshing &&
+      new Date().getTime() - this.lastcall < 1000 * 60 * 15
+    ) {
       console.log("Last fetch < 15 minutes ago, returning cache");
       return this.#getData();
     }
+
+    if (this.gettingdata) {
+      return null;
+    }
+    this.gettingdata = true;
     console.log("Forcing Data Fetch");
 
     // Try fetching the data and return the upcoming launches
+    try {
+      // Get cache
+      try {
+        const lastcall = await AsyncStorage.getItem("lastcall");
+        const launches = await AsyncStorage.getItem("launches");
+        const events = await AsyncStorage.getItem("events");
+        const news = await AsyncStorage.getItem("news");
 
-    let curTime = new Date().getTime();
-    await this.getUpcomingData();
-    await this.getPreviousData();
-    await this.getPreviousEvents();
-    await this.getEvents();
-    await this.getNews();
+        let hasData =
+          lastcall !== null &&
+          launches !== null &&
+          launches.upcoming != [] &&
+          events !== null &&
+          events.upcoming != [] &&
+          news !== null;
 
-    console.log("Data Fetched");
-    // How long did it take to fetch data?
-    let fetchTime = new Date().getTime() - curTime;
-    console.log("Data Fetch Time: " + fetchTime / 1000 + "ms");
+        // Log the last call time
+        if (hasData) {
+          console.log(
+            "Cache Time: " +
+              (new Date().getTime() - parseInt(lastcall)) / 1000 +
+              "s ago"
+          );
 
-    // Record the last call time
-    this.lastcall = new Date().getTime();
+          // Record last API time
+          this.lastcall = parseInt(lastcall);
+          // Otherwise record cache for further use if unable to pull data
+          this.cache = {
+            launches: launches,
+            events: events,
+            news: news,
+          };
+        } else {
+          console.log("No cache or incomplete cache found");
+        }
+      } catch (error) {
+        console.log("Error getting data from cache: " + error);
+      }
+      let curTime = new Date().getTime();
+      await this.getUpcomingData();
+      await this.getPreviousData();
+      await this.getPreviousEvents();
+      await this.getEvents();
+      await this.getNews();
 
-    // Calls the storedata function after returning the data
-    setTimeout.bind(this, this.storeData(), 0);
-    setTimeout.bind(this, this.scheduleNotifications(), 0);
+      console.log("Data Fetched");
+      // How long did it take to fetch data?
+      let fetchTime = new Date().getTime() - curTime;
+      console.log("Data Fetch Time: " + fetchTime / 1000 + "ms");
 
-    this.gettingdata = false;
-    return this.#getData();
+      // Record the last call time
+      this.lastcall = new Date().getTime();
+
+      // Calls the storedata function after returning the data
+      setTimeout.bind(this, this.storeData(), 0);
+      setTimeout.bind(this, this.scheduleNotifications(), 0);
+
+      this.gettingdata = false;
+      return this.#getData();
+    } catch (error) {
+      // If unable to pull data
+      console.log("Error getting data: " + error);
+      console.log("Returning cached data");
+
+      this.launchdata = JSON.parse(this.cache.launches);
+      this.events = JSON.parse(this.cache.events);
+      this.news = JSON.parse(this.cache.news);
+
+      this.gettingdata = false;
+      return this.#getData();
+    }
   }
   // Stores the data in local storage
   async storeData() {
@@ -419,14 +489,12 @@ export class UserData {
       }
 
       // Schedule 24 hour
-      if (
-        this.settings.notiflaunch24hbefore &&
-        timeDiff > 1000 * 60 * 60 * 24
-      ) {
+      if (this.settings.notif24hbefore && timeDiff > 1000 * 60 * 60 * 24) {
         notifs += 1;
         schedulePushNotification(
           launch.mission.name + " Launch Tomorrow",
-          "Launch scheduled tomorrow at " +
+          launch.rocket.configuration.full_name +
+            " launch scheduled tomorrow at " +
             launchTime.toLocaleTimeString([], {
               hour: "2-digit",
             }),
@@ -440,14 +508,19 @@ export class UserData {
       }
 
       // Schedule 1 hour
-      if (this.settings.notiflaunch1hbefore) {
+      if (this.settings.notif1hbefore) {
         notifs += 1;
         schedulePushNotification(
           launch.mission.name + " Launch in 1 Hour",
-          launch.mission.name +
-            " launching on a " +
-            launch.rocket.configuration.full_name +
-            " soon!",
+          launch.rocket.configuration.full_name +
+            " launch scheduled at " +
+            launchTime.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }) +
+            (launch.launch_pad != null
+              ? " from " + launch.launch_pad.location.name
+              : ""),
           new Date(launchTime.getTime() - 1000 * 60 * 60)
         );
       }
@@ -458,11 +531,11 @@ export class UserData {
       }
 
       // Schedule 10 minutes
-      if (this.settings.notiflaunch10mbefore) {
+      if (this.settings.notif10mbefore) {
         notifs += 1;
         schedulePushNotification(
           launch.mission.name + " Launch in 10 Minutes",
-          "Launching Soon!",
+          launch.rocket.configuration.full_name + " launching now!",
           new Date(launchTime.getTime() - 1000 * 60 * 10)
         );
       }

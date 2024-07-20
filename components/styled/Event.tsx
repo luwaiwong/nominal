@@ -8,9 +8,11 @@ import { COLORS, FONT, TIME_OPTIONS } from "../styles";
 
 export default function Event(props){
     const eventData = props.eventData;
-    const [aspectRatio, setAspectRatio] = useState(1);
 
-    const isPrecise = eventData.date_precision.name === "Hour" || eventData.date_precision.name === "Minute" || eventData.date_precision.name === "Day"|| eventData.date_precision.name === "Second";
+    if (eventData == undefined) return null;
+
+    const [aspectRatio, setAspectRatio] = useState(1);
+    const isPrecise = eventData.date_precision != null && (eventData.date_precision.name === "Hour" || eventData.date_precision.name === "Minute" || eventData.date_precision.name === "Day"|| eventData.date_precision.name === "Second");
 
 
     Image.getSize(eventData.feature_image, (width, height) => {setAspectRatio(width/height);})

@@ -33,19 +33,18 @@ export default function Index(props) {
   let userContext = useContext(UserContext);
   let appState = useRef(AppState.currentState);
   let [launchData, setLaunchData]= useState(null)
-  let [refreshing , setRefreshing] = useState(false);
   let currentPage = useRef(0);
   let menuBarRef = useRef(null);
   
   const pagerRef = useRef(null);
   const pageScrollState = useSharedValue(225);
 
-  const fadeAnim = useRef(new Animated.Value(0)).current
-  useEffect(()=> {
-    Animated.loop(
+  const refreshOpacity = useRef(new Animated.Value(0)).current
+
+  const startRefreshAnimation = () => {Animated.loop(
       Animated.sequence([
         Animated.timing(
-          fadeAnim,
+          refreshOpacity,
           {
             toValue: 1,
             duration: 750,
@@ -54,7 +53,7 @@ export default function Index(props) {
           }
         ),
         Animated.timing(
-          fadeAnim,
+          refreshOpacity,
           {
             toValue: 0,
             duration: 750,
@@ -63,14 +62,14 @@ export default function Index(props) {
           }
         )
       ])
-    ).start();
-  }, [fadeAnim])
+    ).start()
+  }
 
   // Subscribe and check app state
   useEffect(()=>{
     const subscription = AppState.addEventListener("change", nextAppState => {
       console.log("App State", appState.current, nextAppState)
-      if (appState.current.match(/inactive|background/) && nextAppState === "active" && launchData != null) {
+      if (appState.current.match(/inactive|background/) && nextAppState === "active") {
         console.log("App focused")
         try {
           reloadData()
@@ -143,13 +142,15 @@ export default function Index(props) {
 
   // Reload function called with pull down reload gesture
   async function reloadData(){
-    
-    setRefreshing(true)
+    if (userContext == undefined || userContext.gettingdata){
+      return;
+    }
 
+    startRefreshAnimation();
     console.log("Refreshing Page")
     await userContext.forceFetchData().then((data)=> {
       console.log("Returning Data")
-      setRefreshing(false)
+      refreshOpacity.setValue(0);
       
       if (data == null){
         return true;
@@ -161,10 +162,6 @@ export default function Index(props) {
 
       setLaunchData(data);
       return true;
-    }).catch((error)=>{
-      console.log("Error when getting data (Index Page)", error)
-      setRefreshing(false)
-      return false;
     })
   }
 
@@ -264,9 +261,10 @@ export default function Index(props) {
         <TitleBar scrollState={pageScrollState}/>
         <CurrentPage/>
         <MenuBar page={currentPage} setPage={setPage} ref={menuBarRef} />
-        {refreshing && 
-            <Animated.Text style={[styles.reloadingDataText, {opacity: fadeAnim}]}>Refreshing Data...</Animated.Text>
-        }
+        <View pointerEvents='none' style={styles.reloadingDataIndicator}>
+          <Animated.Text style={[styles.reloadingDataText, {opacity: refreshOpacity}]} >Refreshing Data...</Animated.Text>
+        </View>
+        
       </View>
     </GestureHandlerRootView>
   );
@@ -285,14 +283,15 @@ const styles = StyleSheet.create({
   reloadingDataIndicator:{
     position: "absolute",
     bottom: colors.BOTTOM_BAR_HEIGHT+50,
-    // width: "100%",
+    // left: Dimensions.get("window").width/2-100,
+    width: "100%",
     height: 5,
-    backgroundColor: colors.FOREGROUND,
-    zIndex: 1000,
+    // backgroundColor: colors.FOREGROUND,
+    zIndex: 100000,
   },
   reloadingDataText:{
     position: "absolute",
-    bottom: colors.BOTTOM_BAR_HEIGHT+ 20,
+    // bottom: colors.BOTTOM_BAR_HEIGHT+ 20,
 
     backgroundColor: colors.BACKGROUND_HIGHLIGHT,
     width: 200,
