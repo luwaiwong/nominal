@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
       marginHorizontal: 10,
       marginTop: 10,
       overflow: 'hidden',
+      elevation: 2,
     },
 
     contentHeaderSection: {

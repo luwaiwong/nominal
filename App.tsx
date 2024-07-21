@@ -108,6 +108,9 @@ export default function App(props) {
   let user = useRef(null);
 
   useEffect(() => {
+    if (user.current != null){
+      return;
+    }
     user.current = createUserContext(); 
   }, []);
 

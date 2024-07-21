@@ -57,6 +57,8 @@ container:{
     borderRadius: 10,
     overflow: "hidden",
 
+    elevation: 2,
+
 },
 overlay:{
     position: "absolute",

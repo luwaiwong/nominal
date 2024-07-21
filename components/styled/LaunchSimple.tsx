@@ -197,6 +197,8 @@ background: {
 
   backgroundColor: colors.BACKGROUND_HIGHLIGHT,
   zIndex: 1000,
+
+  // elevation: 5,
   
 },
 headerSection:{
@@ -234,7 +236,7 @@ text: {
 // Header Section Stuff
 titleText: {
     // flex: 1,
-    fontSize: 21,
+    fontSize: 18,
     color: colors.FOREGROUND,
     alignItems: 'center',
     justifyContent: 'center',

@@ -64,7 +64,7 @@ export default function Dashboard(props) {
 
                 {/* Upcoming Launches */}
                 <View style={[styles.contentSection]}>
-                  <TouchableOpacity onPress={()=>{nav.navigate('Launches', {data: launchData.upcoming,user: userData, title:"Upcoming" })}}>
+                  <TouchableOpacity onPress={()=>{nav.navigate('Launches', {data: launchData.upcoming,user: userData, title:"Upcoming Launches" })}}>
                     <View style={styles.contentHeaderSection} >
                         <Text style={styles.contentHeaderText} >Upcoming </Text>
                         <View style={styles.seeMoreSection}>
@@ -79,7 +79,7 @@ export default function Dashboard(props) {
                   
                   {upcomingFiltered.map((launch: any) => {
                   return (
-                      <LaunchInfo key={launch.id} data={launch} user={userData} nav={nav} />
+                      <LaunchInfo key={launch.id} data={launch} />
                   );
                   })}
                 </View>
@@ -191,6 +191,8 @@ const styles = StyleSheet.create({
       marginHorizontal: 10,
       marginTop: 10,
       overflow: 'hidden',
+
+      elevation: 10,
     },
     contentHeaderSection: {
       display: 'flex',

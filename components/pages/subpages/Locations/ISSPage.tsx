@@ -11,11 +11,15 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 const streamID = "P9C25Un7xaM"
 export function ISSDashboard(){
     const userContext = useContext(UserContext);
-    const launches = userContext.launches;
-    const events = userContext.events;
-    let relatedCount = 0;
+    const [data, setData] = useState(undefined);
+    const [mapLoaded, setMapLoaded] = useState(false);
+    let launches = undefined;
+    let events = undefined;
+    let related = undefined;
 
     function getISSrelated(){
+        launches = userContext.launches;
+        events = userContext.events;
         let e = [];
 
         if (events != undefined && events.upcoming != undefined)
@@ -39,7 +43,6 @@ export function ISSDashboard(){
                 let programs = launch.program;
                 for (let i = 0; i < programs.length; i++){
                     if (programs[i].name == "International Space Station"){
-                        console.log(programs[i].name);
                         return true;
                     }
                 }
@@ -59,55 +62,85 @@ export function ISSDashboard(){
                 result.push(l.shift());
             }
         }
+        while (e.length != 0){
+            e[0].type = "event";
+            result.push(e.shift());
+        }
+        while (l.length != 0){
+            l[0].type = "launch";
+            result.push(l.shift());
+        }
 
-        relatedCount = e.length;
         // Check if precise
         if (result[0] != undefined){
-            if (result[0].type == "event" && result[0].date_precision != null && result[0].date_precision == "Month"){
+            if (result[0].type == "event" && result[0].date_precision != null && result[0].date_precision.name != "Month"){
                 return result[0];
             }
-            else if (result[0].type == "launch" && result[0].net_precision != null && result[0].net_precision == "Month"){
+            else if (result[0].type == "launch" && result[0].net_precision != null && result[0].net_precision.name != "Month"){
                 return result[0];
             }
         }
-        return []
+        console.log("No ISS related events")
+        return undefined
     }
     
-    const related = getISSrelated();
+    // Getting ISS data
+    async function getData(){
+        console.log("Getting ISS data")
+        await userContext.getISSData().then((data) => {
+            data.related = getISSrelated();
+            setData(data);
+        }).catch((error) => {
+            console.log("Error getting ISS data:", error);
+        })
+    }
 
-    getISSrelated();
+    // Check if need to get iss data
+    if (data == undefined) {
+        if (userContext != undefined){
+            getData();
+        }
+        return (
+            <View style={dstyles.container}>
+                <Text style={dstyles.title}>ISS Loading...</Text>
+            </View>
+        )
+    }
     
     return (
         <View style={dstyles.container}>
-            <TouchableOpacity onPress={() => {}}>
-                <View style={dstyles.sectionHeader}>
-                    <Text style={dstyles.sectionTitle}>ISS Status</Text>
-                    <View style={dstyles.seeMoreSection}>
-                        <Text style={dstyles.seeMoreText}>See More</Text>
-                        <MaterialIcons name="arrow-forward-ios" style={dstyles.sectionIcon}/>
-                    </View>
+                <View style={dstyles.infoContainer}>
+                        <View style={dstyles.issMapContainer} pointerEvents='none'>
+                            <WebView source={{uri: 'http://wsn.spaceflight.esa.int/iss/index_portal.php'}} style={dstyles.issMap} scrollEnabled={false} cacheEnabled={true} cacheMode='LOAD_CACHE_ELSE_NETWORK'/>
+                        </View>
+                    
+                    <TouchableOpacity onPress={() => {}}>
+                        {/* <Text style={dstyles.sourceText}>Live Source: ESA</Text>   */}
+        
+                        <View style={dstyles.subInfoContainer}>
+                            <Text style={dstyles.sourceText}>Live ISS Position: ESA</Text>
+                        </View>
+                        
+                    <TouchableOpacity onPress={() => {}}>
+                        <View style={dstyles.sectionHeader}>
+                            <Text style={dstyles.sectionTitle}>ISS Status</Text>
+                            <View style={dstyles.seeMoreSection}>
+                                <Text style={dstyles.seeMoreText}>See More</Text>
+                                <MaterialIcons name="arrow-forward-ios" style={dstyles.sectionIcon}/>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                    </TouchableOpacity>
+                    {data.related != undefined && 
+                    <View style={dstyles.relatedSection}> 
+                        <Text style={dstyles.subtitle}>Next ISS Event:</Text>
+                        {data.related.type == "event" ? 
+                            <Event  eventData={data.related}/>:
+                            <LaunchSimple  data={data.related}/>
+                            
+                        }
+                    </View>}
                 </View>
-            </TouchableOpacity>
-            <View style={dstyles.infoContainer}>
-                <View style={dstyles.issMapContainer} pointerEvents='none'>
-                    <WebView source={{uri: 'http://wsn.spaceflight.esa.int/iss/index_portal.php'}} style={dstyles.issMap} scrollEnabled={false}/>
-                </View>
-                <View style={dstyles.subInfoContainer}>
-                    <Text style={dstyles.sourceText}>Live ISS Position</Text>
-                    <Text style={dstyles.sourceText}>Source: ESA</Text>
-                </View>
-            </View>
-            {related != undefined && related.length != 0 && 
-            <View style={dstyles.relatedSection}> 
-                {related.map((item, index) => {
-                    if (item.type == "event"){
-                        return <Event key={index} data={item}/>
-                    }
-                    if (item.type == "launch"){
-                        return <LaunchSimple key={index} data={item}/>
-                    }
-                })}
-            </View>}
         </View>
     )
 
@@ -115,7 +148,6 @@ export function ISSDashboard(){
 export default function StarshipPage(props) {
     const data = props.route.params.data;
     const user = props.route.params.user;
-    // console.log(data.length);
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -135,16 +167,21 @@ const dstyles = StyleSheet.create({
         flex: 1,
         // justifyContent: 'center',
         // width: '100%',
-        // backgroundColor : COLORS.BACKGROUND_HIGHLIGHT,
+        backgroundColor : COLORS.BACKGROUND_HIGHLIGHT,
         marginHorizontal: 10,
         borderRadius: 10,
         overflow: 'hidden',
         marginBottom: 10,
+        marginTop: 15,
         // paddingTop: 10,
 
         // padding: 10
         
-        // zIndex: 100,
+        // zIndex: 100,shadowColor: '#000',
+        shadowOffset: { width: 1, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 2,
+        elevation: 5,
     },
     title:{
         fontSize: 26,
@@ -153,7 +190,7 @@ const dstyles = StyleSheet.create({
 
         fontFamily: FONT,
 
-        marginBottom: 10,
+        // marginBottom: 15,
     },
     image: {
         width: "100%",
@@ -168,7 +205,7 @@ const dstyles = StyleSheet.create({
         alignItems: 'flex-end',
         justifyContent: 'space-between',
         width: '100%',
-        paddingHorizontal: 3,
+        paddingHorizontal: 10,
         // marginHorizontal: 10,
         // marginBottom: 5,
     },
@@ -177,9 +214,7 @@ const dstyles = StyleSheet.create({
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
-        // marginBottom: 10,
-        // marginLeft: 10,
-        marginTop: 5,
+        marginBottom: 1,
     },
     seeMoreText:{
         fontSize: 18,
@@ -195,6 +230,7 @@ const dstyles = StyleSheet.create({
         fontFamily: FONT,
         textAlign: 'right',
         // marginRight: 10,
+        marginBottom: 2,
     },
     seeMoreSection:{
         display: 'flex',
@@ -202,7 +238,8 @@ const dstyles = StyleSheet.create({
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
         alignContent: 'flex-end',
-        marginBottom: 2,
+        marginBottom: 3,
+        // backgroundColor: 'white',
         
     },
     infoContainer:{
@@ -212,7 +249,6 @@ const dstyles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         borderRadius: 10,
-        marginTop: 10,
         marginBottom: 10,
         // padding: 10,
     },
@@ -243,18 +279,24 @@ const dstyles = StyleSheet.create({
     subInfoContainer:{
         display: 'flex',
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        alignContent: 'flex-end',
+        justifyContent: 'flex-start',
         width: '100%',
-        paddingHorizontal: 3,
-        marginBottom: 5,
+        paddingHorizontal: 5,
+        // marginBottom: 5,
     },
     sourceText:{
-        fontSize: 16,
-        color: COLORS.FOREGROUND,
+        fontSize: 14,
+        color: COLORS.SUBFOREGROUND,
         fontFamily: FONT,
         textAlign: 'right',
-        marginTop: 5,
+        alignContent: 'flex-end',
+        alignItems: 'flex-end',
+        textAlignVertical: 'bottom',
+        // backgroundColor: 'white',
+        // width: '100%',
+        height: "100%",
+        // marginTop: 5,
         marginHorizontal: 5,
         // marginLeft: 13,
         // marginBottom: 10,
@@ -267,8 +309,8 @@ const dstyles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         borderRadius: 10,
-        borderTopLeftRadius: 0,
-        borderTopRightRadius: 0,
+        // borderTopLeftRadius: 0,
+        // borderTopRightRadius: 0,
         // marginTop: 10,
     },
     

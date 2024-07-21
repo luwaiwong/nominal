@@ -112,8 +112,6 @@ export default function Settings(){
             <ScrollView>
                 <View style={styles.scrollContainer}>
                     <View>
-
-                        
                         <View style={styles.sectionContainer}>
                             <Text style={styles.title}>Notifications</Text>
                             <SettingToggle setting="enablenotifs" title={"Enable Notifications"}/>
@@ -232,14 +230,12 @@ const styles = StyleSheet.create({
         flex: 1,
         display: 'flex',
         justifyContent: 'space-between',
-        
-
     },
     sectionContainer:{
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         // margin: 10,
         marginHorizontal: 10,
-        marginTop: 20,
+        marginTop: 15,
         // paddingVertical: 10,
         paddingTop: 10,
         // marginBottom: 15,

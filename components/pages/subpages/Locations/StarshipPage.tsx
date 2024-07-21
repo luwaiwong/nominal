@@ -12,17 +12,16 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 export function StarshipDashboard(){
     const userContext = useContext(UserContext);
     const [data, setData] = useState(undefined);
-    let stream = null;
-    let launches = null
-
 
 
     async function getData(){
         console.log("Getting starship data")
         await userContext.getStarshipData().then((data) => {
+            if (data.upcoming == undefined){
+                console.log("Data is undefined")
+                return;
+            }
             setData(data);
-            console.log(data.upcoming)
-            launches = data.upcoming.launches;
         }).catch((error) => {
             console.log("Error getting starship data:", error);
         })
@@ -35,38 +34,44 @@ export function StarshipDashboard(){
         }
         return (
             <View style={dstyles.container}>
-                <Text style={dstyles.title}>Starship</Text>
+                <Text style={dstyles.title}>Starship Loading...</Text>
             </View>
         )
     }
 
-    
     return (
         
         <View style={dstyles.container}>
-            <TouchableOpacity onPress={() => {}}>
-                <View style={dstyles.sectionHeader}>
-                    <Text style={dstyles.sectionTitle}>Starship/Starbase</Text>
-                    <View style={dstyles.seeMoreSection}>
-                        <Text style={dstyles.seeMoreText}>See More</Text>
-                        <MaterialIcons name="arrow-forward-ios" style={dstyles.sectionIcon}/>
+            <View style={dstyles.infoContainer}>
+                <View style={dstyles.streamContainer} >
+                    <YoutubeIframe videoId='A8QLrVAOE1k' height={220} play={false} mute={true} />
+                </View>
+                <TouchableOpacity onPress={() => {}}>
+                <View style={dstyles.subInfoContainer}>
+                    <Text style={dstyles.sourceText}>Live Starbase Stream: LabPadre</Text>
+                </View>
+
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {}}>
+                    <View style={dstyles.sectionHeader}>
+                        <Text style={dstyles.sectionTitle}>Starship</Text>
+                        <View style={dstyles.seeMoreSection}>
+                            <Text style={dstyles.seeMoreText}>See More</Text>
+                            <MaterialIcons name="arrow-forward-ios" style={dstyles.sectionIcon}/>
+                        </View>
                     </View>
-                </View>
-            </TouchableOpacity>
-            <View style={dstyles.streamContainer}>
-                <YoutubeIframe videoId='A8QLrVAOE1k' height={220} play={true}/>
+                </TouchableOpacity>
+
+                {data != undefined && data.upcoming != undefined && data.upcoming.launches != undefined && data.upcoming.launches[0]!= null && 
+                    <View style={dstyles.eventsContainer}>
+                        <Text style={dstyles.eventsTitle}>
+                            Next Starship Event:
+                        </Text>
+                        <LaunchSimple data={data.upcoming.launches[0]}></LaunchSimple>
+
+                    </View>
+                }
             </View>
-            <Text style={dstyles.streamCredit}>24/7 Livestream from LabPadre</Text>
-
-            {data.upcoming.launches != undefined && data.upcoming.launches[0]!= null && 
-                <View style={dstyles.eventsContainer}>
-                    <Text style={dstyles.eventsTitle}>
-                        Next Starship Event:
-                    </Text>
-                    <LaunchSimple data={data.upcoming.launches[0]}></LaunchSimple>
-
-                </View>
-            }
         </View>
     )
 
@@ -74,7 +79,6 @@ export function StarshipDashboard(){
 export default function StarshipPage(props) {
     const data = props.route.params.data;
     const user = props.route.params.user;
-    // console.log(data.length);
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -126,18 +130,13 @@ const dstyles = StyleSheet.create({
         alignItems: 'flex-end',
         justifyContent: 'space-between',
         width: '100%',
-        paddingHorizontal: 3,
-        // marginHorizontal: 10,
-        marginBottom: 10,
+        paddingHorizontal: 11,
     },
     sectionTitle:{
         fontSize: 26,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
-        // marginBottom: 10,
-        // marginLeft: 10,
-        marginTop: 5,
     },
     seeMoreText:{
         fontSize: 18,
@@ -162,6 +161,17 @@ const dstyles = StyleSheet.create({
         alignContent: 'flex-end',
         marginBottom: 2,
         
+    },
+    infoContainer:{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        borderRadius: 10,
+        // marginTop: 10,
+        marginBottom: 10,
+        // padding: 10,
     },
     streamContainer:{
         width: '100%',
@@ -192,21 +202,37 @@ const dstyles = StyleSheet.create({
         borderRadius: 10,
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
-        paddingTop: 5,
     
 
-        // marginTop: 10,
-        marginBottom: 10,
-        // paddingTop: 10,
     },
     eventsTitle:{
-        fontSize: 20,
-        color: COLORS.FOREGROUND,
+        fontSize: 18,
+        color: COLORS.SUBFOREGROUND,
         fontFamily: FONT,
         textAlign: 'center',
-        // marginBottom: 10,
+        marginBottom: -3,
         marginLeft: 12,
-        // marginTop: 10,
+        marginTop: 10,
+        zIndex: 100,
+    },
+    subInfoContainer:{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        // paddingHorizontal: 11,
+        // marginBottom: 5,
+    },
+    sourceText:{
+        fontSize: 14,
+        color: COLORS.SUBFOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'right',
+        textAlignVertical: 'bottom',
+        marginHorizontal: 10,
+        
+        height: "100%",
     },
     
 })

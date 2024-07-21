@@ -95,8 +95,6 @@ export async function fetchISSData(){
         return response.json();
     })
     .then((data) => {
-        data.upcoming.launches = processLaunchData(data.upcoming.launches);
-        data.previous.launches = processLaunchData(data.previous.launches);
         return data;
     })
 }

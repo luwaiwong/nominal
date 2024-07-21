@@ -82,9 +82,9 @@ const styles = StyleSheet.create({
       width: 150,
 
       
-      textShadowColor: 'rgba(0, 0, 0, 0.4)',
+      textShadowColor: 'rgba(0, 0, 0, 0.6)',
       textShadowOffset: {width: 2, height: 2},
-      textShadowRadius: 1,
+      textShadowRadius: 5,
       elevation: 200,
 
       zIndex: 110,

@@ -151,9 +151,7 @@ export class UserData {
       launches.upcoming != [] &&
       events !== null &&
       events.upcoming != [] &&
-      news !== null &&
-      starship != null &&
-      iss != null;
+      news !== null;
 
     // Log the last call time
     if (hasData) {
@@ -184,7 +182,8 @@ export class UserData {
   async getStarshipData() {
     // If starship data is undefined or last call was more than cachecalltime ago
     if (
-      this.starship === undefined ||
+      this.starship === null ||
+      this.starship.upcoming === undefined ||
       this.starship.lastcall - new Date().getTime() > extradatacalltime
     ) {
       console.log("Fetching Starship Data");
@@ -203,9 +202,10 @@ export class UserData {
     return this.starship;
   }
   async getISSData() {
-    // If starship data is undefined or last call was more than cachecalltime ago
+    // If iss data is undefined or last call was more than cachecalltime ago
     if (
-      this.iss === undefined ||
+      this.iss === null ||
+      this.iss.name === undefined ||
       this.iss.lastcall - new Date().getTime() > extradatacalltime
     ) {
       console.log("Fetching ISS Data");
@@ -314,7 +314,7 @@ export class UserData {
     console.log("Forcing Data Fetch");
 
     try {
-      this.getCache();
+      await this.getCache();
     } catch (e) {
       console.log("Error Getting Cache", e);
     }
