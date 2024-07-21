@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, FlatList, StatusBar } from 'react-native';
+import { StyleSheet, View, Text, Image, FlatList, StatusBar, Dimensions } from 'react-native';
 import { MaterialIcons } from 'react-native-vector-icons';
 import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
 import Event from '../../../styled/Event';
@@ -255,7 +255,8 @@ const dstyles = StyleSheet.create({
     
     issMapContainer:{
         flex: 1,
-        // width: "100%",
+        width: Dimensions.get('window').width-20,
+        aspectRatio: 2.125,
         // margin: 10,
         borderRadius: 10,
         overflow: 'hidden',
@@ -264,7 +265,7 @@ const dstyles = StyleSheet.create({
         borderBottomRightRadius: 0,
     },
     issMap:{
-        width: "100%",
+        width: Dimensions.get('window').width-20,
         // paddingRight: "2.5%",
         aspectRatio: 2.125,
     },
