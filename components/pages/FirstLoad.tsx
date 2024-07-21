@@ -42,18 +42,13 @@ export default function FirstLoad(props) {
                 <Animated.View style={[styles.page,{opacity:opacity}]}>
                     <Text style={styles.title}>Welcome to Nominal</Text>
                     <View>
-                        <Text style={styles.text}>View upcoming launches and events,</Text>
-
-                        {/* <Text style={styles.text}></Text> */}
-                        
-                        <Text style={styles.text}>Check out recently launched missions, </Text>
-                        <Text style={styles.text}>And be informed on breaking news and articles about space.</Text>
+                        <Text style={styles.text}>View upcoming launches and events, view recently launched missions and be informed on breaking news and articles about space.</Text>
 
                         <Text style={styles.buffer}></Text>
-                        <Text style={styles.text}>Get quick access to livestreams,</Text>
-                        <Text style={styles.text}>Recieve notifications for launches,</Text>
+                        <Text style={styles.text}>get quick access to livestreams,</Text>
+                        <Text style={styles.text}>recieve notifications for launches,</Text>
 
-                        <Text style={styles.text}>And use the For You page for an immersive overview of all spaceflight activities.</Text>
+                        <Text style={styles.text}>and use the For You page for an immersive overview of all spaceflight activities.</Text>
 
                         <Text style={styles.buffer}></Text>
 
@@ -64,7 +59,7 @@ export default function FirstLoad(props) {
                     <View></View>
                     <View></View>
                     <View>
-                        <Text style={styles.text}>Thanks for downloading!</Text>
+                        {/* <Text style={styles.text}>Thanks for downloading!</Text> */}
                         <TouchableOpacity onPress={fadeOut}>
                             <Text style={styles.button}>Get Started</Text>
                         </TouchableOpacity>

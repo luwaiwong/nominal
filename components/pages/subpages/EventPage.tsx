@@ -19,7 +19,7 @@ export default function EventPage(props) {
     const userContext = useContext(UserContext);
     const event = props.route.params.data;
     const time = new Date(event.date);
-    const isPrecise = event.date_precision.name === "Hour" || event.date_precision.name === "Minute" || event.date_precision.name === "Day"|| event.date_precision.name === "Second";
+    const isPrecise = event.date_precision != null && (event.date_precision.name === "Hour" || event.date_precision.name === "Minute" || event.date_precision.name === "Day"|| event.date_precision.name === "Second");
 
     let status = "Upcoming Event";
     let statusColor = COLORS.FOREGROUND;
@@ -128,7 +128,7 @@ export default function EventPage(props) {
                 { launches.length > 0 &&
                 <View style={styles.launchSection}>
                     <Text style={styles.launchSubtitle}>Related Launches:</Text>
-                    {launches.map((launch, index) => {return <LaunchSimple key={index} data={launch} user={props.route.params.user} nav={props.navigation} />})}
+                    {launches.map((launch, index) => {return <LaunchSimple key={index} data={launch} />})}
                 </View> 
                 }
                 

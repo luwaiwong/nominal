@@ -4,10 +4,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
 
 import Tags from "./Tags";
-
+import EventEmitter from "eventemitter3";
+var EE = new EventEmitter();
 // Set cache call time
 // If last call less than x minutes ago, use cache
 const cachecalltime = 1000 * 60 * 30;
+const extradatacalltime = 1000 * 60 * 90;
 const twomin = 1000 * 60 * 2;
 
 export const UserContext = React.createContext(null);
@@ -42,10 +44,13 @@ export class UserData {
     this.gettingdata = false;
 
     // Current User Data
-    this.launchdata = undefined;
+    this.launches = undefined;
     this.news = undefined;
     this.events = undefined;
-    this.navigator = undefined;
+    this.starship = undefined;
+    this.iss = undefined;
+
+    // User Stuff
     this.nav = undefined;
 
     this.settings = {
@@ -122,6 +127,7 @@ export class UserData {
       await AsyncStorage.removeItem("launches");
       await AsyncStorage.removeItem("events");
       await AsyncStorage.removeItem("news");
+      await AsyncStorage.removeItem("starship");
       await AsyncStorage.removeItem("settings");
       await AsyncStorage.removeItem("hasused");
       console.log("Data Cleared");
@@ -130,6 +136,93 @@ export class UserData {
     }
   }
 
+  async getCache() {
+    console.log("Getting Cache");
+    const lastcall = await AsyncStorage.getItem("lastcall");
+    const launches = await AsyncStorage.getItem("launches");
+    const events = await AsyncStorage.getItem("events");
+    const news = await AsyncStorage.getItem("news");
+    const starship = await AsyncStorage.getItem("starship");
+    const iss = await AsyncStorage.getItem("iss");
+
+    let hasData =
+      lastcall !== null &&
+      launches !== null &&
+      launches.upcoming != [] &&
+      events !== null &&
+      events.upcoming != [] &&
+      news !== null &&
+      starship != null &&
+      iss != null;
+
+    // Log the last call time
+    if (hasData) {
+      console.log(
+        "Cache Time: " +
+          (new Date().getTime() - parseInt(lastcall)) / 1000 +
+          "s ago"
+      );
+    } else {
+      console.log("No cache or incomplete cache found");
+    }
+
+    // Record last API time
+    this.lastcall = parseInt(lastcall);
+
+    // Check if data is outdated, if not then use cache
+    if (hasData) {
+      // Otherwise record cache for further use if unable to pull data
+      this.cache = {
+        launches: launches,
+        events: events,
+        news: news,
+        starship: starship,
+        iss: iss,
+      };
+    }
+  }
+  async getStarshipData() {
+    // If starship data is undefined or last call was more than cachecalltime ago
+    if (
+      this.starship === undefined ||
+      this.starship.lastcall - new Date().getTime() > extradatacalltime
+    ) {
+      console.log("Fetching Starship Data");
+      try {
+        await this.fetchStarshipData();
+        // Store after returning data
+        setTimeout.bind(this, this.storeData(), 0);
+        return this.starship;
+      } catch (e) {
+        console.log("Error fetching starship data: " + e);
+      }
+    }
+
+    console.log("Returning Starship Cache");
+    // console.log(this.starship);
+    return this.starship;
+  }
+  async getISSData() {
+    // If starship data is undefined or last call was more than cachecalltime ago
+    if (
+      this.iss === undefined ||
+      this.iss.lastcall - new Date().getTime() > extradatacalltime
+    ) {
+      console.log("Fetching ISS Data");
+      try {
+        await this.fetchISSData();
+
+        // Store after returning data
+        setTimeout.bind(this, this.storeData(), 0);
+        return this.iss;
+      } catch (e) {
+        console.log("Error fetching ISS data: " + e);
+      }
+    }
+
+    console.log("Returning ISS Cache");
+    return this.iss;
+  }
   // Returns all required data
   async getData() {
     // Check scheduled notifications
@@ -140,57 +233,27 @@ export class UserData {
 
     this.gettingdata = true;
 
-    // Check cache for data
     try {
-      const lastcall = await AsyncStorage.getItem("lastcall");
-      const launches = await AsyncStorage.getItem("launches");
-      const events = await AsyncStorage.getItem("events");
-      const news = await AsyncStorage.getItem("news");
+      await this.getCache();
+    } catch (e) {
+      console.log("Error getting Cache", e);
+    }
 
-      let hasData =
-        lastcall !== null &&
-        launches !== null &&
-        launches.upcoming != [] &&
-        events !== null &&
-        events.upcoming != [] &&
-        news !== null;
+    // Check if cache is eligble to be returned
+    if (
+      this.cache != undefined &&
+      new Date().getTime() - this.lastcall < cachecalltime
+    ) {
+      console.log("Data fetched from cache");
 
-      // Log the last call time
-      if (hasData) {
-        console.log(
-          "Cache Time: " +
-            (new Date().getTime() - parseInt(lastcall)) / 1000 +
-            "s ago"
-        );
-      } else {
-        console.log("No cache or incomplete cache found");
-      }
+      this.launches = JSON.parse(this.cache.launches);
+      this.events = JSON.parse(this.cache.events);
+      this.news = JSON.parse(this.cache.news);
+      this.starship = JSON.parse(this.cache.starship);
+      this.iss = JSON.parse(this.cache.iss);
 
-      // Record last API time
-      this.lastcall = parseInt(lastcall);
-
-      // Check if data is outdated, if not then use cache
-      if (
-        hasData &&
-        new Date().getTime() - parseInt(lastcall) < cachecalltime
-      ) {
-        this.launchdata = JSON.parse(launches);
-        this.events = JSON.parse(events);
-        this.news = JSON.parse(news);
-        console.log("Data fetched from cache");
-
-        this.gettingdata = false;
-        return this.#getData();
-      }
-
-      // Otherwise record cache for further use if unable to pull data
-      this.cache = {
-        launches: launches,
-        events: events,
-        news: news,
-      };
-    } catch (error) {
-      console.log("Error getting data from cache: " + error);
+      this.gettingdata = false;
+      return this.#getData();
     }
 
     // Try fetching the data and return the upcoming launches
@@ -210,31 +273,31 @@ export class UserData {
       // Record the last call time
       this.lastcall = new Date().getTime();
 
+      this.gettingdata = false;
+
       // Calls the storedata function after returning the data
       setTimeout.bind(this, this.storeData(), 0);
       setTimeout.bind(this, this.scheduleNotifications(), 0);
 
-      this.gettingdata = false;
       return this.#getData();
     } catch (error) {
       // If unable to pull data
       console.log("Error getting data: " + error);
       console.log("Getting and returning cached data");
-      const lastcall = await AsyncStorage.getItem("lastcall");
-      const launches = await AsyncStorage.getItem("launches");
-      const events = await AsyncStorage.getItem("events");
-      const news = await AsyncStorage.getItem("news");
 
-      this.launchdata = JSON.parse();
+      this.launches = JSON.parse(this.cache.launches);
       this.events = JSON.parse(this.cache.events);
       this.news = JSON.parse(this.cache.news);
+      this.starship = JSON.parse(this.cache.starship);
+      this.iss = JSON.parse(this.cache.iss);
 
       this.gettingdata = false;
       return this.#getData();
     }
   }
 
-  async forceFetchData() {
+  // Assume preexisting data exists
+  async reloadData() {
     // if last fetch < 10 minutes ago, return cache
     if (
       this.settings.waitbeforerefreshing &&
@@ -250,51 +313,19 @@ export class UserData {
     this.gettingdata = true;
     console.log("Forcing Data Fetch");
 
+    try {
+      this.getCache();
+    } catch (e) {
+      console.log("Error Getting Cache", e);
+    }
+
     // Try fetching the data and return the upcoming launches
     try {
-      // Get cache
-      try {
-        const lastcall = await AsyncStorage.getItem("lastcall");
-        const launches = await AsyncStorage.getItem("launches");
-        const events = await AsyncStorage.getItem("events");
-        const news = await AsyncStorage.getItem("news");
-
-        let hasData =
-          lastcall !== null &&
-          launches !== null &&
-          launches.upcoming != [] &&
-          events !== null &&
-          events.upcoming != [] &&
-          news !== null;
-
-        // Log the last call time
-        if (hasData) {
-          console.log(
-            "Cache Time: " +
-              (new Date().getTime() - parseInt(lastcall)) / 1000 +
-              "s ago"
-          );
-
-          // Record last API time
-          this.lastcall = parseInt(lastcall);
-          // Otherwise record cache for further use if unable to pull data
-          this.cache = {
-            launches: launches,
-            events: events,
-            news: news,
-          };
-        } else {
-          console.log("No cache or incomplete cache found");
-        }
-      } catch (error) {
-        console.log("Error getting data from cache: " + error);
-      }
       let curTime = new Date().getTime();
       await this.getUpcomingData();
-      await this.getPreviousData();
-      await this.getPreviousEvents();
       await this.getEvents();
       await this.getNews();
+      this.updateStarshipLaunchesAndEvents();
 
       console.log("Data Fetched");
       // How long did it take to fetch data?
@@ -315,11 +346,14 @@ export class UserData {
       console.log("Error getting data: " + error);
       console.log("Returning cached data");
 
-      this.launchdata = JSON.parse(this.cache.launches);
+      this.launches = JSON.parse(this.cache.launches);
       this.events = JSON.parse(this.cache.events);
       this.news = JSON.parse(this.cache.news);
 
+      EE.emit("LaunchesFetched");
+
       this.gettingdata = false;
+
       return this.#getData();
     }
   }
@@ -333,7 +367,7 @@ export class UserData {
     }
 
     try {
-      await AsyncStorage.setItem("launches", JSON.stringify(this.launchdata));
+      await AsyncStorage.setItem("launches", JSON.stringify(this.launches));
       console.log("Launches stored");
     } catch (error) {
       console.log("Error storing data: " + error);
@@ -351,6 +385,22 @@ export class UserData {
       console.log("News stored");
     } catch (error) {
       console.log("Error storing news: " + error);
+    }
+    try {
+      if (this.starship !== undefined) {
+        await AsyncStorage.setItem("starship", JSON.stringify(this.starship));
+        console.log("Starship stored");
+      }
+    } catch (e) {
+      console.log("Error Storing starship: " + e);
+    }
+    try {
+      if (this.iss !== undefined) {
+        await AsyncStorage.setItem("iss", JSON.stringify(this.iss));
+        console.log("ISS stored");
+      }
+    } catch (e) {
+      console.log("Error Storing ISS: " + e);
     }
   }
   async getSettings() {
@@ -396,20 +446,20 @@ export class UserData {
   //#region PINNED FUNCTIONS
   async getPinnedLaunches() {
     let pinned = [];
-    for (let i = 0; i < this.launchdata.upcoming.length; i++) {
+    for (let i = 0; i < this.launches.upcoming.length; i++) {
       if (
-        this.pinned.includes(this.launchdata.upcoming[i].id) &&
-        !pinned.includes(this.launchdata.upcoming[i])
+        this.pinned.includes(this.launches.upcoming[i].id) &&
+        !pinned.includes(this.launches.upcoming[i])
       ) {
-        pinned.push(this.launchdata.upcoming[i]);
+        pinned.push(this.launches.upcoming[i]);
       }
     }
-    for (let i = 0; i < this.launchdata.previous.length; i++) {
+    for (let i = 0; i < this.launches.previous.length; i++) {
       if (
-        this.pinned.includes(this.launchdata.previous[i].id) &&
-        !pinned.includes(this.launchdata.previous[i])
+        this.pinned.includes(this.launches.previous[i].id) &&
+        !pinned.includes(this.launches.previous[i])
       ) {
-        pinned.push(this.launchdata.previous[i]);
+        pinned.push(this.launches.previous[i]);
       }
     }
     return pinned;
@@ -460,8 +510,8 @@ export class UserData {
     let notifs = 0;
     // Load notifications for launches & events within the next 2 weeks
     // Loop through launches
-    for (let i = 0; i < this.launchdata.upcoming.length; i++) {
-      let launch = this.launchdata.upcoming[i];
+    for (let i = 0; i < this.launches.upcoming.length; i++) {
+      let launch = this.launches.upcoming[i];
       let launchTime = new Date(launch.net);
       let today = new Date();
       let preciseMinute = launch.net_precision.name == "Minute";
@@ -655,6 +705,9 @@ export class UserData {
     return await Notifications.getAllScheduledNotificationsAsync();
   }
   //#endregion
+  //#region STARSHIP DATA
+  updateStarshipLaunchesAndEvents() {}
+  //#endregion
 
   // #region PRIVATE DATA FUNCTIONS
   #getData() {
@@ -690,10 +743,10 @@ export class UserData {
   }
 
   #getUpcomingLaunches() {
-    return this.launchdata.upcoming;
+    return this.launches.upcoming;
   }
   #getPreviousLaunches() {
-    return this.launchdata.previous;
+    return this.launches.previous;
   }
   #getNewsData() {
     return this.news;
@@ -716,8 +769,8 @@ export class UserData {
     let recentEvents = [];
     let recent = [];
     // First, get recently launched launches within the last 7 days
-    for (let i = 0; i < this.launchdata.previous.length; i++) {
-      let launch = this.launchdata.previous[i];
+    for (let i = 0; i < this.launches.previous.length; i++) {
+      let launch = this.launches.previous[i];
       let launchTime = new Date(launch.net).getTime();
       if (now - launchTime < 1000 * 60 * 60 * 24 * 7) {
         recentLaunches.push(launch);
@@ -787,22 +840,22 @@ export class UserData {
     ei = 0;
     li = 0;
     // Other info
-    let launches = this.launchdata.upcoming;
+    let launches = this.launches.upcoming;
     let data = [];
 
     while (
       ei < this.events.upcoming.length ||
-      li < this.launchdata.upcoming.length
+      li < this.launches.upcoming.length
     ) {
       let einrange = ei < this.events.upcoming.length;
-      let linrange = li < this.launchdata.upcoming.length;
+      let linrange = li < this.launches.upcoming.length;
 
       if (!einrange && !linrange) {
         break;
       }
       // If out of events, and launches are still accurate
       else if (!einrange && launches[li].net_precision.name != "Month") {
-        data.push(this.launchdata.upcoming[li]);
+        data.push(this.launches.upcoming[li]);
         li++;
         continue;
       }
@@ -824,12 +877,12 @@ export class UserData {
       // If we still have events and launches, but launches are not accurate
       else if (launches[li].net_precision.name == "Month") {
         // Stop
-        // data.push(this.launchdata.upcoming[li]);
-        li = this.launchdata.upcoming.length + 1;
+        // data.push(this.launches.upcoming[li]);
+        li = this.launches.upcoming.length + 1;
         continue;
       }
       let eventTime = new Date(this.events.upcoming[ei].date).getTime();
-      let launchTime = new Date(this.launchdata.upcoming[li].net).getTime();
+      let launchTime = new Date(this.launches.upcoming[li].net).getTime();
 
       let eventHasPrecision =
         this.events.upcoming[ei].date_precision != null &&
@@ -841,7 +894,7 @@ export class UserData {
         ei++;
         continue;
       } else {
-        data.push(this.launchdata.upcoming[li]);
+        data.push(this.launches.upcoming[li]);
         li++;
         continue;
       }
@@ -863,19 +916,19 @@ export class UserData {
 
   // FOR DASHBOARD
   #getDashboardHighlightLaunches() {
-    return [this.launchdata.upcoming[0]];
+    return [this.launches.upcoming[0]];
   }
   // Return last 3 recently launched
   // #TODO Change to return recently launched from last week?
   #getDashboardRecentLaunches() {
-    return this.launchdata.previous.slice(0, 3);
+    return this.launches.previous.slice(0, 3);
   }
 
   #getDashboardFilteredLaunches() {
-    // return this.launchdata.upcoming.slice(0, 5);
+    // return this.launches.upcoming.slice(0, 5);
     // Filter the launches based on the tags
     // Cutoff at launches that are more than 1 month away
-    return this.launchdata.upcoming.slice(1, 5);
+    return this.launches.upcoming.slice(1, 5);
   }
   #getDashboardEvents() {
     return this.events.upcoming.slice(0, 1);
@@ -896,12 +949,12 @@ export class UserData {
       data.lastCalledTime = new Date().getTime();
       // TODO - Store data in local storage
       // TODO - Instead of overwriting the data, merge the new data with the old data
-      if (this.launchdata === undefined) this.launchdata = {};
-      if (this.launchdata.upcoming === undefined) this.launchdata.upcoming = [];
+      if (this.launches === undefined) this.launches = {};
+      if (this.launches.upcoming === undefined) this.launches.upcoming = [];
 
-      this.launchdata.upcoming = data;
+      this.launches.upcoming = data;
 
-      return this.launchdata;
+      return this.launches;
     });
   }
 
@@ -910,12 +963,12 @@ export class UserData {
     console.log("Getting Previous, API Calls: " + this.apiCallTimes);
 
     return await this.APIHandler.getPreviousLaunches().then((data) => {
-      if (this.launchdata === undefined) this.launchdata = {};
-      if (this.launchdata.previous === undefined) this.launchdata.previous = [];
+      if (this.launches === undefined) this.launches = {};
+      if (this.launches.previous === undefined) this.launches.previous = [];
 
-      this.launchdata.previous = data;
+      this.launches.previous = data;
 
-      return this.launchdata;
+      return this.launches;
     });
   }
 
@@ -964,6 +1017,36 @@ export class UserData {
       })
       .catch((error) => {
         console.log("Error getting events: " + error);
+      });
+  }
+
+  async fetchStarshipData() {
+    this.apiCallTimes += 1;
+    console.log("Getting Starship Data, API Calls: " + this.apiCallTimes);
+    return await this.APIHandler.fetchStarshipDashboard()
+      .then((data) => {
+        if (this.starship === undefined) this.starship = {};
+        this.starship = data;
+        this.starship.lastcall = new Date().getTime();
+        return data;
+      })
+      .catch((error) => {
+        console.log("Error getting starship data: " + error);
+      });
+  }
+
+  async fetchISSData() {
+    this.apiCallTimes += 1;
+    console.log("Getting ISS Data, API Calls: " + this.apiCallTimes);
+    return await this.APIHandler.fetchISSData()
+      .then((data) => {
+        if (this.iss === undefined) this.iss = {};
+        this.iss = data;
+        this.iss.lastcall = new Date().getTime();
+        return data;
+      })
+      .catch((error) => {
+        console.log("Error getting ISS data: " + error);
       });
   }
 

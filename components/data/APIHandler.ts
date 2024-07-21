@@ -1,6 +1,6 @@
 const LAUNCH_DEV_API_URL = "https://lldev.thespacedevs.com/2.2.0/";
 const LAUNCH_PROD_API_URL = "https://ll.thespacedevs.com/2.2.0/";
-const LAUNCH_API_URL = LAUNCH_PROD_API_URL;
+const LAUNCH_API_URL = LAUNCH_DEV_API_URL;
 
 const NEWS_API_URL = "https://api.spaceflightnewsapi.net/v4/";
 
@@ -70,6 +70,33 @@ export async function getRocketFamilies(){
         return response.json();
     })
     .then((data) => {
+        return data;
+    })
+}
+
+export async function fetchStarshipDashboard(){
+    return await fetch(LAUNCH_API_URL+"dashboard/starship/")
+    .then((response) => {
+        return response.json();
+    })
+    .then((data) => {
+        data.upcoming.launches = processLaunchData(data.upcoming.launches);
+        data.previous.launches = processLaunchData(data.previous.launches);
+        return data;
+    }).catch((error) => {
+        console.log("Error fetching starship data:", error);
+        return {}
+    })
+}
+
+export async function fetchISSData(){
+    return await fetch(LAUNCH_API_URL+"spacestation/4/")
+    .then((response) => {
+        return response.json();
+    })
+    .then((data) => {
+        data.upcoming.launches = processLaunchData(data.upcoming.launches);
+        data.previous.launches = processLaunchData(data.previous.launches);
         return data;
     })
 }

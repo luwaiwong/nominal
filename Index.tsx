@@ -1,14 +1,13 @@
 import { useFonts } from "expo-font";
 import { SpaceGrotesk_500Medium } from "@expo-google-fonts/space-grotesk";
 
-import { AppState, Dimensions, Platform, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View, Animated } from "react-native";
+import { AppState, Dimensions, Platform, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View, Animated, Alert } from "react-native";
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { StatusBar } from "expo-status-bar";
 import PagerView from "react-native-pager-view";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-// Components
-import TestLaunchData from "./components/pages/TestLaunchData";
+// Components\
 import TitleBar from "./components/styled/Titlebar";
 import MenuBar from "./components/styled/MenuBar";
 import Loading from "./components/styled/Loading";
@@ -24,9 +23,10 @@ import News from "./components/pages/News"
 import * as colors from "./components/styles";
 import { useSharedValue } from "react-native-reanimated";
 import { UserContext } from "./components/data/UserContext";
+import Locations from "./components/pages/More";
 
 
-
+const titleOffset = 300
 
 export default function Index(props) {
   // App Data Variables
@@ -37,7 +37,7 @@ export default function Index(props) {
   let menuBarRef = useRef(null);
   
   const pagerRef = useRef(null);
-  const pageScrollState = useSharedValue(225);
+  const pageScrollState = useSharedValue(titleOffset);
 
   const refreshOpacity = useRef(new Animated.Value(0)).current
 
@@ -140,6 +140,7 @@ export default function Index(props) {
       setLaunchData(data);
     }).catch((error)=>{
       console.log("Error when getting data (Index Page)", error)
+      Alert.alert("Error getting data", "Error: "+ error);
       return false;
     })
   }
@@ -152,7 +153,7 @@ export default function Index(props) {
 
     startRefreshAnimation();
     console.log("Refreshing Page")
-    await userContext.forceFetchData().then((data)=> {
+    await userContext.reloadData().then((data)=> {
       console.log("Returning Data")
       refreshOpacity.setValue(0);
       
@@ -199,7 +200,7 @@ export default function Index(props) {
     // Handle page scroll state changes (e.g., idle, settling, dragging)
     // Example: Log the state change
     // console.log('Page scroll state:', state["nativeEvent"]);
-    pageScrollState.value = (state["nativeEvent"]["offset"]+state["nativeEvent"]["position"]) * -150 + 225;
+    pageScrollState.value = (state["nativeEvent"]["offset"]+state["nativeEvent"]["position"]) * -150 + titleOffset;
     // Can be 
   }
   // Called when the page is changed
@@ -251,6 +252,7 @@ export default function Index(props) {
           <ForYou data={data}/>
           <Dashboard data={data}/>
           <News data={data}/>
+          <Locations data={data}/>
           <Settings />
         </PagerView>
       )

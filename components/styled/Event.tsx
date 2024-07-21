@@ -1,12 +1,14 @@
 
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import { StyleSheet, View, Image, Text, Animated, Linking} from "react-native";
 
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 import { COLORS, FONT, TIME_OPTIONS } from "../styles";
+import { UserContext } from "../data/UserContext";
 
 export default function Event(props){
+    const userContext = useContext(UserContext);
     const eventData = props.eventData;
 
     if (eventData == undefined) return null;
@@ -43,7 +45,7 @@ export default function Event(props){
     // Create an animation that scales the view back to its original size when released
     const animateOut = (open: boolean) => {
         if (open){
-            props.nav.navigate("Event", {data: eventData});
+            userContext.nav.navigate("Event", {data: eventData});
         }
         Animated.timing(scale, {
         toValue: 1,

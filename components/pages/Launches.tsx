@@ -6,7 +6,7 @@ import LaunchInfo from '../styled/Launch';
 import Loading from '../styled/Loading';
 import {BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT} from '../styles';
 
-export default function Launch(props){
+export default function Launches(props){
     const nav = props.data.nav;
     const userData = props.data.userData;
     const upcomingLaunches = props.data.upcoming;

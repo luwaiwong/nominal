@@ -24,7 +24,7 @@ export default function LaunchesPage(props) {
                 </Pressable>
             </View>
             { (userContext.settings.devmode && devMode)?<FlatList
-                data={title == "Upcoming"?userContext.launchdata.upcoming:userContext.launchdata.previous}
+                data={title == "Upcoming"?userContext.launches.upcoming:userContext.launches.previous}
                 keyExtractor={(item, index) => index.toString()}
                 style={styles.list}
                 renderItem={({ item }) => <DevText item={item}></DevText>}>

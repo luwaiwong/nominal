@@ -17,6 +17,7 @@ export default function LaunchPage(props) {
     const userContext = useContext(UserContext);
     const launch = props.route.params.data;
     const launchTime = new Date(launch.net);
+    const timeDiff = launchTime.getTime() - Date.now();
     const isPrecise = launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second";
 
     let status = "Upcoming Launch";
@@ -104,6 +105,12 @@ export default function LaunchPage(props) {
                         <Text style={styles.timeText}> NET {MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
                         }
                 </View>
+
+
+                {launch.failreason != null && launch.failreason != "" && <Text style={styles.failReason} >Cause of Failure: {launch.failreason}</Text>}
+                
+                {/* Note that information may not be accurate as the launch is happening when launch is < 10 minutes away*/}
+                {timeDiff > 0 && timeDiff < 1000 * 60 * 10 && <Text style={styles.liveWarning}>Note that information may not be accurate as the launch is happening, use official sources and livestreams for more accurate, up to date information! </Text>}
                 <View style={styles.infoUrls}>
                     {launch.vid_urls != null && launch.vid_urls[0] != null && launch.vid_urls[0].url != null &&
                         <TouchableOpacity  onPress={() => Linking.openURL(launch.vid_url[0].url)} >
@@ -114,10 +121,6 @@ export default function LaunchPage(props) {
                         </TouchableOpacity>
                     }
                 </View>
-
-
-                {launch.failreason != null && launch.failreason != "" && <Text style={styles.failReason} >Cause of Failure: {launch.failreason}</Text>}
-                
 
                 {/* Description */}
                 <Text style={styles.descriptionTitle}>Description:</Text>
@@ -440,6 +443,22 @@ const styles = StyleSheet.create({
         borderColor: COLORS.RED,
         borderWidth: 2,
     },
+    liveWarning:{
+        fontSize: 15,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'justify',
+        marginHorizontal: 10,
+        marginTop: 10,
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+
+        padding: 10,
+
+        borderRadius: 10,
+        borderColor: COLORS.FOREGROUND,
+        borderWidth: 2,
+    },
+
 
     // #endregion
     // #region LAUNCH DESCRIPTION

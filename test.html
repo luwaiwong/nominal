@@ -9,6 +9,7 @@
     <script>
         let link = "https://ll.thespacedevs.com"
         let news = "https://api.spaceflightnewsapi.net/v4/articles"
+        let starship = "https://lldev.thespacedevs.com/2.2.0/dashboard/starship/"
         
         async function TestAPI(){
             // fetch(link+"/2.2.0/launch/upcoming/")
@@ -28,8 +29,8 @@
             //     .then((data) => {
             //         console.log(data)
             //     })
-            
-            fetch(news)
+            console.log("fetching")
+            fetch(starship)
                 .then((response) => {
                     console.log(response);
                     return response.json();

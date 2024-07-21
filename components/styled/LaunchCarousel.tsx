@@ -44,7 +44,7 @@ export default function LaunchCarousel(props:{content, type, nav}){
     return (
         <>
             <View style={[styles.contentSection , {marginTop: 0}]}>
-            <TouchableOpacity onPress={() => props.nav.navigate("Launches", {data:userContext.launchdata.previous,title:"Recent Launches"})}>
+            <TouchableOpacity onPress={() => props.nav.navigate("Launches", {data:userContext.launches.previous,title:"Recent Launches"})}>
                 <View style={styles.contentHeaderSection} >
                     <Text style={styles.contentHeaderText} >Recent </Text>
 
@@ -68,7 +68,7 @@ export default function LaunchCarousel(props:{content, type, nav}){
                 
                 {props.type == "launch" && content.map((launch: any) => {
                 return (
-                    <Launch key={launch.id} data={launch} nav={props.nav}/>
+                    <Launch key={launch.id} data={launch}/>
 
                 );
             })}

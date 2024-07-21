@@ -1,13 +1,18 @@
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Pressable } from "react-native";
-import {useRef, useEffect, useState } from "react";
+import {useRef, useEffect, useState, useContext } from "react";
 import PagerView from "react-native-pager-view";
 
 import { COLORS, FONT } from "../styles";
 import Loading from "../styled/Loading";
 
 import {ForYouLaunch, ForYouEvent, ForYouEnd} from "../styled/ForYouItem";
+import { UserContext } from "../data/UserContext";
+import EventEmitter from "eventemitter3";
+
+var EE = new EventEmitter();
 
 export default function ForYou(props) {
+  const userContext = useContext(UserContext);
   const pagerRef = useRef(null);
   const curPage = useRef(0);
   let userData = props.data.userData;
@@ -33,7 +38,21 @@ export default function ForYou(props) {
     return () => clearInterval(intervalId);
 
     // Specify empty array as second argument to run only when the component mounts and unmounts
-  }, []);
+  }, []);// Subscribe and check app state
+  useEffect(()=>{
+    if (userContext == null){
+      return;
+    }
+    EE.on("LaunchesUpdated", onLaunchesUpdated);
+  
+    return () => {
+      EE.removeListener("LaunchesUpdated", onLaunchesUpdated);
+    }
+  }, [userContext])
+
+  function onLaunchesUpdated(){
+    console.log("Launches Updated")
+  }
 
   
   const onPageScroll = (state) => {
