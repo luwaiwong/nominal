@@ -182,8 +182,8 @@ export class UserData {
   async getStarshipData() {
     // If starship data is undefined or last call was more than cachecalltime ago
     if (
-      this.starship === null ||
-      this.starship.upcoming === undefined ||
+      this.starship == undefined ||
+      this.starship.upcoming == undefined ||
       this.starship.lastcall - new Date().getTime() > extradatacalltime
     ) {
       console.log("Fetching Starship Data");
@@ -204,8 +204,8 @@ export class UserData {
   async getISSData() {
     // If iss data is undefined or last call was more than cachecalltime ago
     if (
-      this.iss === null ||
-      this.iss.name === undefined ||
+      this.iss == undefined ||
+      this.iss.name == undefined ||
       this.iss.lastcall - new Date().getTime() > extradatacalltime
     ) {
       console.log("Fetching ISS Data");

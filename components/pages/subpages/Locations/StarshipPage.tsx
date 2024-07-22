@@ -133,24 +133,25 @@ const dstyles = StyleSheet.create({
         paddingHorizontal: 11,
     },
     sectionTitle:{
-        fontSize: 26,
+        fontSize: 24,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
     },
     seeMoreText:{
-        fontSize: 18,
+        fontSize: 16,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'right',
-        marginRight: 10,
+        marginRight: 5,
         alignContent: 'flex-end',
     },
     sectionIcon:{
-        fontSize: 25,
+        fontSize: 20,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'right',
+        // marginBottom: 2,
         // marginRight: 10,
     },
     seeMoreSection:{
@@ -232,6 +233,8 @@ const dstyles = StyleSheet.create({
         textAlignVertical: 'bottom',
         marginHorizontal: 10,
         
+        marginTop: 2,
+        marginLeft: 12,
         height: "100%",
     },
     

@@ -123,7 +123,7 @@ export function ISSDashboard(){
                         
                     <TouchableOpacity onPress={() => {}}>
                         <View style={dstyles.sectionHeader}>
-                            <Text style={dstyles.sectionTitle}>ISS Status</Text>
+                            <Text style={dstyles.sectionTitle}>International Space Station</Text>
                             <View style={dstyles.seeMoreSection}>
                                 <Text style={dstyles.seeMoreText}>See More</Text>
                                 <MaterialIcons name="arrow-forward-ios" style={dstyles.sectionIcon}/>
@@ -210,27 +210,27 @@ const dstyles = StyleSheet.create({
         // marginBottom: 5,
     },
     sectionTitle:{
-        fontSize: 26,
-        color: COLORS.FOREGROUND,
-        fontFamily: FONT,
-        textAlign: 'left',
-        marginBottom: 1,
-    },
-    seeMoreText:{
         fontSize: 18,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
+        textAlign: 'left',
+        // marginBottom: 1,
+    },
+    seeMoreText:{
+        fontSize: 16,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
         textAlign: 'right',
-        marginRight: 10,
+        marginRight: 5,
         alignContent: 'flex-end',
     },
     sectionIcon:{
-        fontSize: 25,
+        fontSize: 20,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'right',
         // marginRight: 10,
-        marginBottom: 2,
+        // marginBottom: 2,
     },
     seeMoreSection:{
         display: 'flex',
@@ -238,7 +238,7 @@ const dstyles = StyleSheet.create({
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
         alignContent: 'flex-end',
-        marginBottom: 3,
+        marginBottom: 1,
         // backgroundColor: 'white',
         
     },
@@ -299,6 +299,7 @@ const dstyles = StyleSheet.create({
         height: "100%",
         // marginTop: 5,
         marginHorizontal: 5,
+        marginTop: 2,
         // marginLeft: 13,
         // marginBottom: 10,
     },
