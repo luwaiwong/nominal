@@ -121,7 +121,7 @@ export function StarshipDashboard(){
                 </View> */}
 
 
-                {data != undefined && data.lastEvent != undefined && 
+                {data != undefined && data.lastEvent != undefined && data.nextEvent == undefined &&
                     <View >
                         <Text style={dstyles.eventsTitle}>
                             Last Starship Event:
@@ -204,7 +204,7 @@ const dstyles = StyleSheet.create({
         width: '100%',
         paddingHorizontal: 11,
         // marginTop: -5,
-        marginBottom: 10,
+        marginBottom: 5,
     },
     sectionTitle:{
         fontSize: 24,

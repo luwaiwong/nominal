@@ -13,6 +13,7 @@ const streamID = "P9C25Un7xaM"
 export function ISSDashboard(){
     const userContext = useContext(UserContext);
     const [data, setData] = useState(undefined);
+    const [liveData, setLiveData] = useState(undefined);
     const [mapLoaded, setMapLoaded] = useState(false);
     let launches = undefined;
     let events = undefined;
@@ -92,12 +93,49 @@ export function ISSDashboard(){
     async function getData(){
         // console.log("Getting ISS data")
         await userContext.getISSData().then((data) => {
+            if (data == undefined){
+                console.log("No ISS data")
+                return;
+            }
+
             data.related = getISSrelated();
+            // Check docked vehicles
+            data.docked_vehicles = 0;
+            for (let i = 0; i < data.docking_location.length; i++){
+                if (data.docking_location[i].docked != null){
+                    data.docked_vehicles++;
+                }
+            }
+            
             setData(data);
         }).catch((error) => {
             console.log("Error getting ISS data:", error);
         })
     }
+
+    async function getISSPositionData(){
+        await fetch("https://api.wheretheiss.at/v1/satellites/25544").then((data) => {
+            return data.json();
+        }).then((data)=>{
+            // console.log("ISS Data:", data);
+            setLiveData(data);
+        }).catch((error) => {
+            console.log("Error getting ISS data:", error);
+        })
+    }
+
+    useEffect(() => {
+        if (userContext != undefined){
+            getData();
+            getISSPositionData();
+        }
+
+        // Set timer to reload live data
+        const interval = setInterval(() => {
+            getISSPositionData();
+        }, 2000);
+        return () => clearInterval(interval);
+    }, [])
 
     // Check if need to get iss data
     if (data == undefined) {
@@ -110,28 +148,18 @@ export function ISSDashboard(){
             </View>
         )
     }
+
+    // console.log(Object.keys(data))
+    // console.log(data.docking_location)
     return (
         <View style={dstyles.container}>
                 <View style={dstyles.infoContainer}>
                         <View style={dstyles.issMapContainer} pointerEvents='none'>
                             <WebView source={{uri: 'http://wsn.spaceflight.esa.int/iss/index_portal.php'}} style={dstyles.issMap} scrollEnabled={false} cacheEnabled={true} cacheMode='LOAD_CACHE_ELSE_NETWORK'/>
                         </View>
-                    
-                    <TouchableOpacity onPress={() => {userContext.nav.navigate("ISS")}}>
-                        {/* <Text style={dstyles.sourceText}>Live Source: ESA</Text>   */}
-        
                         <View style={dstyles.subInfoContainer}>
                             <Text style={dstyles.sourceText}>Live ISS Position: ESA</Text>
                         </View>
-                        
-                        <View style={dstyles.sectionHeader}>
-                            <Text style={dstyles.sectionTitle}>International Space Station</Text>
-                            <View style={dstyles.seeMoreSection}>
-                                <Text style={dstyles.seeMoreText}>See More</Text>
-                                <MaterialIcons name="arrow-forward-ios" style={dstyles.sectionIcon}/>
-                            </View>
-                        </View>
-                    </TouchableOpacity>
                     {data.related != undefined && 
                     <View style={dstyles.relatedSection}> 
                         {/* <Text style={dstyles.subtitle}>Next ISS Event:</Text> */}
@@ -141,6 +169,33 @@ export function ISSDashboard(){
                             
                         }
                     </View>}
+                    
+                    { liveData != undefined &&
+                    <View> 
+                        <View style={dstyles.statsContainer}>
+                            <Text style={dstyles.statsText}>Altitude: {liveData.altitude.toFixed(1)}km</Text>
+                            <Text style={dstyles.statsText}>Longitude: {liveData.longitude.toFixed(1)}</Text>
+                            <Text style={dstyles.statsText}>Velocity: {liveData.velocity.toFixed(1)}km/s</Text>
+                            <Text style={dstyles.statsText}>Latitude: {liveData.latitude.toFixed(1)}</Text>
+                            <Text style={dstyles.statsText}>Crew: {data.onboard_crew}</Text>
+                            <Text style={dstyles.statsText}>Docked Spacecraft: {data.docked_vehicles}</Text>
+                        </View>
+                        {/* <Text style={dstyles.statsTitle}>Live Data:</Text> */}
+                    </View>
+                    
+                    }
+                    <TouchableOpacity onPress={() => {userContext.nav.navigate("ISS")}}>
+                        {/* <Text style={dstyles.sourceText}>Live Source: ESA</Text>   */}
+        
+                        
+                        <View style={dstyles.sectionHeader}>
+                            <Text style={dstyles.sectionTitle}>International Space Station</Text>
+                            <View style={dstyles.seeMoreSection}>
+                                <Text style={dstyles.seeMoreText}>See More</Text>
+                                <MaterialIcons name="arrow-forward-ios" style={dstyles.sectionIcon}/>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
                 </View>
         </View>
     )
@@ -198,7 +253,7 @@ const dstyles = StyleSheet.create({
         borderRadius: 10,
         overflow: 'hidden',
         marginBottom: 10,
-        marginTop: 10,
+        // marginTop: 10,
         // paddingTop: 10,
 
         // padding: 10
@@ -236,7 +291,7 @@ const dstyles = StyleSheet.create({
         // marginBottom: 5,
     },
     sectionTitle:{
-        fontSize: 18,
+        fontSize: 19,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
@@ -340,9 +395,49 @@ const dstyles = StyleSheet.create({
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         width: Dimensions.get("window").width-20,
         borderRadius: 10,
+        
         // borderTopLeftRadius: 0,
         // borderTopRightRadius: 0,
         // marginTop: 10,
+    },
+    statsContainer:{
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        // width: '100%',
+        marginTop: 10,
+        marginBottom: 10,
+        marginHorizontal: 7,
+        padding: 5,
+        // backgroundColor: 'white',
+        // padding: 10,
+        // margin: 10,
+        borderRadius: 10,
+        borderWidth: 3,
+        borderColor: COLORS.BACKGROUND,
+
+    },
+    statsTitle:{
+        fontSize: 18,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'right',
+        // marginLeft: 10,
+        // marginTop: 10,
+        marginHorizontal: 5,
+        marginLeft: 15,
+    },
+    
+    statsText:{
+        fontSize: 14,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+        // marginLeft: 10,
+        marginHorizontal: 5,
+        width: "45%",
     },
     
     

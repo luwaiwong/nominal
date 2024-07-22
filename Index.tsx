@@ -251,8 +251,8 @@ export default function Index(props) {
           <News data={data}/> */}
           <ForYou data={data}/>
           <Dashboard data={data}/>
-          <News data={data}/>
           <Locations data={data}/>
+          <News data={data}/>
           <Settings />
         </PagerView>
       )

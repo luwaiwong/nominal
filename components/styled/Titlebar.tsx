@@ -17,8 +17,8 @@ export default function TitleBar(props){
               <Text style={styles.titleText}>News</Text> */}
               <Text style={styles.titleText}>For You</Text>
               <Text style={styles.titleText}>Launches</Text>
+              <Text style={styles.titleText}>Locations</Text>
               <Text style={styles.titleText}>News</Text>
-              <Text style={styles.titleText}>More</Text>
               <Text style={styles.titleText}>Settings</Text>
           </Animated.View>
         </View>
