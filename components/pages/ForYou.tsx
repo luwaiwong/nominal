@@ -15,12 +15,14 @@ export default function ForYou(props) {
   const userContext = useContext(UserContext);
   const pagerRef = useRef(null);
   const curPage = useRef(0);
-  const [imageOfDay, setImageOfDay] = useState(null)
+  // const [imageOfDay, setImageOfDay] = useState(null)
+  
   const [items, setItems]=useState([])
   let userData = props.data.userData;
   let launchData = props.data.launchData;
   let foryou = launchData.foryou;
   let news = launchData.news;
+  let imageOfDay = null;
 
   let timer = useRef(0);  
   // timer to check if the user has not been in the For You page for a while
@@ -54,7 +56,7 @@ export default function ForYou(props) {
         sortForYouItems();
         return null
       }
-      setImageOfDay(data)
+      imageOfDay = data;
       sortForYouItems();
       return data;
 
@@ -72,6 +74,12 @@ export default function ForYou(props) {
   }, [userContext])
 
   function sortForYouItems(){
+    foryou.map((item: any, index) => {
+      if (item.type == "between" ){
+        // console.log("hasbetween")
+        // return (<ForYouImageOfDay key={item.id} data={imageOfDay}/>);
+      }
+    })
     let items = []
     items = foryou.map((item: any, index) => {
       // console.log(item.type)
@@ -81,6 +89,7 @@ export default function ForYou(props) {
         );
       }
       else if (item.type == "between" && imageOfDay != null){
+        console.log("Image of the day", imageOfDay)
         return (<ForYouImageOfDay key={item.id} data={imageOfDay}/>);
       }
       else if (item.type != "between"){
@@ -111,8 +120,6 @@ export default function ForYou(props) {
   if (items.length == 0 || items == null){
     return <></>
   }
-  
-  // console.log(items)
   return(
       <PagerView 
         style={styles.immersiveSection} 

@@ -15,7 +15,7 @@ export function StarshipDashboard(){
 
 
     async function getData(){
-        console.log("Getting starship data")
+        // console.log("Getting starship data")
         await userContext.getStarshipData().then((data) => {
             if (data.upcoming == undefined){
                 console.log("Data is undefined")

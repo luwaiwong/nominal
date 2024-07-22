@@ -75,7 +75,7 @@ export function ISSDashboard(){
         }
 
         // Check if precise
-        return undefined
+        // return undefined
         if (result[0] != undefined){
             if (result[0].type == "event" && result[0].date_precision != null && result[0].date_precision.name != "Month"){
                 return result[0];
@@ -90,7 +90,7 @@ export function ISSDashboard(){
     
     // Getting ISS data
     async function getData(){
-        console.log("Getting ISS data")
+        // console.log("Getting ISS data")
         await userContext.getISSData().then((data) => {
             data.related = getISSrelated();
             setData(data);
