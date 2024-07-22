@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 import { UserContext } from '../data/UserContext';
 
-const versioncode = "0.3.2";
+const versioncode = "0.4.0";
 
 export default function Settings(){
     let userContext = React.useContext(UserContext);

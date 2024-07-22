@@ -22,6 +22,8 @@ export default function Dashboard(props) {
   let recentlyLaunched = launchData.dashboardRecent
   let upcomingFiltered = launchData.dashboardFiltered
   let highlights = launchData.dashboardHighlights
+  const upcomingEvents = props.data.launchData.events.upcoming;
+  const previousEvents = props.data.launchData.events.previous;
 
   let events = props.data.launchData.dashboardEvents
   let news = props.data.launchData.dashboardNews
@@ -66,7 +68,7 @@ export default function Dashboard(props) {
                 <View style={[styles.contentSection]}>
                   <TouchableOpacity onPress={()=>{nav.navigate('Launches', {data: launchData.upcoming,user: userData, title:"Upcoming Launches" })}}>
                     <View style={styles.contentHeaderSection} >
-                        <Text style={styles.contentHeaderText} >Upcoming </Text>
+                        <Text style={styles.contentHeaderText} >Upcoming Launches</Text>
                         <View style={styles.seeMoreSection}>
                           <Text style={styles.contentSeeMore} >See All </Text>
                           <MaterialIcons 
@@ -84,6 +86,34 @@ export default function Dashboard(props) {
                   })}
                 </View>
 
+                {upcomingEvents != undefined && upcomingEvents.length != 0 && 
+                <View style={styles.sectionContainer}>
+                    <TouchableOpacity onPress={() => {nav.navigate('Events', {data:upcomingEvents})}}>
+                        <View style={styles.sectionHeader}>
+                            <Text style={styles.sectionTitle}>Upcoming Events</Text>
+                            <View style={styles.seeMoreSection}>
+                                <Text style={styles.seeMoreText}>See All</Text>
+                                <MaterialIcons name="arrow-forward-ios" style={styles.sectionIcon}/>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                    {upcomingEvents != undefined && upcomingEvents.slice(0,2).map((item, index) => {return (<Event nav={nav} eventData={item} key={index}/>);})}        
+                </View>
+                }
+                {previousEvents != undefined && previousEvents.length != 0 && 
+                <View style={styles.sectionContainer}>
+                    <TouchableOpacity onPress={() => {nav.navigate('Events', {data:previousEvents})}}>
+                        <View style={styles.sectionHeader}>
+                            <Text style={styles.sectionTitle}>Recent Events</Text>
+                            <View style={styles.seeMoreSection}>
+                                <Text style={styles.seeMoreText}>See All</Text>
+                                <MaterialIcons name="arrow-forward-ios" style={styles.sectionIcon}/>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                    {previousEvents != undefined && previousEvents.slice(0,1).map((item, index) => {return (<Event nav={nav} eventData={item} key={index}/>);})}        
+                </View>
+                }
 
                 <View style={[styles.buffer]}></View>
 
@@ -271,4 +301,76 @@ const styles = StyleSheet.create({
      marginHorizontal: 10,
     },
 
+    sectionContainer:{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+
+
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        borderRadius: 15,
+        // width: '100%',
+        marginTop: 10,
+        // marginBottom: 10,
+        marginHorizontal: 10,
+        
+    },
+    eventsTitle:{
+        fontSize: 22,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'center',
+        // marginBottom: 10,
+        marginLeft: 12,
+        marginTop: 10,
+    },
+    eventsContainer:{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+
+
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        borderRadius: 15,
+        marginTop: 10,
+        marginHorizontal    : 10,
+        marginBottom: 10,
+        
+    },
+    // SECTION HEADERS
+    sectionHeader:{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        justifyContent: 'space-between',
+        width: '100%',
+        paddingHorizontal: 3,
+        // marginBottom: 5,
+        marginTop: 5,
+    },
+    sectionTitle:{
+        fontSize: 24,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+        // marginBottom: 10,
+        marginLeft: 10,
+    },
+    seeMoreText:{
+        fontSize: 18,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'right',
+        marginRight: 10,
+        alignContent: 'flex-end',
+    },
+    sectionIcon:{
+        fontSize: 25,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'right',
+        marginRight: 10,
+    },
 });

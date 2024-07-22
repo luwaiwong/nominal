@@ -182,7 +182,7 @@ export default function ISSPage(props) {
                 <View> 
                     <Text style={styles.description} numberOfLines={3}>{iss.description}</Text>
                 </View>
-                    {/* <YoutubeIframe videoId={streamID} width={Dimensions.get("window").width-20}height={225} play={true} mute={true} /> */}
+                <YoutubeIframe videoId={streamID} width={Dimensions.get("window").width}height={225} play={true} mute={true} />
             </ScrollView>
             
         </View>
@@ -198,7 +198,7 @@ const dstyles = StyleSheet.create({
         borderRadius: 10,
         overflow: 'hidden',
         marginBottom: 10,
-        marginTop: 15,
+        marginTop: 10,
         // paddingTop: 10,
 
         // padding: 10
@@ -207,7 +207,7 @@ const dstyles = StyleSheet.create({
         shadowOffset: { width: 1, height: 2 },
         shadowOpacity: 0.5,
         shadowRadius: 2,
-        elevation: 5,
+        // elevation: 5,
     },
     title:{
         fontSize: 26,

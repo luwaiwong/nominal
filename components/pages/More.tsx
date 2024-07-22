@@ -40,8 +40,8 @@ export default function Locations(props){
                   <RefreshControl refreshing={refreshing} onRefresh={()=>{refreshData()}
                   } colors={[COLORS.FOREGROUND]} progressBackgroundColor={COLORS.BACKGROUND_HIGHLIGHT}/>
                 }>
-                <ISSDashboard/>
                 <StarshipDashboard/>
+                <ISSDashboard/>
                 <View style={styles.bottomBuffer}></View>
             </ScrollView>
         </View>

@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     sourceRight:{
-        fontSize: 14,
+        fontSize: 13,
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
         textAlign: "right",

@@ -3,12 +3,14 @@ import { BlurView } from "expo-blur";
 
 import {COLORS, FONT} from '../styles';
 import TMinus from "./TMinus";
+import { useContext } from "react";
+import { UserContext } from "../data/UserContext";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-export default function HighlightLaunch(props) {
-    const nav = props.nav;
+export default function LaunchHighlight(props) {
+    const userContext = useContext(UserContext);
     const data = props.data;
     const isNext = props.isNext;
     const launchTime = new Date(data.net);
@@ -17,7 +19,7 @@ export default function HighlightLaunch(props) {
         status = "Just Launched";
     }
     return (
-        <TouchableOpacity onPress={()=>nav.navigate("Launch", {data: data})}>
+        <TouchableOpacity onPress={()=>userContext.nav.navigate("Launch", {data: data})}>
             <View style={styles.container}>
                 <Image style={styles.image}  source={{uri: data.image}} />   
                 <View style={styles.overlay} />

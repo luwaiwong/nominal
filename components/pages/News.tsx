@@ -13,7 +13,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 export default function News(props){
     let userContext = useState(UserContext);
     const launchData = props.data.launchData;    
-    const news = props.data.launchData.news.slice(0,5);
+    const news = props.data.launchData.news.slice(0,6);
 
     const nav = props.data.nav;
     const eventsHighlights = props.data.launchData.eventsHighlights;
@@ -52,35 +52,7 @@ export default function News(props){
                     {/* <Article articleData={news[4]}></Article> */}
                 </View>
                 {/* <Text style={styles.eventsTitle}>Events</Text>  */}
-                    {upcomingEvents != undefined && upcomingEvents.length != 0 && 
-                    <View style={styles.sectionContainer}>
-                        <TouchableOpacity onPress={() => {nav.navigate('Events', {data:upcomingEvents})}}>
-                            <View style={styles.sectionHeader}>
-                                <Text style={styles.sectionTitle}>Upcoming Events</Text>
-                                <View style={styles.seeMoreSection}>
-                                    <Text style={styles.seeMoreText}>See All</Text>
-                                    <MaterialIcons name="arrow-forward-ios" style={styles.sectionIcon}/>
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-                        {upcomingEvents != undefined && upcomingEvents.slice(0,2).map((item, index) => {return (<Event nav={nav} eventData={item} key={index}/>);})}        
-                    </View>
-                    }
                     
-                    {previousEvents != undefined && previousEvents.length != 0 && 
-                    <View style={styles.sectionContainer}>
-                        <TouchableOpacity onPress={() => {nav.navigate('Events', {data:previousEvents})}}>
-                            <View style={styles.sectionHeader}>
-                                <Text style={styles.sectionTitle}>Recent Events</Text>
-                                <View style={styles.seeMoreSection}>
-                                    <Text style={styles.seeMoreText}>See All</Text>
-                                    <MaterialIcons name="arrow-forward-ios" style={styles.sectionIcon}/>
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-                        {previousEvents != undefined && previousEvents.slice(0,1).map((item, index) => {return (<Event nav={nav} eventData={item} key={index}/>);})}        
-                    </View>
-                    }
                 <View style={styles.bottomBuffer}></View>
             </ScrollView>
         </View>

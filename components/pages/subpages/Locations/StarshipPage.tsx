@@ -8,25 +8,80 @@ import LaunchSimple from '../../../styled/LaunchSimple';
 import WebView from 'react-native-webview';
 import YoutubeIframe from 'react-native-youtube-iframe';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import Launch from '../../../styled/Launch';
+import LaunchHighlight from '../../../styled/HighlightLaunch';
 
 export function StarshipDashboard(){
     const userContext = useContext(UserContext);
     const [data, setData] = useState(undefined);
 
-
+    
     async function getData(){
         // console.log("Getting starship data")
         await userContext.getStarshipData().then((data) => {
             if (data.upcoming == undefined){
                 console.log("Data is undefined")
-                return;
             }
-            setData(data);
+            sortData(data);
         }).catch((error) => {
             console.log("Error getting starship data:", error);
         })
     }
 
+    function sortData(data){
+        let newData = data
+        let today = new Date().getTime();
+        
+        if (data.upcoming == undefined){
+            return;
+        }
+
+        let upcominglaunches = data.upcoming.launches;
+        let upcomingevents = data.upcoming.events;
+
+        // Set next event to most recent launch or event
+        if (upcominglaunches == undefined || upcominglaunches[0] == undefined){
+            newData.nextEvent = upcomingevents[0];
+        }
+        else if (upcomingevents == undefined || upcomingevents[0] == undefined){
+            newData.nextEvent = upcominglaunches[0];
+        }
+        else if (upcominglaunches[0].net < upcomingevents[0].date){
+            newData.nextEvent = upcominglaunches[0];
+        }
+        else{
+            newData.nextEvent = upcomingevents[0];
+        }
+        newData.nextEvent = upcominglaunches[0]
+
+        let previousevent = data.previous.events.at(-1);
+        let previouslaunch = data.previous.launches.at(-1);
+
+        
+        // Set next event to most recent launch or event
+        if (previouslaunch == undefined ){
+            newData.lastEvent = previousevent;
+        }
+        else if (previousevent == undefined){
+            newData.lastEvent = previouslaunch;
+        }
+        else if (new Date(previouslaunch.net).getTime()-today > new Date(previousevent.date).getTime()-today){
+            newData.lastEvent = previouslaunch;
+        }
+        else{
+            newData.lastEvent = previousevent;
+        }
+
+        
+        setData(newData)
+
+    }
+
+    useEffect(() => {
+        if (userContext != undefined){
+            getData();
+        }
+    }, [])
 
     if (data == undefined) {
         if (userContext != undefined){
@@ -39,19 +94,44 @@ export function StarshipDashboard(){
         )
     }
 
+    let infoContainerStyle = {
+        marginTop: data.nextEvent != undefined?-25: 0,
+        paddingTop: data.nextEvent != undefined? 20: 5,
+
+    }
     return (
         
         <View style={dstyles.container}>
-            <View style={dstyles.infoContainer}>
-                <View style={dstyles.streamContainer} >
+            {data != undefined && data.nextEvent != undefined &&
+                <View style={dstyles.eventsContainer}>
+                    {
+                        data.nextEvent != undefined && data.nextEvent.type == "launch" ? <LaunchHighlight data={data.nextEvent}></LaunchHighlight> :
+                        <Event eventData={data.nextEvent}></Event>
+                    }
+                    
+
+                </View>
+            }
+            <View style={[dstyles.infoContainer, infoContainerStyle]}>
+                {/* <View style={dstyles.streamContainer} >
                     <YoutubeIframe videoId='A8QLrVAOE1k' height={220} play={false} mute={true} />
                 </View>
-                <TouchableOpacity onPress={() => {}}>
                 <View style={dstyles.subInfoContainer}>
                     <Text style={dstyles.sourceText}>Live Starbase Stream: LabPadre</Text>
-                </View>
+                </View> */}
 
-                </TouchableOpacity>
+
+                {data != undefined && data.lastEvent != undefined && 
+                    <View >
+                        <Text style={dstyles.eventsTitle}>
+                            Last Starship Event:
+                        </Text>
+                        {
+                            data.lastEvent != undefined && data.lastEvent.type == "launch" ? <LaunchSimple data={data.lastEvent}></LaunchSimple> :
+                            <Event eventData={data.lastEvent}></Event>
+                        }
+                    </View>
+                }
                 <TouchableOpacity onPress={() => {}}>
                     <View style={dstyles.sectionHeader}>
                         <Text style={dstyles.sectionTitle}>Starship & Starbase</Text>
@@ -62,15 +142,7 @@ export function StarshipDashboard(){
                     </View>
                 </TouchableOpacity>
 
-                {data != undefined && data.upcoming != undefined && data.upcoming.launches != undefined && data.upcoming.launches[0]!= null && 
-                    <View style={dstyles.eventsContainer}>
-                        {/* <Text style={dstyles.eventsTitle}>
-                            Next Starship Event:
-                        </Text> */}
-                        <LaunchSimple data={data.upcoming.launches[0]}></LaunchSimple>
-
-                    </View>
-                }
+                
             </View>
         </View>
     )
@@ -99,7 +171,7 @@ const dstyles = StyleSheet.create({
         // justifyContent: 'center',
         // width: '100%',
         // backgroundColor : COLORS.BACKGROUND_HIGHLIGHT,
-        marginHorizontal: 10,
+        // marginHorizontal: 10,
         marginTop: 10,
         borderRadius: 10,
         overflow: 'hidden',
@@ -131,9 +203,11 @@ const dstyles = StyleSheet.create({
         justifyContent: 'space-between',
         width: '100%',
         paddingHorizontal: 11,
+        // marginTop: -5,
+        marginBottom: 10,
     },
     sectionTitle:{
-        fontSize: 20,
+        fontSize: 24,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
@@ -160,7 +234,7 @@ const dstyles = StyleSheet.create({
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
         alignContent: 'flex-end',
-        marginBottom: 2,
+        marginBottom:3,
         
     },
     infoContainer:{
@@ -169,10 +243,14 @@ const dstyles = StyleSheet.create({
         alignItems: 'flex-start',
         justifyContent: 'center',
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        marginHorizontal: 10,
         borderRadius: 10,
-        // marginTop: 10,
+        // marginTop: -20,
         marginBottom: 10,
         // padding: 10,
+        paddingTop: 5,
+        // elevation: 10,
+        zIndex: -10,
     },
     streamContainer:{
         width: '100%',
@@ -199,7 +277,7 @@ const dstyles = StyleSheet.create({
         alignItems: 'flex-start',
         justifyContent: 'center',
 
-        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        // backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         borderRadius: 10,
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
@@ -207,13 +285,13 @@ const dstyles = StyleSheet.create({
 
     },
     eventsTitle:{
-        fontSize: 14,
+        fontSize: 16,
         color: COLORS.SUBFOREGROUND,
         fontFamily: FONT,
-        textAlign: 'center',
-        marginBottom: -3,
+        textAlign: 'left',
+        marginBottom: -5,
         marginLeft: 12,
-        marginTop: 10,
+        // marginTop: 10,
         zIndex: 100,
     },
     subInfoContainer:{
