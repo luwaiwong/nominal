@@ -84,7 +84,7 @@ export function ForYouEvent(data) {
 
   let description = eventData.description;
   // description = description.replace(/\. (?=[A-Z])/g, );
-  console.log(description)
+  // console.log(description)
 
   let status = "Upcoming Event";
 
@@ -155,7 +155,7 @@ export function ForYouImageOfDay(props) {
   let data = props.data;  
   let [descriptionOpen, setDescriptionOpen] = useState(false);
   let description = data.explanation;
-  description.replace(/\.(?=[A-Z])/g, '<br /><br />');
+  // description.replace(/\.(?=[A-Z])/g, '<br /><br />');
 
   // console.log(data.url)
 
