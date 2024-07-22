@@ -54,7 +54,7 @@ export function StarshipDashboard(){
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {}}>
                     <View style={dstyles.sectionHeader}>
-                        <Text style={dstyles.sectionTitle}>Starship</Text>
+                        <Text style={dstyles.sectionTitle}>Starship & Starbase</Text>
                         <View style={dstyles.seeMoreSection}>
                             <Text style={dstyles.seeMoreText}>See More</Text>
                             <MaterialIcons name="arrow-forward-ios" style={dstyles.sectionIcon}/>
@@ -64,9 +64,9 @@ export function StarshipDashboard(){
 
                 {data != undefined && data.upcoming != undefined && data.upcoming.launches != undefined && data.upcoming.launches[0]!= null && 
                     <View style={dstyles.eventsContainer}>
-                        <Text style={dstyles.eventsTitle}>
+                        {/* <Text style={dstyles.eventsTitle}>
                             Next Starship Event:
-                        </Text>
+                        </Text> */}
                         <LaunchSimple data={data.upcoming.launches[0]}></LaunchSimple>
 
                     </View>
@@ -133,7 +133,7 @@ const dstyles = StyleSheet.create({
         paddingHorizontal: 11,
     },
     sectionTitle:{
-        fontSize: 24,
+        fontSize: 20,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
@@ -207,7 +207,7 @@ const dstyles = StyleSheet.create({
 
     },
     eventsTitle:{
-        fontSize: 18,
+        fontSize: 14,
         color: COLORS.SUBFOREGROUND,
         fontFamily: FONT,
         textAlign: 'center',

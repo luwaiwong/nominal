@@ -18,6 +18,8 @@ import {createUserContext, UserContext} from "./components/data/UserContext";
 import { COLORS } from "./components/styles";
 import { useEffect } from "react";
 import FirstLoad from "./components/pages/FirstLoad";
+import ISSPage, { ISSDashboard } from "./components/pages/subpages/Locations/ISSPage";
+import StarshipPage from "./components/pages/subpages/Locations/StarshipPage";
 
 
 const Stack = createStackNavigator();
@@ -166,6 +168,14 @@ export default function App(props) {
               name = "First Load"
               component = {FirstLoad}
               options={{transitionSpec: {open: {animation: 'timing', config: {duration: 0, delay: 0}}, close: {animation: 'timing', config: {duration: 0, delay: 0}},}}}
+            ></Stack.Screen>
+            <Stack.Screen
+              name = "ISS"
+              component={ISSPage}
+            ></Stack.Screen>
+            <Stack.Screen
+              name = "Starship"
+              component={StarshipPage}
             ></Stack.Screen>
           </Stack.Navigator>
         </NavigationContainer>

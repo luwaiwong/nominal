@@ -901,7 +901,7 @@ export class UserData {
     }
 
     // loop through and remove duplicates
-    data = [...data, ...recent];
+    data = [...data, { type: "between", id: 10000000000 }, ...recent];
     let unique = [];
     let uniqueIds = [];
     for (let i = 0; i < data.length; i++) {

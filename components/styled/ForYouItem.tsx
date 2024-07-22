@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, StatusBar, Dimensions, FlatList, Pressable, TouchableOpacity, TouchableHighlight, TouchableNativeFeedback } from "react-native";
+import { StyleSheet, View, Text, Image, StatusBar, Dimensions, FlatList, Pressable, TouchableOpacity, TouchableHighlight, TouchableNativeFeedback, Linking } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
@@ -82,6 +82,10 @@ export function ForYouEvent(data) {
     name = eventData.program[0].name;
   }
 
+  let description = eventData.description;
+  // description = description.replace(/\. (?=[A-Z])/g, );
+  console.log(description)
+
   let status = "Upcoming Event";
 
   // Set Status
@@ -107,7 +111,7 @@ export function ForYouEvent(data) {
         style={styles.infoSection}>
         <View style={styles.infoTextSection}>
           <TouchableOpacity onPress={()=>setDescriptionOpen(!descriptionOpen)}>
-            <Text style={styles.descriptionText} numberOfLines={descriptionOpen?15:3}>{eventData.description}</Text>
+            <Text style={styles.descriptionText} numberOfLines={descriptionOpen?15:3}>{description}</Text>
 
           </TouchableOpacity>
           <Text style={styles.largeText} numberOfLines={1}>{eventData.type.name}</Text>
@@ -141,10 +145,50 @@ export function ForYouEnd(props){
         {news.map((article) => {
           return <ArticleDescriptive articleData={article} key={article.id} />
         })
-        }
+      }
     </View>
   </View>
   )
+
+}
+export function ForYouImageOfDay(props) {
+  let data = props.data;  
+  let [descriptionOpen, setDescriptionOpen] = useState(false);
+  let description = data.explanation;
+  description.replace(/\.(?=[A-Z])/g, '<br /><br />');
+
+  // console.log(data.url)
+
+  return (
+    <Pressable onPress={()=>{Linking.openURL(data.hdurl)}}>
+      
+    <View style={styles.page}>
+        <Image style={styles.image} source={{uri: data.url}} />
+        <View style={styles.contentContainer}>
+          <View>
+            <Text style={styles.title} numberOfLines={1} >{data.title}</Text>
+            <Text style={[styles.subtitle]} numberOfLines={1} >NASA Astronomy Picture of the Day</Text>
+          </View>
+
+          <View>
+            <BlurView  intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView'
+              style={styles.infoSection}>
+                <TouchableOpacity onPress={()=>setDescriptionOpen(!descriptionOpen)}>
+                  <Text style={styles.descriptionText} numberOfLines={descriptionOpen?100:4}>{description}</Text>
+                </TouchableOpacity>
+              <View style={styles.infoTextSection}>
+                {/* <Text style={styles.launcherText} numberOfLines={1}>{data.copyright}</Text> */}
+
+                <Text style={styles.placeText}>Copyright: {data.copyright.trim()}</Text>
+                <Text style={styles.timeText} >{new Date(data.date).toLocaleString([],{weekday:'long', day:'2-digit', month:'long', year:'numeric'})}</Text>
+              </View>
+            </BlurView>
+          </View>
+        </View>
+
+    </View>
+    </Pressable>
+  );
 
 }
 
@@ -215,7 +259,7 @@ const styles = StyleSheet.create({
     // Text
     // TOP SECTION
     title:{
-      fontSize: 35,
+      fontSize: 28,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "600",
@@ -229,7 +273,7 @@ const styles = StyleSheet.create({
       marginHorizontal: 10,
     },
     subtitle:{
-      fontSize: 21,
+      fontSize: 19,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "600",
@@ -262,9 +306,10 @@ const styles = StyleSheet.create({
       fontFamily: FONT,
       fontWeight: "400",
       textAlign: "left",
+      marginBottom: -5
     },
     descriptionText:{
-      fontSize: 15,
+      fontSize: 16,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "400",
@@ -277,7 +322,7 @@ const styles = StyleSheet.create({
       fontFamily: FONT,
       fontWeight: "400",
       textAlign: "left",
-      marginTop: -5
+      // marginTop: -5
     },
     smallText:{
       fontSize: 15,

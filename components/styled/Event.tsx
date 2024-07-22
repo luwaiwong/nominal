@@ -73,7 +73,7 @@ export default function Event(props){
                 </View>
                 <View style={styles.bottom}>
                     <Text numberOfLines={4} style={styles.title}>{eventData.name}</Text>
-                    <Text style={styles.sourceLeft}>{eventData.type.name}</Text>
+                    {eventData.type.name != null && <Text style={styles.sourceLeft}>{eventData.type.name}</Text>}
                     <View style={styles.horizontalContainer}>
                         <Text style={styles.sourceLeft} numberOfLines={1}>{eventData.location}</Text>
                         {/* Show time and date */}

@@ -129,6 +129,7 @@ const styles = StyleSheet.create({
 
       
       marginLeft: 12,
+    
       // marginBottom: 5,
     },
     contentSeeMore: {
@@ -165,26 +166,26 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollIndicatorEnabled:{
-        width: 8,
-        height: 8,
+        width: 10,
+        height: 10,
         borderRadius: 6,
         backgroundColor: COLORS.FOREGROUND,
 
-        margin: 5,
+        // margin: 5,
         marginHorizontal: 10,
 
     },
     scrollIndicatorDisabled:{
-        width: 6,
-        height: 6,
+        width: 8,
+        height: 8,
 
         borderRadius: 6,
         // backgroundColor: COLORS.FOREGROUND,
         
         borderColor: COLORS.FOREGROUND,
-        borderWidth: 0.5,
+        borderWidth: 1,
 
-        margin: 5,
+        // margin: 5,
         marginHorizontal: 10,
     }
 });
