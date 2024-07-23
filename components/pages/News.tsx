@@ -66,33 +66,6 @@ export default function News(props){
     if (data == null){
         return (<></>)
     }
-    return (
-        <View style={styles.container}>
-            <FlatList
-                refreshControl={
-                  <RefreshControl refreshing={refreshing} onRefresh={()=>{refreshData()}
-                  } colors={[COLORS.FOREGROUND]} progressBackgroundColor={COLORS.BACKGROUND_HIGHLIGHT}/>}
-                data={data}
-                keyExtractor={(item, index) => index.toString()}
-                // style={styles.list}
-                ListFooterComponent={<View style={styles.bottomPadding}></View>}
-                ListHeaderComponent={
-                    <TouchableOpacity onPress={() => {nav.navigate('All News', {data:data})}}>
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionTitle}>Articles</Text>
-                            <View style={styles.seeMoreSection}>
-                                <Text style={styles.seeMoreText}>See All</Text>
-                                <MaterialIcons name="arrow-forward-ios" style={styles.sectionIcon}/>
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                }
-                renderItem={({ item }) => <Article articleData={item}></Article>}
-                // onEndReachedThreshold={0.5}
-                onEndReached={() => {onEndReached()}}
-            />
-        </View>
-    )
     return (<>
         <View style={styles.container}>
             <ScrollView 
@@ -102,7 +75,7 @@ export default function News(props){
                 }>
                 
                 <View style={styles.sectionContainer}>
-                    <TouchableOpacity onPress={() => {nav.navigate('All News', {data:data})}}>
+                    <TouchableOpacity onPress={() => {nav.navigate('All News', {data:userContext.news})}}>
                         <View style={styles.sectionHeader}>
                             <Text style={styles.sectionTitle}>Articles</Text>
                             <View style={styles.seeMoreSection}>
@@ -116,6 +89,7 @@ export default function News(props){
                     {/* <Article articleData={news[4]}></Article> */}
                 </View>
                 {/* <Text style={styles.eventsTitle}>Events</Text>  */}
+                <View style={styles.bottomPadding}></View>
                     
             </ScrollView>
         </View>
