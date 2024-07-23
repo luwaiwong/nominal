@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, FlatList, StatusBar } from 'react-native';
+import { StyleSheet, View, Text, Image, FlatList, StatusBar, ScrollView, Dimensions } from 'react-native';
 import { MaterialIcons } from 'react-native-vector-icons';
 import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
 import Event from '../../../styled/Event';
@@ -81,12 +81,9 @@ export function StarshipDashboard(){
         if (userContext != undefined){
             getData();
         }
-    }, [])
+    }, [userContext])
 
     if (data == undefined) {
-        if (userContext != undefined){
-            getData();
-        }
         return (
             <View style={dstyles.container}>
                 <Text style={dstyles.title}>Starship Loading...</Text>
@@ -113,12 +110,6 @@ export function StarshipDashboard(){
                 </View>
             }
             <View style={[dstyles.infoContainer, infoContainerStyle]}>
-                {/* <View style={dstyles.streamContainer} >
-                    <YoutubeIframe videoId='A8QLrVAOE1k' height={220} play={false} mute={true} />
-                </View>
-                <View style={dstyles.subInfoContainer}>
-                    <Text style={dstyles.sourceText}>Live Starbase Stream: LabPadre</Text>
-                </View> */}
 
 
                 {data != undefined && data.lastEvent != undefined && data.nextEvent == undefined &&
@@ -132,7 +123,7 @@ export function StarshipDashboard(){
                         }
                     </View>
                 }
-                <TouchableOpacity onPress={() => {}}>
+                <TouchableOpacity onPress={() => {userContext.nav.navigate("Starship")}}>
                     <View style={dstyles.sectionHeader}>
                         <Text style={dstyles.sectionTitle}>Starship & Starbase</Text>
                         <View style={dstyles.seeMoreSection}>
@@ -149,8 +140,10 @@ export function StarshipDashboard(){
 
 }
 export default function StarshipPage(props) {
-    const data = props.route.params.data;
-    const user = props.route.params.user;
+    const userContext = useContext(UserContext);
+    const data = userContext.starship;
+    console.log(Object.keys(data))
+    console.log(data.vehicles)
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -159,9 +152,85 @@ export default function StarshipPage(props) {
                     style={styles.back} 
                     onPress={() => props.navigation.goBack()}>
                 </MaterialIcons>
-                <Text style={styles.title}>Starship/Starbase</Text>
+                <Text style={styles.title}>Starship & Starbase</Text>
             </View>
-            
+            <ScrollView>
+                <View style={dstyles.streamContainer} >
+                    <YoutubeIframe videoId='A8QLrVAOE1k' width={Dimensions.get("window").width} height={Dimensions.get("window").width*1} play={false} mute={true} />
+                </View>
+                <View style={dstyles.subInfoContainer}>
+                    <Text style={dstyles.sourceText}>Live Starbase Stream: LabPadre</Text>
+                </View>
+                {/* Upcoming Launches */}
+                <View style={styles.section}>
+                  <TouchableOpacity onPress={()=>{userContext.nav.navigate('Launches', {data: data.upcoming.launches,title:"Upcoming Starship Launches" })}}>
+                    <View style={styles.contentHeaderSection} >
+                        <Text style={styles.contentHeaderText} >Next Launch</Text>
+                        <View style={styles.seeMoreSection}>
+                          <Text style={styles.contentSeeMore} >See All </Text>
+                          <MaterialIcons 
+                          name="arrow-forward-ios" 
+                          style={styles.contentHeaderIcon} 
+                          />
+                        </View>
+                    </View>
+                  </TouchableOpacity>
+                  <LaunchSimple data={data.upcoming.launches[0]}></LaunchSimple>
+                </View>
+                <View style={styles.section}>
+                  <TouchableOpacity onPress={()=>{userContext.nav.navigate('Launches', {data: data.previous.launches.reverse(),title:"Previous Starship Launches" })}}>
+                    <View style={styles.contentHeaderSection} >
+                        <Text style={styles.contentHeaderText} >Previous Launch</Text>
+                        <View style={styles.seeMoreSection}>
+                          <Text style={styles.contentSeeMore} >See All </Text>
+                          <MaterialIcons 
+                          name="arrow-forward-ios" 
+                          style={styles.contentHeaderIcon} 
+                          />
+                        </View>
+                    </View>
+                  </TouchableOpacity>
+                  <LaunchSimple data={data.previous.launches[data.previous.launches.length-1]}></LaunchSimple>
+                </View>
+                {/* <Text style={styles.sectionTitle}>Events:</Text> */}
+                {/* Upcoming Launches */}
+                {
+                data.upcoming != null && data.upcoming.events != null && data.upcoming.events[0] != null &&
+                <View style={styles.section}>
+                  <TouchableOpacity onPress={()=>{userContext.nav.navigate('Events', {data: data.upcoming.events})}}>
+                    <View style={styles.contentHeaderSection} >
+                        <Text style={styles.contentHeaderText} >Upcoming Event</Text>
+                        <View style={styles.seeMoreSection}>
+                          <Text style={styles.contentSeeMore} >See All </Text>
+                          <MaterialIcons 
+                          name="arrow-forward-ios" 
+                          style={styles.contentHeaderIcon} 
+                          />
+                        </View>
+                    </View>
+                  </TouchableOpacity>
+                  <Event eventData={data.upcoming.events[0]}></Event>
+                </View>
+                }
+                {
+                data.previous != null && data.previous.events != null && data.previous.events[0] != null &&
+                <View style={styles.section}>
+                  <TouchableOpacity onPress={()=>{userContext.nav.navigate('Events', {data: data.previous.events.reverse(),title:"Upcoming Launches" })}}>
+                    <View style={styles.contentHeaderSection} >
+                        <Text style={styles.contentHeaderText} >Recent Event</Text>
+                        <View style={styles.seeMoreSection}>
+                          <Text style={styles.contentSeeMore} >See All </Text>
+                          <MaterialIcons 
+                          name="arrow-forward-ios" 
+                          style={styles.contentHeaderIcon} 
+                          />
+                        </View>
+                    </View>
+                  </TouchableOpacity>
+                  <Event eventData={data.previous.events.reverse()[data.previous.events.length-1]}></Event>
+                </View>
+}
+            </ScrollView>
         </View>
     )
 }
@@ -207,7 +276,7 @@ const dstyles = StyleSheet.create({
         marginBottom: 5,
     },
     sectionTitle:{
-        fontSize: 24,
+        fontSize: 19,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
@@ -365,6 +434,71 @@ const styles = StyleSheet.create({
     image: {
         width: "100%",
         aspectRatio: 1,
+    },
+    sectionTitle:{
+        fontSize: 26,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+        marginHorizontal: 16,
+        marginTop: 10,
+    },
+    section:{
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        marginHorizontal: 10,
+        borderRadius: 10,
 
-    }
+        marginTop: 10,
+
+        // width: '100%',
+        
+        
+    },
+    contentHeaderSection:{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        justifyContent: 'space-between',
+
+        
+        width: '100%',
+        paddingHorizontal: 11,
+        marginBottom: 5,
+        marginTop: 2,
+    },
+    contentHeaderText:{
+        fontSize: 22,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+    },
+    contentSeeMore:{
+        fontSize: 16,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'right',
+        marginRight: 5,
+        alignContent: 'flex-end',
+    },
+    contentHeaderIcon:{
+        fontSize: 20,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'right',
+    },
+    seeMoreSection:{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        marginBottom: 3,
+    },
+    sectionIcon:{
+        fontSize: 20,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'right',
+    },
 })

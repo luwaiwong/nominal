@@ -2,7 +2,7 @@
   "expo": {
     "name": "Nominal",
     "slug": "nominal",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "orientation": "portrait",
     "icon": "./assets/icon-temp.png",
     "userInterfaceStyle": "light",
@@ -39,6 +39,15 @@
       "eas": {
         "projectId": "c90f5fc8-86de-487e-8727-59f725ccd519"
       }
-    }
+    },
+    "plugins": [
+      ["expo-build-properties", {
+        "android": {
+          "usesCleartextTraffic": true
+        },
+        "ios": {
+        }
+        }]
+    ]
   }
 }

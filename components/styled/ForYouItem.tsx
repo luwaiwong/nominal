@@ -138,8 +138,8 @@ export function ForYouEnd(props){
   <View style={styles.page}>
     <View style={styles.articleSection}>
       <View>
-        <Text style={styles.eventTitle}>You're all caught up! </Text>    
-        <Text style={styles.subtitle}>Here are some recent articles:</Text>    
+        <Text style={styles.articleTitle}>You're all caught up! </Text>    
+        <Text style={styles.articleSubtitle}>Here are some recent articles:</Text>    
       </View>
 
         {news.map((article) => {
@@ -166,7 +166,7 @@ export function ForYouImageOfDay(props) {
         <Image style={styles.image} source={{uri: data.url}} />
         <View style={styles.contentContainer}>
           <View>
-            <Text style={styles.title} numberOfLines={1} >{data.title}</Text>
+            <Text style={styles.title} numberOfLines={3} >{data.title}</Text>
             <Text style={[styles.subtitle]} numberOfLines={1} >NASA Astronomy Picture of the Day</Text>
           </View>
 
@@ -179,7 +179,7 @@ export function ForYouImageOfDay(props) {
               <View style={styles.infoTextSection}>
                 {/* <Text style={styles.launcherText} numberOfLines={1}>{data.copyright}</Text> */}
 
-                <Text style={styles.placeText}>Copyright: {data.copyright.trim()}</Text>
+                {data.copyright != undefined && <Text style={styles.placeText}>Copyright: {data.copyright.trim()}</Text>}
                 <Text style={styles.timeText} >{new Date(data.date).toLocaleString([],{weekday:'long', day:'2-digit', month:'long', year:'numeric'})}</Text>
               </View>
             </BlurView>
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     // Text
     // TOP SECTION
     title:{
-      fontSize: 28,
+      fontSize: 26,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "600",
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
 
       textShadowColor: 'rgba(0, 0, 0, 0.6)',
       textShadowOffset: {width: 1, height: 2},
-      textShadowRadius: 1,
+      textShadowRadius: 5,
       elevation: 200,
       
       marginHorizontal: 10,
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
 
       textShadowColor: 'rgba(0, 0, 0, 0.6)',
       textShadowOffset: {width: 1.5, height: 1.5},
-      textShadowRadius: 1,
+      textShadowRadius: 5,
       elevation: 200,
       
       marginHorizontal: 10,
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
 
       textShadowColor: 'rgba(0, 0, 0, 0.4)',
       textShadowOffset: {width: 0, height: 1},
-      textShadowRadius: 1,
+      textShadowRadius: 5,
       elevation: 200,
     },
     launcherText:{
@@ -431,13 +431,44 @@ const styles = StyleSheet.create({
     articleSection:{
       display: "flex",
       flexDirection: "column",
-      justifyContent: "space-around",
-      marginTop: StatusBar.currentHeight+TOP_BAR_HEIGHT,
+      justifyContent: "space-between",
+      marginTop: StatusBar.currentHeight+TOP_BAR_HEIGHT-10,
 
       // backgroundColor: 'white',
 
       
       width: "100%",
-      height: Dimensions.get('window').height-StatusBar.currentHeight-BOTTOM_BAR_HEIGHT-20,
+      height: Dimensions.get('window').height-StatusBar.currentHeight-BOTTOM_BAR_HEIGHT-10,
+    },
+    articleTitle:{
+      fontSize: 24,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "600",
+      textAlign: "left",
+
+      textShadowColor: 'rgba(0, 0, 0, 0.6)',
+      textShadowOffset: {width: 1, height: 1},
+      textShadowRadius: 1,
+      elevation: 200,
+      
+      marginHorizontal: 15,
+      marginRight: 10,
+    },
+    articleSubtitle:{
+      fontSize: 18,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "600",
+      textAlign: "left",
+
+      textShadowColor: 'rgba(0, 0, 0, 0.6)',
+      textShadowOffset: {width: 1, height: 1},
+      textShadowRadius: 1,
+      elevation: 200,
+      
+      marginHorizontal: 15,
+      marginRight: 10,
+      marginBottom  : 10,
     },
 });

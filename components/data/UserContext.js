@@ -928,7 +928,7 @@ export class UserData {
     // return this.launches.upcoming.slice(0, 5);
     // Filter the launches based on the tags
     // Cutoff at launches that are more than 1 month away
-    return this.launches.upcoming.slice(1, 3);
+    return this.launches.upcoming.slice(1, 4);
   }
   #getDashboardEvents() {
     return this.events.upcoming.slice(0, 1);

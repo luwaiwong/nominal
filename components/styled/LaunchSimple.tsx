@@ -19,7 +19,7 @@ export default function LaunchSimple(data: {data: any}) {
   let [launchTime, setLaunchTime] = useState<any>(new Date(launch.net));
 
   
-  const isPrecise = launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second";
+  const isPrecise = launch.net_precision != undefined && launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second";
   // let [pinned, setPinned] = useState<any>(userData.getPinned().includes(launchInfo.id));
   // const togglePinned = () => {
   //   let pinnedStatus = userData.togglePinned(launchInfo.id)
@@ -94,7 +94,11 @@ export default function LaunchSimple(data: {data: any}) {
   singletap.onEnd(()=>{});
   
   // Status name
-  let status = launch.status.name;
+  let status = "";
+  if (launch.status != null){
+
+    status = launch.status.name;
+  }
 
   let tminus = calculateTminus(launch.net, status);
   tminus = "T "+tminus;
@@ -118,7 +122,7 @@ export default function LaunchSimple(data: {data: any}) {
                 <View style={styles.smallSpacer}></View>
                 <Text style={styles.smallText}>{launch.rocket.configuration.full_name}</Text>
                 <Text style={styles.smallText} numberOfLines={1}>{launch.launch_provider.name}</Text>
-                {/* <Text style={styles.smallText} numberOfLines={1}>{launchInfo.launch_pad.name}</Text> */}
+                <Text style={styles.smallText} numberOfLines={1}>{launch.launch_pad.name}</Text>
                 <View style={styles.smallSpacer}></View>
 
                 { isPrecise ? 

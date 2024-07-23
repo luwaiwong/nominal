@@ -143,6 +143,46 @@ export function processLaunchData(data: any){
         return null
     }
 }
+export function processIndividualLaunchData(launch: any){
+    try {
+        return {
+            // Dashboard Launch Data
+            // Launch Info
+            type: "launch",
+            id: launch.id,
+            sd_id: launch.id,
+            name: launch.name,
+            image: launch.image,
+
+            // Provider and Location
+            rocket: launch.rocket,
+            launch_provider: launch.launch_service_provider,
+            launch_pad: launch.pad,
+            mission: launch.mission,
+
+            // Launch Time
+            net: launch.net,
+            net_precision: launch.net_precision,
+            window_start: launch.window_start,
+            window_end: launch.window_end,
+
+            // Status
+            status: launch.status,
+            holdreason: launch.holdreason,
+            failreason: launch.failreason,
+
+            // Links & Media
+            webcast_live: launch.webcast_live,
+            infographic: launch.infographic,
+
+            // Other information
+            program: launch.program,
+        }
+    } catch (error){
+        console.log("Error processing launch data:", error);
+        return null
+    }
+}
 
 function convertTime(time: string){
     let date = new Date(time);

@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, FlatList, StatusBar, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, Image, FlatList, StatusBar, Dimensions, ScrollView, Linking } from 'react-native';
 import { MaterialIcons } from 'react-native-vector-icons';
 import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
 import Event from '../../../styled/Event';
@@ -8,8 +8,11 @@ import LaunchSimple from '../../../styled/LaunchSimple';
 import { WebView } from 'react-native-webview';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import YoutubeIframe from 'react-native-youtube-iframe';
+import { processIndividualLaunchData, processLaunchData } from '../../../data/APIHandler';
 
-const streamID = "P9C25Un7xaM"
+const highDefStream= "P9C25Un7xaM"
+const lowDefStream= "VdFK-xs_r-4"
+const streamID = highDefStream
 export function ISSDashboard(){
     const userContext = useContext(UserContext);
     const [data, setData] = useState(undefined);
@@ -133,15 +136,12 @@ export function ISSDashboard(){
         // Set timer to reload live data
         const interval = setInterval(() => {
             getISSPositionData();
-        }, 2000);
+        }, 10000);
         return () => clearInterval(interval);
     }, [])
 
     // Check if need to get iss data
     if (data == undefined) {
-        if (userContext != undefined){
-            getData();
-        }
         return (
             <View style={dstyles.container}>
                 <Text style={dstyles.title}>ISS Loading...</Text>
@@ -182,7 +182,6 @@ export function ISSDashboard(){
                         </View>
                         {/* <Text style={dstyles.statsTitle}>Live Data:</Text> */}
                     </View>
-                    
                     }
                     <TouchableOpacity onPress={() => {userContext.nav.navigate("ISS")}}>
                         {/* <Text style={dstyles.sourceText}>Live Source: ESA</Text>   */}
@@ -205,8 +204,12 @@ export function ISSDashboard(){
 // Assume ISS data has already been loading from widge
 export default function ISSPage(props) {
     const userContext = useContext(UserContext);
+    const [liveData, setLiveData] = useState(undefined);
+    const [descriptionShown, setDescriptionShown] = useState(false);
     let iss = userContext.iss
     let description = iss.description;
+    description = description.replace(/(\.[^.]*\.)/g, '$1 \n\n');
+
     let stats = {
         orbit: iss.orbit,
         founded: iss.founded,
@@ -216,7 +219,26 @@ export default function ISSPage(props) {
         volume: iss.volume
     }
 
-    console.log(Object.keys(iss))
+    async function getISSPositionData(){
+        await fetch("https://api.wheretheiss.at/v1/satellites/25544").then((data) => {
+            return data.json();
+        }).then((data)=>{
+            // console.log("ISS Data:", data);
+            setLiveData(data);
+        }).catch((error) => {
+            console.log("Error getting ISS data:", error);
+        })
+    }
+    useEffect(() => {
+        // Set timer to reload live data
+        const interval = setInterval(() => {
+            getISSPositionData();
+        }, 2000);
+        return () => clearInterval(interval);
+    }, [])
+
+    // console.log("ISS Data:", Object.keys(iss.docking_location[4].docked.flight_vehicle.launch))
+    // console.log(iss.docking_location[4].docked.flight_vehicle.launch)
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -231,13 +253,65 @@ export default function ISSPage(props) {
                 <View style={styles.issMapContainer} pointerEvents='none'>
                     <WebView source={{uri: 'http://wsn.spaceflight.esa.int/iss/index_portal.php'}} style={styles.issMap} scrollEnabled={false} cacheEnabled={true} cacheMode='LOAD_CACHE_ELSE_NETWORK'/>
                 </View>
+                {/* <View style={{marginHorizontal: 10, overflow: 'hidden', borderRadius: 10}}> */}
+                    {/* <YoutubeIframe videoId={streamID} width={Dimensions.get("window").width} height={Dimensions.get("window").width*0.57} play={false} mute={true} /> */}
+                {/* </View> */}
                 <View style={dstyles.subInfoContainer}>
-                    <Text style={dstyles.sourceText}>Current ISS Position: ESA</Text>
+                    <Text style={dstyles.sourceText}>ISS Live Position: ESA</Text>
+                    {/* <Text style={dstyles.sourceText}>ISS Livestream: NASA</Text> */}
+                </View>
+                <View style={styles.streamsContainer}>
+                    <TouchableOpacity onPress={()=>Linking.openURL("https://www.youtube.com/watch?v=P9C25Un7xaM")}>
+                        <Text style={styles.stream}>HD Livestream</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=>Linking.openURL("https://www.youtube.com/watch?v=VdFK-xs_r-4")}>
+                        <Text style={styles.stream}>Livestream</Text>
+                    </TouchableOpacity>
                 </View>
                 <View> 
-                    <Text style={styles.description} numberOfLines={3}>{iss.description}</Text>
+                    <View style={dstyles.statsContainer}>
+                        { liveData != undefined && 
+                            <>
+                                <Text style={dstyles.statsText}>Altitude: {liveData.altitude.toFixed(1)}km</Text>
+                                <Text style={dstyles.statsText}>Longitude: {liveData.longitude.toFixed(1)}</Text>
+                                <Text style={dstyles.statsText}>Velocity: {liveData.velocity.toFixed(1)}km/s</Text>
+                                <Text style={dstyles.statsText}>Latitude: {liveData.latitude.toFixed(1)}</Text>
+                                <Text style={dstyles.statsText}>Crew: {iss.onboard_crew}</Text>
+                                <Text style={dstyles.statsText}>Docked Spacecraft: {iss.docked_vehicles}</Text>
+                                <Text style={dstyles.statsText}></Text>
+                                <Text style={dstyles.statsText}></Text>
+                            </>
+                        }
+                        <Text style={dstyles.statsText}>Height: {iss.height}</Text>
+                        <Text style={dstyles.statsText}>Mass: {iss.mass}</Text>
+                        <Text style={dstyles.statsText}>Width: {iss.width}</Text>
+                        <Text style={dstyles.statsText}>Volume: {iss.volume}</Text>
+                        <Text style={dstyles.statsText}>Founded: {iss.founded}</Text>
+                        <Text style={dstyles.statsText}>Orbit: {iss.orbit}</Text>
+
+                    </View>
+                    {/* <Text style={dstyles.statsTitle}>Live Data:</Text> */}
                 </View>
-                <YoutubeIframe videoId={streamID} width={Dimensions.get("window").width}height={225} play={true} mute={true} />
+                <TouchableOpacity onPress={()=>setDescriptionShown(!descriptionShown)}> 
+                    <Text style={styles.subtitle} numberOfLines={3}>Description:</Text>
+                    <Text style={styles.description} numberOfLines={descriptionShown?100:5} >{'\t'}{description}</Text>
+                </TouchableOpacity>
+                <View>
+                    <Text style={styles.subtitle}>Currently Docked Vehicles</Text>
+                    {iss.docking_location.map((dock, index) => {
+                        if (dock.docked != null){
+                            let launch = processIndividualLaunchData(dock.docked.flight_vehicle.launch)
+                            return (
+                                <View style={styles.dockContainer} key={index}>
+                                    <Text style={styles.dockName}>{dock.name}</Text>
+                                    <Text style={styles.dockTime}>Docked {new Date(dock.docked.docking).toLocaleString([], {day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit'})}</Text>
+                                    {/* <Text style={dstyles.subtitle}>{dock.docked.flight_vehicle.spacecraft.name}</Text> */}
+                                    <LaunchSimple data={launch} />
+                                </View>
+                            )
+                        }
+                    })}
+                </View>
             </ScrollView>
             
         </View>
@@ -364,7 +438,7 @@ const dstyles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         alignContent: 'flex-end',
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
         width: '100%',
         paddingHorizontal: 5,
         // marginBottom: 5,
@@ -417,6 +491,7 @@ const dstyles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 3,
         borderColor: COLORS.BACKGROUND,
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
 
     },
     statsTitle:{
@@ -499,19 +574,80 @@ const styles = StyleSheet.create({
         // marginTop: 10,
         borderBottomLeftRadius: 0,
         borderBottomRightRadius: 0,
+        marginBottom: 0,
     },
     issMap:{
         width: Dimensions.get('window').width,
         // paddingRight: "2.5%",
         aspectRatio: 2.125,
     },
+    subtitle:{
+        fontSize: 16,
+        fontFamily: FONT,
+        color: COLORS.SUBFOREGROUND,
+        marginHorizontal: 10,
+        marginTop: 10,
+
+    },
     description:{
+        fontSize: 16,
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
         marginHorizontal: 10,
-        marginTop: 10,
+        // marginTop: 10,
         marginBottom: 10,
 
+    },
+    streamsContainer:{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        marginTop: 10,
+        marginHorizontal: 10,
+        // marginBottom: 10,
+    },
+    stream:{
+        fontSize: 16,
+        fontFamily: FONT,
+        backgroundColor: COLORS.RED,
+        color: COLORS.BACKGROUND,
+        borderColor: COLORS.RED,
+        borderRadius: 15,
+        borderWidth: 2,
+        paddingHorizontal: 8,
+        paddingTop: 2,
+        marginRight: 10,
+
+        // marginHorizontal: 10,
+        // marginTop: 10,
+        // marginBottom: 10,
+    },
+    dockName:{
+        fontSize: 18,
+        fontFamily: FONT,
+        color: COLORS.FOREGROUND,
+        marginHorizontal: 12,
+        marginTop: 10,
+    },
+    dockContainer:{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        borderRadius: 10,
+        marginBottom: 5,
+        marginHorizontal: 8,
+        marginTop: 5,        
+        // padding
+    },
+    dockTime:{
+        fontSize: 14,
+        fontFamily: FONT,
+        color: COLORS.SUBFOREGROUND,
+        marginHorizontal: 12,
+        marginTop: 5,
     }
     
 })

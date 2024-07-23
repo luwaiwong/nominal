@@ -12,32 +12,34 @@ export default function Article(props:{articleData:any}){
     const articleDateData = new Date(articleData.published_at);
     const timeDiff = today.getTime() - articleDateData.getTime();
 
-    let articleDate = articleDateData.toUTCString().slice(0, -7);
+    let articleDate = articleDateData.toLocaleString('default', { month: 'long', day: 'numeric', weekday: 'long', year: 'numeric' });
     if (timeDiff < 86400000){
-        // const hours = Math.floor(timeDiff / 360000);
-        // articleDate = hours.toString() + " hours ago";
-        articleDate = "Today";
+        const hours = Math.floor(timeDiff / 3600000);
+        articleDate = hours.toString() + " hours ago";
+        // articleDate = "Today";
     }
-    else if (timeDiff < 172800000){
-        articleDate = "Yesterday";
+    // If time is more than 72 hours ago, display the date
+    else if (timeDiff < 259200000){
+        articleDate = articleDateData.toLocaleString('default', { month: 'long', day: 'numeric', weekday: 'long', year: 'numeric' });
     }
     
     // Get the aspect ratio of the image one time
-    useEffect(() => {
-        try {
-            Image.getSize(articleData.image_url, (width, height) => {
-                let ratio = width/height;
-                if (ratio < 1.25){
-                    setAspectRatio(1.25);
-                }else {
-                    setAspectRatio(width/height);
-                }})
+    // useEffect(() => {
+    //     try {
+    //         Image.getSize(articleData.image_url, (width, height) => {
+    //             let ratio = width/height;
+    //             if (ratio < 1.25){
+    //                 setAspectRatio(1.25);
+    //             }else {
+    //                 setAspectRatio(width/height);
+    //             }})
                 
-        } catch (error){
-            console.log("Error getting image size:", error)
-        }
-    }, []);
+    //     } catch (error){
+    //         console.log("Error getting image size:", error)
+    //     }
+    // }, []);
 
+    // console.log("Article data:", articleData);
     async function openLink(url: string){
         Linking.openURL(url);
     }
@@ -53,7 +55,7 @@ export default function Article(props:{articleData:any}){
                     <Text style={styles.time}>{articleDate}</Text>
                 </View>
                 <View style={styles.right}>
-                    {!hasgif &&<Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: articleData.image_url}} />  }      
+                    {!hasgif &&<Image style={[styles.image,{aspectRatio: 1.5}]} source={{uri: articleData.image_url}} />  }      
                     <Text style={styles.source} >{articleData.news_site}</Text>
 
                 </View>
@@ -84,7 +86,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        width: "65%",
+        width: "60%",
     },
     right:{
         display: "flex",
@@ -92,7 +94,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         
         // backgroundColor: COLORS.FOREGROUND,
-        width: "35%",
+        width: "40%",
 
     },
     

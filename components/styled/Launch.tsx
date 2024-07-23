@@ -93,8 +93,6 @@ export default function Launch(data) {
   return (
     <TouchableOpacity onPress={()=> nav.navigate("Launch", {data: launch})}>
       <Animated.View style={[styles.background, {transform:[{scale}]}]}>
-        {/* Header, Holds the title and t -  countdown */}
-        {/* Body, Holds the launch info on left and image on right */}
         <View style={styles.bodySection}>
           <View style={styles.infoSection}>
             <View>
@@ -181,21 +179,20 @@ background: {
   marginVertical: 4,
   height: 180,
   overflow: 'hidden',
-  padding: 10,
+  // padding: 10,
+  paddingTop: 10,
+  paddingHorizontal: 10,
 
   backgroundColor: colors.BACKGROUND_HIGHLIGHT,
-  borderRadius: 15,
+  borderRadius: 10,
   
-},
-headerSection:{
-  height: 35,
 },
 bodySection:{
   display: 'flex',
   flexDirection: 'row',
   width: '100%',
-  height: 165,
-  justifyContent: 'space-between',
+  // height: 165,
+  // justifyContent: 'space-between',
   
 },
 infoSection:{
@@ -204,11 +201,12 @@ infoSection:{
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-around',
+  // backgroundColor: colors.FOREGROUND,
 
 },
 image: {
   width: 165,
-  height: 165,
+  height: 160,
   borderRadius: 10,
   borderWidth: 2,
 },
@@ -222,7 +220,7 @@ text: {
 // Header Section Stuff
 titleText: {
     // flex: 1,
-    fontSize: 20,
+    fontSize: 18,
     color: colors.FOREGROUND,
     alignItems: 'center',
     justifyContent: 'center',
@@ -230,6 +228,7 @@ titleText: {
     // height: 30,
     fontFamily: colors.FONT,
     marginBottom: 5,
+    marginTop: -5,
 },
 // Info Section Stuff
 horizontalInfoContainer:{

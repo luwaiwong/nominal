@@ -1,94 +1,49 @@
 
 import { useState, useEffect, useRef } from "react";
-import { StyleSheet, View, Image, Text, Animated, Linking} from "react-native";
+import { StyleSheet, View, Image, Text, Animated, Linking, TouchableOpacity} from "react-native";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
-import { COLORS, FONT } from "../styles";
+import { BACKGROUND_HIGHLIGHT, COLORS, FONT } from "../styles";
 
 export default function ArticleDescriptive(props:{articleData:any}){
     const articleData = props.articleData;
     let hasgif = articleData.image_url != null && articleData.image_url.search(".gif") != -1;
-    
-    const [aspectRatio, setAspectRatio] = useState(1);
 
     const today = new Date();
     const articleDateData = new Date(articleData.published_at);
     const timeDiff = today.getTime() - articleDateData.getTime();
 
-    let articleDate = articleDateData.toUTCString().slice(0, -7);
+    let articleDate = articleDateData.toLocaleString('default', { month: 'long', day: 'numeric', weekday: 'long', year: 'numeric' });
     if (timeDiff < 86400000){
-        // const hours = Math.floor(timeDiff / 360000);
-        // articleDate = hours.toString() + " hours ago";
-        articleDate = "Today";
+        const hours = Math.floor(timeDiff / 3600000);
+        articleDate = hours.toString() + " hours ago";
+        // articleDate = "Today";
     }
-    else if (timeDiff < 172800000){
-        articleDate = "Yesterday";
+    // If time is more than 72 hours ago, display the date
+    else if (timeDiff < 259200000){
+        articleDate = articleDateData.toLocaleString('default', { month: 'long', day: 'numeric', weekday: 'long', year: 'numeric' });
     }
-    
-    // Get the aspect ratio of the image one time
-    useEffect(() => {
-        Image.getSize(articleData.image_url, (width, height) => {
-            let ratio = width/height;
-            if (ratio > 1.2){
-                setAspectRatio(1.2);
-            }else {
-                setAspectRatio(width/height);
-            }})
-    }, []);
-
-
-    // ANIMATIONS
-    const scale = useRef(new Animated.Value(1)).current;
-    // Create an animation that scales the view to 1.2 times its original size when pressed
-    const animateIn = () => {
-        Animated.timing(scale, {
-        toValue: 0.95,
-        duration: 200,
-        useNativeDriver: true, // Add this to improve performance
-        }).start();
-    };
-
-    // Create an animation that scales the view back to its original size when released
-    const animateOut = (open: boolean) => {
-        if (open) Linking.openURL(articleData.url);
-        Animated.timing(scale, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true, // Add this to improve performance
-        }).start();
-    };
-
-
-    // Gestures
-    const tap = Gesture.Tap();
-
-    tap.onTouchesDown(()=>animateIn());
-    tap.onEnd(()=>animateOut(true));
-    // tap.onTouchesMove(()=>animateIn());
-    tap.onTouchesCancelled(()=>animateOut(false));
-    // tap.onEnd(()=>toggle()); // UNCOMMENT TO RESTORE PINNED
-    tap.numberOfTaps(1);
-
     
     return (
-        <GestureDetector gesture={tap}>
-            <Animated.View style={[styles.container,{transform:[{scale}]}]}>
+        <TouchableOpacity onPress={()=>{Linking.openURL(articleData.url)}}>
+            <View style={styles.container}>
                 <View style={styles.left}>
                     <View>
-                        <Text numberOfLines={4} style={styles.title}>{articleData.title}</Text>
-                        <Text numberOfLines={4} style={styles.description}>{articleData.summary}</Text>
+                        <Text numberOfLines={3} style={styles.title}>{articleData.title}</Text>
+                        <Text numberOfLines={5} style={styles.description}>{articleData.summary}</Text>
 
                     </View>
 
                     <Text style={styles.time}>{articleDate}</Text>
                 </View>
                 <View style={styles.right}>
-                    {!hasgif &&  <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: articleData.image_url}} /> }
+                    {!hasgif &&  <Image style={[styles.image,{aspectRatio: 1}]} source={{uri: articleData.image_url}} /> }
                            
                     <Text style={styles.source}>{articleData.news_site}</Text>
 
                 </View>
-            </Animated.View>
-        </GestureDetector>
+            </View>
+            <View style={styles.bottomLine}></View>
+        </TouchableOpacity>
     );
 }
 
@@ -112,7 +67,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        width: "65%",
+        width: "60%",
     },
     right:{
         display: "flex",
@@ -120,7 +75,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         
         // backgroundColor: COLORS.FOREGROUND,
-        width: "35%",
+        width: "40%",
 
     },
     
@@ -144,11 +99,12 @@ const styles = StyleSheet.create({
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
         paddingRight: 10,
+        marginBottom: 5,
         
         
     },
     description:{
-        fontSize: 12,
+        fontSize: 13,
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
         paddingRight: 10,
@@ -161,6 +117,7 @@ const styles = StyleSheet.create({
         color: COLORS.FOREGROUND,
         textAlign: "right",
         marginRight: 2,
+        marginTop: 5,
     },
     time:{
 
@@ -168,6 +125,17 @@ const styles = StyleSheet.create({
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
         marginRight: 2,
+        marginTop: 5,
+    },
+    bottomLine:{
+        
+        height: 3,
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        borderRadius: 10,
+
+        marginHorizontal: 15,
+        marginTop: 5,
+        marginBottom: 10,
     }
     
 });

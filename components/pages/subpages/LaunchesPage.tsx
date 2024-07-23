@@ -23,8 +23,8 @@ export default function LaunchesPage(props) {
                     <Text style={styles.title}>{title}</Text>
                 </Pressable>
             </View>
-            { (userContext.settings.devmode && devMode)?<FlatList
-                data={title == "Upcoming"?userContext.launches.upcoming:userContext.launches.previous}
+            { (userContext.settings.devmode && devMode && false)?<FlatList
+                data={title == "Upcoming Launches"?userContext.launches.upcoming:userContext.launches.previous}
                 keyExtractor={(item, index) => index.toString()}
                 style={styles.list}
                 renderItem={({ item }) => <DevText item={item}></DevText>}>
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
         height: TOP_BAR_HEIGHT,
     },
     title:{
-        fontSize: 26,
+        fontSize: 24,
         color: COLORS.FOREGROUND,
         width: "100%",
         textAlign: 'center',
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
 
         fontFamily: FONT,
 
-        marginBottom: 5,
+        marginBottom: 2,
     },
     dev:{
         fontSize: 14,

@@ -6,19 +6,19 @@ import { BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT } from "../styles";
 
 import Article from "../styled/Article";
 import Event from "../styled/Event";
-import { useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../data/UserContext";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
+import ArticleDescriptive from "../styled/ArticleDescriptive";
+const NEWS_API_URL = "https://api.spaceflightnewsapi.net/v4/";
 
 export default function News(props){
-    let userContext = useState(UserContext);
-    const launchData = props.data.launchData;    
-    const news = props.data.launchData.news.slice(0,6);
+    let userContext = useContext(UserContext);
+    let callingData = useRef(false);
+    let currentOffset = useRef(10);
+    const [data, setData] = useState(null);
 
     const nav = props.data.nav;
-    const eventsHighlights = props.data.launchData.eventsHighlights;
-    const upcomingEvents = props.data.launchData.events.upcoming;
-    const previousEvents = props.data.launchData.events.previous;
 
     const [refreshing, setRefreshing] = useState(false)
     async function refreshData(){
@@ -29,6 +29,70 @@ export default function News(props){
         })
     }
 
+    useEffect(() => {
+        if (userContext != null && userContext.news != null){
+            setData(userContext.news.slice(0,5))
+        }
+    }, [])
+
+    const onEndReached = () => {
+        // getMoreData();
+    }
+
+    async function getMoreData(){
+        if (callingData.current){
+            return
+        }
+
+        callingData.current = true;
+        await fetch(NEWS_API_URL+"articles/?offset="+currentOffset.current).then((response) => {
+            // console.log(response)
+            return response.json()
+        }).then((articles) => {
+            if (articles == null){
+                console.log("Article data null")
+                callingData.current = false;
+                return
+            }
+            setData([...data,...articles.results])
+            currentOffset.current = currentOffset.current + 10;
+            callingData.current = false;
+        }).catch((error) => {
+            console.log("Error fetching article data", error)
+            callingData.current = false;
+        })
+    }
+
+    if (data == null){
+        return (<></>)
+    }
+    return (
+        <View style={styles.container}>
+            <FlatList
+                refreshControl={
+                  <RefreshControl refreshing={refreshing} onRefresh={()=>{refreshData()}
+                  } colors={[COLORS.FOREGROUND]} progressBackgroundColor={COLORS.BACKGROUND_HIGHLIGHT}/>}
+                data={data}
+                keyExtractor={(item, index) => index.toString()}
+                // style={styles.list}
+                ListFooterComponent={<View style={styles.bottomPadding}></View>}
+                ListHeaderComponent={
+                    <TouchableOpacity onPress={() => {nav.navigate('All News', {data:data})}}>
+                        <View style={styles.sectionHeader}>
+                            <Text style={styles.sectionTitle}>Articles</Text>
+                            <View style={styles.seeMoreSection}>
+                                <Text style={styles.seeMoreText}>See All</Text>
+                                <MaterialIcons name="arrow-forward-ios" style={styles.sectionIcon}/>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                }
+                renderItem={({ item }) => <Article articleData={item}></Article>}
+                // onEndReachedThreshold={0.5}
+                onEndReached={() => {onEndReached()}}
+            />
+        </View>
+    )
     return (<>
         <View style={styles.container}>
             <ScrollView 
@@ -38,22 +102,21 @@ export default function News(props){
                 }>
                 
                 <View style={styles.sectionContainer}>
-                    <TouchableOpacity onPress={() => {nav.navigate('All News', {data:launchData.news})}}>
+                    <TouchableOpacity onPress={() => {nav.navigate('All News', {data:data})}}>
                         <View style={styles.sectionHeader}>
                             <Text style={styles.sectionTitle}>Articles</Text>
                             <View style={styles.seeMoreSection}>
-                                <Text style={styles.seeMoreText}>See All</Text>
+                                {/* <Text style={styles.seeMoreText}>See All</Text> */}
                                 <MaterialIcons name="arrow-forward-ios" style={styles.sectionIcon}/>
                             </View>
                         </View>
                     </TouchableOpacity>
                     <View style={{height:10}}></View>
-                    {news != undefined && news.map((item, index) => {return (<Article articleData={item} key={index}/>);})}
+                    {data != undefined && data.map((item, index) => {return (<Article articleData={item} key={index}/>);})}
                     {/* <Article articleData={news[4]}></Article> */}
                 </View>
                 {/* <Text style={styles.eventsTitle}>Events</Text>  */}
                     
-                <View style={styles.bottomBuffer}></View>
             </ScrollView>
         </View>
     </>)
@@ -150,8 +213,8 @@ const styles = StyleSheet.create({
         alignContent: 'flex-end',
         
     },
-    bottomBuffer:{
+    bottomPadding:{
         height: BOTTOM_BAR_HEIGHT,
-    }
+    },
     
 })
