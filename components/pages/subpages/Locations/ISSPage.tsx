@@ -16,7 +16,6 @@ const streamID = highDefStream
 export function ISSDashboard(){
     const userContext = useContext(UserContext);
     const [data, setData] = useState(undefined);
-    const [liveData, setLiveData] = useState(undefined);
     const [mapLoaded, setMapLoaded] = useState(false);
     let launches = undefined;
     let events = undefined;
@@ -116,28 +115,10 @@ export function ISSDashboard(){
         })
     }
 
-    async function getISSPositionData(){
-        await fetch("https://api.wheretheiss.at/v1/satellites/25544").then((data) => {
-            return data.json();
-        }).then((data)=>{
-            // console.log("ISS Data:", data);
-            setLiveData(data);
-        }).catch((error) => {
-            console.log("Error getting ISS data:", error);
-        })
-    }
-
     useEffect(() => {
         if (userContext != undefined){
             getData();
-            getISSPositionData();
         }
-
-        // Set timer to reload live data
-        const interval = setInterval(() => {
-            getISSPositionData();
-        }, 10000);
-        return () => clearInterval(interval);
     }, [])
 
     // Check if need to get iss data
@@ -148,9 +129,6 @@ export function ISSDashboard(){
             </View>
         )
     }
-
-    // console.log(Object.keys(data))
-    // console.log(data.docking_location)
     return (
         <View style={dstyles.container}>
                 <View style={dstyles.infoContainer}>
@@ -170,26 +148,9 @@ export function ISSDashboard(){
                         }
                     </View>}
                     
-                    { liveData != undefined &&
-                    <View> 
-                        <View style={dstyles.subInfoContainer}>
-                            <Text style={dstyles.sourceText}>Live ISS Stats:</Text>
-                        </View>
-                        <View style={dstyles.statsContainer}>
-                            <Text style={dstyles.statsText}>Altitude: {liveData.altitude.toFixed(1)}km</Text>
-                            <Text style={dstyles.statsText}>Longitude: {liveData.longitude.toFixed(1)}</Text>
-                            <Text style={dstyles.statsText}>Velocity: {liveData.velocity.toFixed(1)}km/s</Text>
-                            <Text style={dstyles.statsText}>Latitude: {liveData.latitude.toFixed(1)}</Text>
-                            <Text style={dstyles.statsText}>Crew: {data.onboard_crew}</Text>
-                            <Text style={dstyles.statsText}>Docked Spacecraft: {data.docked_vehicles}</Text>
-                        </View>
-                        {/* <Text style={dstyles.statsTitle}>Live Data:</Text> */}
-                    </View>
-                    }
+                    <LiveData data={data}/>
                     <TouchableOpacity onPress={() => {userContext.nav.navigate("ISS")}}>
                         {/* <Text style={dstyles.sourceText}>Live Source: ESA</Text>   */}
-        
-                        
                         <View style={dstyles.sectionHeader}>
                             <Text style={dstyles.sectionTitle}>International Space Station</Text>
                             <View style={dstyles.seeMoreSection}>
@@ -203,6 +164,60 @@ export function ISSDashboard(){
     )
 
 }
+
+
+    function LiveData(props){
+        const userContext = useContext(UserContext);
+        const [liveData, setLiveData] = useState(undefined);
+        let launches = null;
+        let events = null;
+
+        async function getISSPositionData(){
+            await fetch("https://api.wheretheiss.at/v1/satellites/25544").then((data) => {
+                return data.json();
+            }).then((data)=>{
+                // console.log("ISS Data:", data);
+                setLiveData(data);
+            }).catch((error) => {
+                console.log("Error getting ISS data:", error);
+            })
+        }
+
+        useEffect(() => {
+                getISSPositionData();
+
+            // Set timer to reload live data
+            const interval = setInterval(() => {
+                getISSPositionData();
+            }, 2000);
+            return () => clearInterval(interval);
+        }, [])
+
+        if (liveData == undefined || props.data == undefined){
+            return (
+                <View style={dstyles.statsContainer}>
+                    <Text style={dstyles.statsText}>Loading Live Data...</Text>
+                </View>
+            )
+        }
+        return (
+            <View> 
+                <View style={dstyles.subInfoContainer}>
+                    <Text style={dstyles.sourceText}>Live ISS Stats:</Text>
+                </View>
+                <View style={dstyles.statsContainer}>
+                    <Text style={dstyles.statsText}>Altitude: {liveData.altitude.toFixed(1)}km</Text>
+                    <Text style={dstyles.statsText}>Longitude: {liveData.longitude.toFixed(1)}</Text>
+                    <Text style={dstyles.statsText}>Velocity: {liveData.velocity.toFixed(1)}km/s</Text>
+                    <Text style={dstyles.statsText}>Latitude: {liveData.latitude.toFixed(1)}</Text>
+                    <Text style={dstyles.statsText}>Crew: {props.data.onboard_crew}</Text>
+                    <Text style={dstyles.statsText}>Docked Spacecraft: {props.data.docked_vehicles}</Text>
+                </View>
+                {/* <Text style={dstyles.statsTitle}>Live Data:</Text> */}
+            </View>
+        )
+
+    }
 
 // Assume ISS data has already been loading from widge
 export default function ISSPage(props) {
@@ -222,6 +237,9 @@ export default function ISSPage(props) {
         volume: iss.volume
     }
 
+    const [launches, setLaunches] = useState({upcoming: [], previous: []});
+    const [events, setEvents] = useState({upcoming: [], previous: []});
+
     async function getISSPositionData(){
         await fetch("https://api.wheretheiss.at/v1/satellites/25544").then((data) => {
             return data.json();
@@ -233,6 +251,72 @@ export default function ISSPage(props) {
         })
     }
     useEffect(() => {
+        // Set data
+
+        let eu = [];
+        let ep = [];
+        let lu = [];
+        let lp = [];
+
+        if (userContext.events != undefined && userContext.events.upcoming != undefined)
+        {
+            eu = userContext.events.upcoming.filter((event) => {
+                // Loop through the programs
+                let programs = event.program;
+                for (let i = 0; i < programs.length; i++){
+                    if (programs[i].name == "International Space Station"){
+                        return true;
+                    }
+                }
+                return false;
+            })
+        }
+
+        if (userContext.launches != undefined && userContext.launches.upcoming != undefined){
+            lu = userContext.launches.upcoming.filter((launch) => {
+                // Loop through the programs
+                let programs = launch.program;
+                for (let i = 0; i < programs.length; i++){
+                    if (programs[i].name == "International Space Station"){
+                        return true;
+                    }
+                }
+                return false;
+            })
+        }
+
+        if (userContext.events != undefined && userContext.events.previous != undefined)
+        {
+            ep = userContext.events.previous.filter((event) => {
+                // Loop through the programs
+                let programs = event.program;
+                for (let i = 0; i < programs.length; i++){
+                    if (programs[i].name == "International Space Station"){
+                        return true;
+                    }
+                }
+                return false;
+            })
+        }
+
+
+
+        if (userContext.launches != undefined && userContext.launches.previous != undefined){
+            lp = userContext.launches.previous.filter((launch) => {
+                // Loop through the programs
+                let programs = launch.program;
+                for (let i = 0; i < programs.length; i++){
+                    if (programs[i].name == "International Space Station"){
+                        return true;
+                    }
+                }
+                return false;
+            })
+        }
+
+        setLaunches({upcoming: lu, previous: lp});
+        setEvents({upcoming: eu, previous: ep});
+
         // Set timer to reload live data
         const interval = setInterval(() => {
             getISSPositionData();
@@ -299,8 +383,82 @@ export default function ISSPage(props) {
                     <Text style={styles.subtitle} numberOfLines={3}>Description:</Text>
                     <Text style={styles.description} numberOfLines={descriptionShown?100:5} >{'\t'}{description}</Text>
                 </TouchableOpacity>
+                {/* Show recent, upcoming events and launches */}
+
+                {/* Upcoming Launches */}{
+                    launches.upcoming[0] != null && 
+                    <View style={styles.section}>
+                    <TouchableOpacity onPress={()=>{userContext.nav.navigate('Launches', {data: launches.upcoming,title:"Upcoming ISS Launches" })}}>
+                        <View style={styles.contentHeaderSection} >
+                            <Text style={styles.contentHeaderText} >Next Launch</Text>
+                            <View style={styles.seeMoreSection}>
+                            <Text style={styles.contentSeeMore} >See All </Text>
+                            <MaterialIcons 
+                            name="arrow-forward-ios" 
+                            style={styles.contentHeaderIcon} 
+                            />
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                    <LaunchSimple data={launches.upcoming[0]}></LaunchSimple>
+                    </View>
+                }
+                { launches.previous[0] != null && 
+                <View style={styles.section}>
+                  <TouchableOpacity onPress={()=>{userContext.nav.navigate('Launches', {data: launches.previous,title:"Previous Starship Launches" })}}>
+                    <View style={styles.contentHeaderSection} >
+                        <Text style={styles.contentHeaderText} >Previous Launch</Text>
+                        <View style={styles.seeMoreSection}>
+                          <Text style={styles.contentSeeMore} >See All </Text>
+                          <MaterialIcons 
+                          name="arrow-forward-ios" 
+                          style={styles.contentHeaderIcon} 
+                          />
+                        </View>
+                    </View>
+                  </TouchableOpacity>
+                  <LaunchSimple data={launches.previous[0]}></LaunchSimple>
+                </View>}
+                {/* <Text style={styles.sectionTitle}>Events:</Text> */}
+                {/* Upcoming Launches */}
+                {
+                 events.upcoming[0] != null &&
+                <View style={styles.section}>
+                  <TouchableOpacity onPress={()=>{userContext.nav.navigate('Events', {data: events.upcoming})}}>
+                    <View style={styles.contentHeaderSection} >
+                        <Text style={styles.contentHeaderText} >Upcoming Event</Text>
+                        <View style={styles.seeMoreSection}>
+                          <Text style={styles.contentSeeMore} >See All </Text>
+                          <MaterialIcons 
+                          name="arrow-forward-ios" 
+                          style={styles.contentHeaderIcon} 
+                          />
+                        </View>
+                    </View>
+                  </TouchableOpacity>
+                  <Event eventData={events.upcoming[0]}></Event>
+                </View>
+                }
+                {
+                events.previous[0] != null &&
+                <View style={styles.section}>
+                  <TouchableOpacity onPress={()=>{userContext.nav.navigate('Events', {data: events.previous,title:"Previous Events" })}}>
+                    <View style={styles.contentHeaderSection} >
+                        <Text style={styles.contentHeaderText} >Recent Event</Text>
+                        <View style={styles.seeMoreSection}>
+                          <Text style={styles.contentSeeMore} >See All </Text>
+                          <MaterialIcons 
+                          name="arrow-forward-ios" 
+                          style={styles.contentHeaderIcon} 
+                          />
+                        </View>
+                    </View>
+                  </TouchableOpacity>
+                  <Event eventData={events.previous[0]}></Event>
+                </View> 
+                }
                 <View>
-                    <Text style={styles.subtitle}>Currently Docked Vehicles</Text>
+                    <Text style={styles.dockTitle}>Currently Docked Vehicles:</Text>
                     {iss.docking_location.map((dock, index) => {
                         if (dock.docked != null){
                             let launch = processIndividualLaunchData(dock.docked.flight_vehicle.launch)
@@ -626,6 +784,13 @@ const styles = StyleSheet.create({
         // marginTop: 10,
         // marginBottom: 10,
     },
+    dockTitle:{
+        fontSize: 24,
+        fontFamily: FONT,
+        color: COLORS.FOREGROUND,
+        marginHorizontal: 20,
+        marginTop: 15,
+    },
     dockName:{
         fontSize: 18,
         fontFamily: FONT,
@@ -641,7 +806,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         borderRadius: 10,
         marginBottom: 5,
-        marginHorizontal: 8,
+        marginHorizontal: 10,
         marginTop: 5,        
         // padding
     },
@@ -651,6 +816,64 @@ const styles = StyleSheet.create({
         color: COLORS.SUBFOREGROUND,
         marginHorizontal: 12,
         marginTop: 5,
-    }
+    },
+
+    section:{
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        marginHorizontal: 10,
+        borderRadius: 10,
+
+        marginTop: 10,
+
+        // width: '100%',
+        
+        
+    },
+    contentHeaderSection:{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        justifyContent: 'space-between',
+
+        
+        width: '100%',
+        paddingHorizontal: 11,
+        marginTop: 2,
+    },
+    contentHeaderText:{
+        fontSize: 22,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+    },
+    contentSeeMore:{
+        fontSize: 16,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'right',
+        marginRight: 5,
+        alignContent: 'flex-end',
+    },
+    contentHeaderIcon:{
+        fontSize: 20,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'right',
+    },
+    seeMoreSection:{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        marginBottom: 3,
+    },
+    sectionIcon:{
+        fontSize: 20,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'right',
+    },
     
 })

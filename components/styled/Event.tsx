@@ -65,6 +65,7 @@ export default function Event(props){
     // tap.onEnd(()=>toggle()); // UNCOMMENT TO RESTORE PINNED
     tap.numberOfTaps(1);
 
+    // console.log("Loading");
     return (
         <GestureDetector gesture={tap}>
             <Animated.View style={[styles.container, {transform:[{scale}]}]}>

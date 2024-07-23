@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, StatusBar, Dimensions, FlatList, Pressable, TouchableOpacity, TouchableHighlight, TouchableNativeFeedback, Linking } from "react-native";
+import { StyleSheet, View, Text, Image, StatusBar, Dimensions, FlatList, Pressable, TouchableOpacity, TouchableHighlight, TouchableNativeFeedback, Linking, ScrollView } from "react-native";
 import React from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
@@ -137,16 +137,19 @@ export function ForYouEnd(props){
   return (
   <View style={styles.page}>
     <View style={styles.articleSection}>
-      <View>
-        <Text style={styles.articleTitle}>You're all caught up! </Text>    
-        <Text style={styles.articleSubtitle}>Here are some recent articles:</Text>    
-      </View>
+        <View>
+          <Text style={styles.articleTitle}>You're all caught up! </Text>    
+          <Text style={styles.articleSubtitle}>Here are some recent articles:</Text>    
+        </View>
 
-        {news.map((article) => {
-          return <ArticleDescriptive articleData={article} key={article.id} />
-        })
-      }
-    </View>
+        <ScrollView>
+              {news.map((article) => {
+                return <ArticleDescriptive articleData={article} key={article.id} />
+              })
+            }
+            <View style={styles.bottomPadding}></View>
+        </ScrollView>
+      </View>
   </View>
   )
 
@@ -435,6 +438,7 @@ const styles = StyleSheet.create({
       marginTop: StatusBar.currentHeight+TOP_BAR_HEIGHT-10,
 
       // backgroundColor: 'white',
+      flex: 1,
 
       
       width: "100%",
@@ -471,4 +475,7 @@ const styles = StyleSheet.create({
       marginRight: 10,
       marginBottom  : 10,
     },
+    bottomPadding:{
+      height: BOTTOM_BAR_HEIGHT+10,
+    }
 });

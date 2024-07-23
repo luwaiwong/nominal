@@ -1,5 +1,5 @@
-import { StyleSheet, View, Text, Image, FlatList, StatusBar, ScrollView, Dimensions } from 'react-native';
-import { MaterialIcons } from 'react-native-vector-icons';
+import { StyleSheet, View, Text, Image, FlatList, StatusBar, ScrollView, Dimensions, Linking } from 'react-native';
+import { MaterialIcons, MaterialCommunityIcons} from 'react-native-vector-icons';
 import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
 import Event from '../../../styled/Event';
 import { useContext, useEffect, useState } from 'react';
@@ -105,8 +105,6 @@ export function StarshipDashboard(){
                         data.nextEvent != undefined && data.nextEvent.type == "launch" ? <LaunchHighlight data={data.nextEvent}></LaunchHighlight> :
                         <Event eventData={data.nextEvent}></Event>
                     }
-                    
-
                 </View>
             }
             <View style={[dstyles.infoContainer, infoContainerStyle]}>
@@ -143,7 +141,11 @@ export default function StarshipPage(props) {
     const userContext = useContext(UserContext);
     const data = userContext.starship;
     const previousLaunches = data.previous.launches;
-    const previousEvents = data.previous.events;
+    const previousEvents = [...data.previous.events].reverse();
+    // console.log(data.previous.events[0].name)
+
+
+
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -155,28 +157,49 @@ export default function StarshipPage(props) {
                 <Text style={styles.title}>Starship & Starbase</Text>
             </View>
             <ScrollView>
-                <View style={dstyles.streamContainer} >
+                {/* <View style={dstyles.streamContainer} >
                     <YoutubeIframe videoId='A8QLrVAOE1k' width={Dimensions.get("window").width} height={Dimensions.get("window").width*1} play={false} mute={true} />
+                </View> */} 
+
+                <View style={styles.infoUrls}>
+                        <TouchableOpacity  onPress={() => Linking.openURL("https://www.youtube.com/watch?v=mhJRzQsLZGg")} >
+                            <View style={styles.infoUrl}>
+                                <Text style={styles.infoUrlText}>LabPadre</Text>
+                                <MaterialCommunityIcons name="video-outline" style={styles.infoUrlIcon} />
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity  onPress={() => Linking.openURL("https://www.youtube.com/watch?v=A8QLrVAOE1k")} >
+                            <View style={styles.infoUrl}>
+                                <Text style={styles.infoUrlText}>NasaSpaceflight</Text>
+                                <MaterialCommunityIcons name="video-outline" style={styles.infoUrlIcon} />
+                            </View>
+                        </TouchableOpacity>
+
                 </View>
-                <View style={dstyles.subInfoContainer}>
-                    <Text style={dstyles.sourceText}>Live Starbase Stream: LabPadre</Text>
-                </View>
-                {/* Upcoming Launches */}
-                <View style={styles.section}>
-                  <TouchableOpacity onPress={()=>{userContext.nav.navigate('Launches', {data: data.upcoming.launches,title:"Upcoming Starship Launches" })}}>
-                    <View style={styles.contentHeaderSection} >
-                        <Text style={styles.contentHeaderText} >Next Launch</Text>
-                        <View style={styles.seeMoreSection}>
-                          <Text style={styles.contentSeeMore} >See All </Text>
-                          <MaterialIcons 
-                          name="arrow-forward-ios" 
-                          style={styles.contentHeaderIcon} 
-                          />
+
+                {/* {
+                    data.upcoming.launches[0] != null &&
+                    <LaunchHighlight data={data.upcoming.launches[0]}></LaunchHighlight>
+                } */}
+                {/* <Text style={styles.description}>Future and past Starship events </Text> */}
+                {/* Upcoming Launches */}{
+                    data.upcoming.launches[0] != null && 
+                    <View style={styles.section}>
+                    <TouchableOpacity onPress={()=>{userContext.nav.navigate('Launches', {data: data.upcoming.launches,title:"Upcoming Starship Launches" })}}>
+                        <View style={styles.contentHeaderSection} >
+                            <Text style={styles.contentHeaderText} >Next Launch</Text>
+                            <View style={styles.seeMoreSection}>
+                            <Text style={styles.contentSeeMore} >See All </Text>
+                            <MaterialIcons 
+                            name="arrow-forward-ios" 
+                            style={styles.contentHeaderIcon} 
+                            />
+                            </View>
                         </View>
+                    </TouchableOpacity>
+                    <LaunchSimple data={data.upcoming.launches[0]}></LaunchSimple>
                     </View>
-                  </TouchableOpacity>
-                  <LaunchSimple data={data.upcoming.launches[0]}></LaunchSimple>
-                </View>
+                }
                 <View style={styles.section}>
                   <TouchableOpacity onPress={()=>{userContext.nav.navigate('Launches', {data: previousLaunches,title:"Previous Starship Launches" })}}>
                     <View style={styles.contentHeaderSection} >
@@ -214,25 +237,50 @@ export default function StarshipPage(props) {
                 }
                 {
                 data.previous != null && data.previous.events != null && data.previous.events[0] != null &&
-                <View style={styles.section}>
-                  <TouchableOpacity onPress={()=>{userContext.nav.navigate('Events', {data: previousEvents,title:"Upcoming Launches" })}}>
-                    <View style={styles.contentHeaderSection} >
-                        <Text style={styles.contentHeaderText} >Recent Event</Text>
-                        <View style={styles.seeMoreSection}>
-                          <Text style={styles.contentSeeMore} >See All </Text>
-                          <MaterialIcons 
-                          name="arrow-forward-ios" 
-                          style={styles.contentHeaderIcon} 
-                          />
-                        </View>
+                    <View style={styles.section}>
+                        <TouchableOpacity onPress={()=>{userContext.nav.navigate('Events', {data: previousEvents,title:"Previous Events" })}}>
+                            <View style={styles.contentHeaderSection} >
+                                <Text style={styles.contentHeaderText} >Recent Event</Text>
+                                <View style={styles.seeMoreSection}>
+                                <Text style={styles.contentSeeMore} >See All </Text>
+                                <MaterialIcons 
+                                name="arrow-forward-ios" 
+                                style={styles.contentHeaderIcon} 
+                                />
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                    <Event eventData={previousEvents[0]}></Event>
+                    </View> 
+                }
+                
+
+                {
+                    userContext.settings.devmode &&
+                    <View>
+                        <Text>Notices: {JSON.stringify(data.notices)}</Text>
+                        <Text>Road Closures: {JSON.stringify(data.road_closures)}</Text>
                     </View>
-                  </TouchableOpacity>
-                  <Event eventData={previousEvents[0]}></Event>
-                </View>
-}
+                }
             </ScrollView>
         </View>
     )
+}
+function Vehicle(props){
+    return (
+        <View>
+            <Text>{props.data.name}</Text>
+        </View>
+    )
+}
+
+function Orbiter(props){
+    return (
+        <View>
+            <Text>{props.data.name}</Text>
+        </View>
+    )
+
 }
 const dstyles = StyleSheet.create({
     container: {
@@ -273,6 +321,7 @@ const dstyles = StyleSheet.create({
         width: '100%',
         paddingHorizontal: 11,
         // marginTop: -5,
+        paddingTop: 5,
         marginBottom: 5,
     },
     sectionTitle:{
@@ -303,8 +352,7 @@ const dstyles = StyleSheet.create({
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
         alignContent: 'flex-end',
-        marginBottom:3,
-        
+        marginBottom:2,
     },
     infoContainer:{
         display: 'flex',
@@ -413,14 +461,55 @@ const styles = StyleSheet.create({
 
         marginBottom: 10,
     },
-    text: {
+    infoUrls:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        flexWrap: "wrap",
+        width: "100%",
+        marginLeft: 11,
+        // marginTop: 5,
+        // marginBottom: 20,
+        
+    },
+    infoUrl:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        marginRight: 5,
+        marginTop: 10,
+        padding: 5,
+        paddingHorizontal: 10,
+        borderRadius: 10,
+    },
+    infoUrlText:{
+        
+      fontSize: 14,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+      backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+      borderRadius: 10,
+
+    },
+    infoUrlIcon:{
+      fontSize: 25,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+      marginLeft: 5,
+      marginTop: 2,
+    },
+    description: {
         fontSize: 20,
         color: COLORS.FOREGROUND,
-    },
-    list:{
-        flex: 1,
-        backgroundColor: COLORS.BACKGROUND,
-        marginBottom: 10,
+        fontFamily: FONT,
+        marginHorizontal: 15,
+
     },
     back:{
         position: 'absolute',

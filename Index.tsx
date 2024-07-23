@@ -244,11 +244,6 @@ export default function Index(props) {
           onPageScroll={onPageScroll}
           onPageSelected={onPageSelected}
         >
-          {/* <Settings/>
-          <Launches data={data} />
-          <ForYou data={data}/>
-          <Dashboard data={data} />
-          <News data={data}/> */}
           <ForYou data={data}/>
           <Dashboard data={data}/>
           <News data={data}/>
