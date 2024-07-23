@@ -142,8 +142,8 @@ export function StarshipDashboard(){
 export default function StarshipPage(props) {
     const userContext = useContext(UserContext);
     const data = userContext.starship;
-    console.log(Object.keys(data))
-    console.log(data.vehicles)
+    const previousLaunches = data.previous.launches;
+    const previousEvents = data.previous.events;
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -178,7 +178,7 @@ export default function StarshipPage(props) {
                   <LaunchSimple data={data.upcoming.launches[0]}></LaunchSimple>
                 </View>
                 <View style={styles.section}>
-                  <TouchableOpacity onPress={()=>{userContext.nav.navigate('Launches', {data: data.previous.launches.reverse(),title:"Previous Starship Launches" })}}>
+                  <TouchableOpacity onPress={()=>{userContext.nav.navigate('Launches', {data: previousLaunches,title:"Previous Starship Launches" })}}>
                     <View style={styles.contentHeaderSection} >
                         <Text style={styles.contentHeaderText} >Previous Launch</Text>
                         <View style={styles.seeMoreSection}>
@@ -190,7 +190,7 @@ export default function StarshipPage(props) {
                         </View>
                     </View>
                   </TouchableOpacity>
-                  <LaunchSimple data={data.previous.launches[data.previous.launches.length-1]}></LaunchSimple>
+                  <LaunchSimple data={previousLaunches[0]}></LaunchSimple>
                 </View>
                 {/* <Text style={styles.sectionTitle}>Events:</Text> */}
                 {/* Upcoming Launches */}
@@ -215,7 +215,7 @@ export default function StarshipPage(props) {
                 {
                 data.previous != null && data.previous.events != null && data.previous.events[0] != null &&
                 <View style={styles.section}>
-                  <TouchableOpacity onPress={()=>{userContext.nav.navigate('Events', {data: data.previous.events.reverse(),title:"Upcoming Launches" })}}>
+                  <TouchableOpacity onPress={()=>{userContext.nav.navigate('Events', {data: previousEvents,title:"Upcoming Launches" })}}>
                     <View style={styles.contentHeaderSection} >
                         <Text style={styles.contentHeaderText} >Recent Event</Text>
                         <View style={styles.seeMoreSection}>
@@ -227,7 +227,7 @@ export default function StarshipPage(props) {
                         </View>
                     </View>
                   </TouchableOpacity>
-                  <Event eventData={data.previous.events.reverse()[data.previous.events.length-1]}></Event>
+                  <Event eventData={previousEvents[0]}></Event>
                 </View>
 }
             </ScrollView>

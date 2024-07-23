@@ -154,12 +154,12 @@ export function ISSDashboard(){
     return (
         <View style={dstyles.container}>
                 <View style={dstyles.infoContainer}>
-                        <View style={dstyles.issMapContainer} pointerEvents='none'>
+                        {/* <View style={dstyles.issMapContainer} pointerEvents='none'>
                             <WebView source={{uri: 'http://wsn.spaceflight.esa.int/iss/index_portal.php'}} style={dstyles.issMap} scrollEnabled={false} cacheEnabled={true} cacheMode='LOAD_CACHE_ELSE_NETWORK'/>
                         </View>
                         <View style={dstyles.subInfoContainer}>
                             <Text style={dstyles.sourceText}>Live ISS Position: ESA</Text>
-                        </View>
+                        </View> */}
                     {data.related != undefined && 
                     <View style={dstyles.relatedSection}> 
                         {/* <Text style={dstyles.subtitle}>Next ISS Event:</Text> */}
@@ -172,6 +172,9 @@ export function ISSDashboard(){
                     
                     { liveData != undefined &&
                     <View> 
+                        <View style={dstyles.subInfoContainer}>
+                            <Text style={dstyles.sourceText}>Live ISS Stats:</Text>
+                        </View>
                         <View style={dstyles.statsContainer}>
                             <Text style={dstyles.statsText}>Altitude: {liveData.altitude.toFixed(1)}km</Text>
                             <Text style={dstyles.statsText}>Longitude: {liveData.longitude.toFixed(1)}</Text>
@@ -455,7 +458,7 @@ const dstyles = StyleSheet.create({
         // width: '100%',
         height: "100%",
         // marginTop: 5,
-        marginHorizontal: 5,
+        marginHorizontal: 8,
         marginTop: 2,
         // marginLeft: 13,
         // marginBottom: 10,
@@ -481,7 +484,7 @@ const dstyles = StyleSheet.create({
         alignItems: 'flex-start',
         justifyContent: 'space-between',
         // width: '100%',
-        marginTop: 10,
+        marginTop: 5,
         marginBottom: 10,
         marginHorizontal: 7,
         padding: 5,

@@ -18,7 +18,7 @@ export default function LaunchPage(props) {
     const launch = props.route.params.data;
     const launchTime = new Date(launch.net);
     const timeDiff = launchTime.getTime() - Date.now();
-    const isPrecise = launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second";
+    const isPrecise = launch.net_precision != null && (launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second");
 
     let status = "Upcoming Launch";
     let statusColor = COLORS.FOREGROUND;

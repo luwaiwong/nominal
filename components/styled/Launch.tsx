@@ -36,7 +36,7 @@ export default function Launch(data) {
       statusColor = COLORS.YELLOW;
   }  
   
-  const isPrecise = launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second";
+  const isPrecise = launch.net_precision != null && (launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second");
 
   // ANIMATIONS
   const scale = useRef(new Animated.Value(1)).current;

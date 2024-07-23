@@ -527,7 +527,7 @@ const styles = StyleSheet.create({
         fontFamily: FONT,
         textAlign: 'left',
         // marginBottom: 5,
-        marginLeft: 12,
+        marginHorizontal: 12,
     },
     
     typeText:{
@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
-        marginLeft: 12,
+        marginHorizontal: 12,
         marginBottom: 10,
     },
     seperationLine:

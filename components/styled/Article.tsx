@@ -13,13 +13,13 @@ export default function Article(props:{articleData:any}){
     const timeDiff = today.getTime() - articleDateData.getTime();
 
     let articleDate = articleDateData.toLocaleString('default', { month: 'long', day: 'numeric', weekday: 'long', year: 'numeric' });
-    if (timeDiff < 86400000){
+    if (timeDiff < 1000 * 60 * 60 * 24 * 2){
         const hours = Math.floor(timeDiff / 3600000);
         articleDate = hours.toString() + " hours ago";
         // articleDate = "Today";
     }
     // If time is more than 72 hours ago, display the date
-    else if (timeDiff < 259200000){
+    else if (timeDiff > 1000 * 60 * 60 * 24 * 2){
         articleDate = articleDateData.toLocaleString('default', { month: 'long', day: 'numeric', weekday: 'long', year: 'numeric' });
     }
     

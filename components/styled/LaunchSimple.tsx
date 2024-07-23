@@ -18,8 +18,7 @@ export default function LaunchSimple(data: {data: any}) {
   let launch = data.data;  
   let [launchTime, setLaunchTime] = useState<any>(new Date(launch.net));
 
-  
-  const isPrecise = launch.net_precision != undefined && launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second";
+  const isPrecise = launch.net_precision != null && (launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second");
   // let [pinned, setPinned] = useState<any>(userData.getPinned().includes(launchInfo.id));
   // const togglePinned = () => {
   //   let pinnedStatus = userData.togglePinned(launchInfo.id)
