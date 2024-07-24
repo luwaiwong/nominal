@@ -85,6 +85,7 @@ export class UserData {
       // DEV
       devmode: false,
       waitbeforerefreshing: true,
+      reloadonfocused: false,
     };
 
     // USER DATA

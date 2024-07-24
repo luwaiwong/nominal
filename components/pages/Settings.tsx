@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 import { UserContext } from '../data/UserContext';
 
-const versioncode = "0.4.5";
+const versioncode = "0.4.6";
 
 export default function Settings(){
     let userContext = React.useContext(UserContext);
@@ -169,7 +169,10 @@ export default function Settings(){
 
                             <SettingToggle setting="waitbeforerefreshing" title={"Wait Before Refreshing Data"} />
                             <Text style={styles.description}>If refreshing data, only fetch data if the last API call is more than 15 minutes ago</Text>
-                            </View>}
+                            <SettingToggle setting="reloadonfocused" title={"Reload when app is focused"} />
+                            <Text style={styles.description}>When app is focused from background, reload data (Reload app to enable)</Text>
+                            </View>
+                            }
                         </View>  
                     </View>
                     

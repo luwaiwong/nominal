@@ -99,8 +99,9 @@ export default function Dashboard(props) {
                   );
                   })}
                 </View>
+                {/* <Text style={styles.sectionTitle}>Locations:</Text> */}
                 <StarshipDashboard />
-                <ISSDashboard />
+                <ISSDashboard  />
                 <View style={[styles.buffer]}></View>
                 
 
@@ -286,7 +287,8 @@ const styles = StyleSheet.create({
         fontFamily: FONT,
         textAlign: 'left',
         // marginBottom: 10,
-        marginLeft: 10,
+        marginLeft: 20,
+        marginTop: 15,
     },
     seeMoreText:{
         fontSize: 18,

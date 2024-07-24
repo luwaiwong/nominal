@@ -111,7 +111,8 @@ export function ForYouEvent(data) {
             <Text style={styles.descriptionText} numberOfLines={descriptionOpen?15:3}>{description}</Text>
 
           </TouchableOpacity>
-          <Text style={styles.largeText} numberOfLines={1}>{eventData.type.name}</Text>
+          {eventData.type.name != null &&
+          <Text style={styles.largeText} numberOfLines={1}>{eventData.type.name}</Text>}
           {name != "" && <Text style={styles.text} numberOfLines={1}>{name}</Text>}
           
 

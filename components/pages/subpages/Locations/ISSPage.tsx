@@ -136,12 +136,12 @@ export function ISSDashboard(){
                     <View style={dstyles.sectionHeader}>
                         <Text style={dstyles.sectionTitle}>International Space Station</Text>
                         <View style={dstyles.seeMoreSection}>
-                            <Text style={dstyles.seeMoreText}>See All</Text>
+                            <Text style={dstyles.seeMoreText}>Explore</Text>
                             <MaterialIcons name="arrow-forward-ios" style={dstyles.sectionIcon}/>
                         </View>
                     </View>
                 </TouchableOpacity>
-                <LiveData data={data}/>
+                <LiveData data={data} />
                 <View style={dstyles.infoContainer}>
                         {/* <View style={dstyles.issMapContainer} pointerEvents='none'>
                             <WebView source={{uri: 'http://wsn.spaceflight.esa.int/iss/index_portal.php'}} style={dstyles.issMap} scrollEnabled={false} cacheEnabled={true} cacheMode='LOAD_CACHE_ELSE_NETWORK'/>
@@ -169,6 +169,7 @@ export function ISSDashboard(){
     function LiveData(props){
         const userContext = useContext(UserContext);
         const [liveData, setLiveData] = useState(undefined);
+        const update = props.update
         let launches = null;
         let events = null;
 
@@ -186,11 +187,18 @@ export function ISSDashboard(){
         useEffect(() => {
             
             getISSPositionData();
+            
+            let updateTime = 10000;
+            if (update != undefined){
+                updateTime = update;
+            }
             // Set timer to reload live data
             const interval = setInterval(() => {
                 getISSPositionData();
-            }, 10000);
+            }, updateTime);
             return () => clearInterval(interval);
+
+            
         }, [props.data])
 
         if (liveData == undefined || props.data == undefined){

@@ -10,9 +10,11 @@ import YoutubeIframe from 'react-native-youtube-iframe';
 import { Gesture, GestureDetector, TouchableOpacity } from 'react-native-gesture-handler';
 import Launch from '../../../styled/Launch';
 import LaunchHighlight from '../../../styled/HighlightLaunch';
+import StarbaseWeather from '../../../styled/starship/StarbaseWeather';
 
 export function StarshipDashboard(){
     const userContext = useContext(UserContext);
+    const oldData = useRef(null);
     const [data, setData] = useState(undefined);
 
     
@@ -20,8 +22,14 @@ export function StarshipDashboard(){
         // console.log("Getting starship data")
         await userContext.getStarshipData().then((data) => {
             if (data.upcoming == undefined){
-                console.log("Data is undefined")
+                console.log("Starship data is undefined")
             }
+
+            if (oldData.current != undefined && JSON.stringify(oldData.current) == JSON.stringify(data)){
+                console.log("Starship data is the same")
+                return;
+            }
+            oldData.current = data;
             sortData(data);
         }).catch((error) => {
             console.log("Error getting starship data:", error);
@@ -74,6 +82,7 @@ export function StarshipDashboard(){
         return (
             <View style={dstyles.container}>
                 <Text style={dstyles.title}>Starship & Starbase Loading...</Text>
+            <   StarbaseWeather/>
             </View>
         )
     }
@@ -90,11 +99,12 @@ export function StarshipDashboard(){
                 <View style={dstyles.sectionHeader}>
                     <Text style={dstyles.sectionTitle}>Starship & Starbase</Text>
                     <View style={dstyles.seeMoreSection}>
-                        <Text style={dstyles.seeMoreText}>See All</Text>
+                        <Text style={dstyles.seeMoreText}>Explore</Text>
                         <MaterialIcons name="arrow-forward-ios" style={dstyles.sectionIcon}/>
                     </View>
                 </View>
             </TouchableOpacity>
+            <StarbaseWeather/>
 
             {data != undefined && data.nextEvent != undefined &&
                 <View style={dstyles.eventsContainer}>
@@ -122,7 +132,6 @@ export function StarshipDashboard(){
             </View>
         </View>
     )
-
 }
 export default function StarshipPage(props) {
     const userContext = useContext(UserContext);
@@ -204,6 +213,7 @@ export default function StarshipPage(props) {
             </View>
             <ScrollView>
 
+                <StarbaseWeather/>
                 <View style={styles.infoUrls}>
                         <TouchableOpacity  onPress={() => Linking.openURL("https://www.youtube.com/watch?v=A8QLrVAOE1k")} >
                             <View style={styles.infoUrl}>
@@ -326,33 +336,63 @@ export default function StarshipPage(props) {
 }
 function Vehicle(props){
     const data = props.data;
-    // console.log(data)
+    const status = data.status;
+    let statusColor = COLORS.FOREGROUND;
+
+    if (status == "active"){
+        statusColor = COLORS.GREEN;
+    }   else if (status == "retired"){
+        statusColor = COLORS.SUBFOREGROUND;
+    }   else if (status == "destroyed"){
+        statusColor = COLORS.RED;
+    }   else if (status == "lost"){
+        statusColor = COLORS.RED;
+    }
+
     return (
         <View style={styles.vehicleContainer}>
             <View style={styles.vehicleInfo}>
                 <Text style={styles.vehicleTitle}>{props.data.serial_number}</Text>
-                {data.last_launch_date != null && <Text style={styles.vehicleDate}>Last Launched {new Date(data.last_launch_date).toLocaleString([],{day:'numeric', month: 'long', year:'numeric' })}</Text>}
-                <Text style={styles.vehicleStatus}>{data.status.charAt(0).toUpperCase() + data.status.slice(1)}</Text>
+                <Text style={[styles.vehicleStatus,{color:statusColor}]}>{data.status.charAt(0).toUpperCase() + data.status.slice(1)}</Text>
                 <Text style={styles.vehicleStatus}>flights: {data.flights}</Text>
-                <Text style={styles.vehicleDetails}>{props.data.details}</Text>
             </View>
-            {<Image source={{uri: data.image_url}} style={styles.vehicleImage }/> }
+            <View style={styles.vehicleImage}>
+            <Text style={styles.vehicleDetails}>{props.data.details}</Text>
+                {data.last_launch_date != null && <Text style={styles.vehicleDate}>Last Launched {new Date(data.last_launch_date).toLocaleString([],{day:'numeric', month: 'long', year:'numeric' })}</Text>}
+
+            </View>
+            {/* {<Image source={{uri: data.image_url}} style={styles.vehicleImage }/> } */}
         </View>
     )
 }
 
 function Orbiter(props){
     const data = props.data;
+    const status = data.status.name;
+    let statusColor = COLORS.FOREGROUND;
+
+    if (status == "Active"){
+        statusColor = COLORS.GREEN;
+    }   else if (status == "Retired"){
+        statusColor = COLORS.SUBFOREGROUND;
+    }   else if (status == "Destroyed"){
+        statusColor = COLORS.RED;
+    }
+
     return (
         <View style={styles.vehicleContainer}>
 
             <View style={styles.vehicleInfo}>
                 <Text style={styles.vehicleTitle}>{props.data.name}</Text>
-                <Text style={styles.vehicleStatus}>{data.status.name}</Text>
-                <Text style={styles.vehicleStatus}>flights: {data.flights_count}</Text>
-                <Text style={styles.vehicleDetails}>{data.description}</Text>
+                <Text style={[styles.vehicleStatus,{color:statusColor}]}>{data.status.name}</Text>
+                <Text style={styles.vehicleStatus}>Flights: {data.flights_count}</Text>
             </View>
-            {<Image source={{uri: data.spacecraft_config.image_url}} style={styles.vehicleImage }/> }
+            <View style={styles.vehicleImage}>
+            
+                <Text style={styles.vehicleDetails}>{data.description}</Text>
+
+            </View>
+            {/* {<Image source={{uri: data.spacecraft_config.image_url}} style={styles.vehicleImage }/> } */}
         </View>
     )
 
@@ -386,7 +426,7 @@ const dstyles = StyleSheet.create({
         alignItems: 'flex-end',
         justifyContent: 'space-between',
         width: '100%',
-        paddingHorizontal: 11,
+        paddingHorizontal: 12,
         // marginTop: -5,
         paddingTop: 5,
         marginBottom: 10,
@@ -495,7 +535,7 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
         width: "100%",
         marginLeft: 11,
-        // marginTop: 5,
+        marginTop: -12,
         // marginBottom: 20,
         
     },
@@ -505,7 +545,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-        marginRight: 5,
+        marginRight: 10,
         marginTop: 10,
         padding: 5,
         paddingHorizontal: 10,
@@ -671,7 +711,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'flex-start',
         justifyContent: 'center',
-        width: "60%",
+        width: "40%",
     },
     vehicleTitle:{
         fontSize: 22,
@@ -697,9 +737,10 @@ const styles = StyleSheet.create({
         fontFamily: FONT,
         textAlign: 'left',
         marginRight: 10,
+        // width: "40%",
     },
     vehicleImage:{
-        width: "40%",
+        width: "60%",
         height: "100%",
         resizeMode: "cover",
         borderRadius: 10,

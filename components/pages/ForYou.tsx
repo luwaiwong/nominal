@@ -22,7 +22,7 @@ export default function ForYou(props) {
   let launchData = props.data.launchData;
   let foryou = launchData.foryou;
   let news = launchData.news;
-  let imageOfDay = null;
+  let imageOfDay = useRef(null);
 
   let timer = useRef(0);  
   // timer to check if the user has not been in the For You page for a while
@@ -55,7 +55,8 @@ export default function ForYou(props) {
         sortForYouItems();
         return null
       }
-      imageOfDay = data;
+      console.log(imageOfDay.current)
+      imageOfDay.current = data;
       sortForYouItems();
       return data;
 
@@ -69,7 +70,9 @@ export default function ForYou(props) {
       return;
     }
     console.log("Setting up for you page")
-    fetchIOD();
+    if (imageOfDay.current == null){
+      fetchIOD();
+    }
   }, [userContext])
 
   function sortForYouItems(){
@@ -80,7 +83,7 @@ export default function ForYou(props) {
           <ForYouLaunch first={index == 0} key={item.id} data={item} user={userData} nav={props.data.nav}/>
         );
       }
-      else if (item.type == "between" && imageOfDay != null){
+      else if (item.type == "between" && imageOfDay.current != null){
         // return (<ForYouImageOfDay key={item.id} data={imageOfDay}/>);
       }
       else if (item.type != "between"){
@@ -88,8 +91,8 @@ export default function ForYou(props) {
       }
     })
     items = items.filter(notUndefined => notUndefined != undefined)
-    if (imageOfDay != null){
-      items = [items[0],<ForYouImageOfDay key={1000000} data={imageOfDay}/>,...items.slice(1)]
+    if (imageOfDay.current != null){
+      setItems([items[0],<ForYouImageOfDay key={1000000} data={imageOfDay.current}/>,...items.slice(1)])
     }
     else {
       setItems(items)

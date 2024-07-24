@@ -71,6 +71,10 @@ export default function Index(props) {
       return;
     }
 
+    if (!userContext.settings.reloadonfocused){
+      return;
+    }
+
     const subscription = AppState.addEventListener("change", nextAppState => {
       console.log("App State", appState.current, nextAppState)
       if (appState.current.match(/inactive|background/) && nextAppState === "active") {
