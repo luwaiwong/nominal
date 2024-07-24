@@ -7,12 +7,12 @@ import LaunchInfo from '../styled/Launch';
 import Loading from '../styled/Loading';
 import {BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT} from '../styles';
 import { UserContext } from '../data/UserContext';
+import Event from '../styled/Event';
 
-export default function Launches(props){
+export default function Events(props){
     const userContext = useContext(UserContext);
-    const nav = userContext.nav; 
-    const upcomingLaunches = userContext.launches.upcoming;
-    const previousLaunches = userContext.launches.previous;
+    const upcomingEvents = userContext.events.upcoming;
+    const previousEvents = userContext.events.previous;
 
     //#region Animation & Input for Top Bar
     let upcoming = Gesture.Tap();
@@ -75,7 +75,7 @@ export default function Launches(props){
                   style={styles.back} 
                   onPress={() => props.navigation.goBack()}>
               </MaterialIcons>
-                <Text style={styles.title}>Launches</Text>
+                <Text style={styles.title}>All Events</Text>
           </View>
           {/* Upcoming and Previous button */}
           <View style={styles.topSelectionContainer}>
@@ -94,17 +94,17 @@ export default function Launches(props){
             {/* Upcoming Section */}
             <View style={[styles.contentSection]}>
               <FlatList
-                  data={upcomingLaunches}
+                  data={upcomingEvents}
                   keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item }) => <LaunchInfo data={item}  nav={nav}> </LaunchInfo>}>
+                  renderItem={({ item }) => <Event eventData={item}> </Event>}>
               </FlatList>
             </View>
             {/* Previous Section */}
             <View style={[styles.contentSection]}>
               <FlatList
-                  data={previousLaunches}
+                  data={previousEvents}
                   keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item }) => <LaunchInfo data={item}  nav={nav}></LaunchInfo>}>
+                  renderItem={({ item }) => <Event eventData={item} ></Event>}>
               </FlatList>
             </View> 
           </Animated.View>

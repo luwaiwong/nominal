@@ -4,7 +4,7 @@
   "expo": {
     "name": "Nominal",
     "slug": "nominal",
-    "version": "0.4.6",
+    "version": "0.4.7",
     "orientation": "portrait",
     "icon": "./assets/icon-temp.png",
     "userInterfaceStyle": "light",
@@ -56,7 +56,6 @@
       ],
       [
         "react-native-android-widget", {
-          "fonts": ["./assets/fonts/SpaceGrotesk.ttf"],
           "widgets": 
           [
             {

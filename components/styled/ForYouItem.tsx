@@ -156,8 +156,9 @@ export function ForYouImageOfDay(props) {
   let data = props.data;  
   let [descriptionOpen, setDescriptionOpen] = useState(false);
   let description = data.explanation;
+  let date = new Date(data.date);
   // description.replace(/\.(?=[A-Z])/g, '<br /><br />');
-
+  console.log(new Date(data.date));
   return (
     <Pressable onPress={()=>{Linking.openURL(data.hdurl)}}>
       
@@ -180,7 +181,7 @@ export function ForYouImageOfDay(props) {
                 {/* <Text style={styles.launcherText} numberOfLines={1}>{data.copyright}</Text> */}
 
                 {data.copyright != undefined && <Text style={styles.placeText}>Copyright: {data.copyright.trim()}</Text>}
-                <Text style={styles.timeText} >{new Date(data.date).toLocaleString([],{weekday:'long', day:'2-digit', month:'long', year:'numeric'})}</Text>
+                <Text style={styles.timeText} >{DAYS[date.getUTCDay()]+" "+ MONTHS[date.getUTCMonth()] + " " +date.getUTCDate()+", " +date.getUTCFullYear()}</Text>
               </View>
             </BlurView>
           </View>

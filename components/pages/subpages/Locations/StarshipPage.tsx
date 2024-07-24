@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, FlatList, StatusBar, ScrollView, Dimensions, Linking, Animated } from 'react-native';
+import { StyleSheet, View, Text, Image, FlatList, StatusBar, ScrollView, Dimensions, Linking, Animated, Alert } from 'react-native';
 import { MaterialIcons, MaterialCommunityIcons} from 'react-native-vector-icons';
 import { BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
 import Event from '../../../styled/Event';
@@ -32,7 +32,7 @@ export function StarshipDashboard(){
             oldData.current = data;
             sortData(data);
         }).catch((error) => {
-            console.log("Error getting starship data:", error);
+            Alert.alert("Error getting starship data: "+ error)
         })
     }
 
@@ -197,10 +197,6 @@ export default function StarshipPage(props) {
       
     }
 
-    //#endregion
-
-
-
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -300,38 +296,47 @@ export default function StarshipPage(props) {
                     <Event eventData={previousEvents[0]}></Event>
                     </View> 
                 }
-        <View>
-          <View style={styles.topSelectionContainer}>
-            <GestureDetector gesture={upcoming}>
-              <Text style={styles.topSelectionText}>Vehicles</Text> 
-            </GestureDetector>
-            <GestureDetector gesture={previous}>
-              <Text style={styles.topSelectionText}>Orbiters</Text> 
-            </GestureDetector>
-          </View>
-          {/* Animated Bar */}
-          <Animated.View style={[styles.topSelectionBar, {marginLeft:animatedBarMargin}]}></Animated.View>
+                <View>
+                {
+                    userContext.settings.devmode &&
+                    <View style={styles.devMode}>
+                        <Text style={styles.devText}>Developer Info</Text>
+                        <Text style={styles.devText}>Notices: {JSON.stringify(data.notices)}</Text>
+                        <Text style={styles.devText}>Road Closures: {JSON.stringify(data.road_closures)}</Text>
+                        {/* <Text>Updates: {JSON.stringify(data.updates)}</Text> */}
+                    </View>
+                }
+                <View style={styles.topSelectionContainer}>
+                    <GestureDetector gesture={upcoming}>
+                        <Text style={styles.topSelectionText}>Vehicles</Text> 
+                    </GestureDetector>
+                    <GestureDetector gesture={previous}>
+                        <Text style={styles.topSelectionText}>Orbiters</Text> 
+                    </GestureDetector>
+                </View>
+                {/* Animated Bar */}
+                <Animated.View style={[styles.topSelectionBar, {marginLeft:animatedBarMargin}]}></Animated.View>
 
-          {/* Content Section */}
-          <Animated.View style={[styles.contentContainer, {marginLeft:animatedPageMargin}]}>
-            <Animated.View style={[styles.contentSection,{height:showHeight?"100%":0, overflow:'hidden'}]}>
-                {data.vehicles.map((vehicle, index) => {
-                    return (
-                        <Vehicle key={index} data={vehicle}/>
-                    )
-                })}
-            </Animated.View> 
-            <View style={[styles.contentSection]}>
-                {data.orbiters.map((orbiter, index) => {
-                    return (
-                        <Orbiter key={index} data={orbiter}/>
-                    )
-                })}
-            </View>
-          </Animated.View>
-        </View>
-            </ScrollView>
-        </View>
+                {/* Content Section */}
+                <Animated.View style={[styles.contentContainer, {marginLeft:animatedPageMargin}]}>
+                <Animated.View style={[styles.contentSection,{height:showHeight?"100%":0, overflow:'hidden'}]}>
+                    {data.vehicles.map((vehicle, index) => {
+                        return (
+                            <Vehicle key={index} data={vehicle}/>
+                        )
+                    })}
+                </Animated.View> 
+                    <View style={[styles.contentSection]}>
+                        {data.orbiters.map((orbiter, index) => {
+                            return (
+                                <Orbiter key={index} data={orbiter}/>
+                            )
+                        })}
+                    </View>
+                </Animated.View>
+                </View> 
+        </ScrollView>
+    </View>
     )
 }
 function Vehicle(props){
@@ -744,5 +749,24 @@ const styles = StyleSheet.create({
         height: "100%",
         resizeMode: "cover",
         borderRadius: 10,
+    },
+    devMode:{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        marginHorizontal: 10,
+        borderRadius: 10,
+        marginTop: 10,
+        // marginBottom: 10,
+        padding: 10,
+    },
+    devText:{
+        fontSize: 14,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+        marginBottom: 5,
     }
 })

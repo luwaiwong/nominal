@@ -26,6 +26,8 @@ import { WidgetPreview } from "react-native-android-widget";
 import { registerWidgetTaskHandler } from 'react-native-android-widget';
 import { WidgetTaskHandler } from "./components/widgets/WidgetTaskHandler";
 import { registerRootComponent } from "expo";
+import Launches from "./components/pages/Launches";
+import Events from "./components/pages/Events";
 
 // Register componet
 registerRootComponent(index);
@@ -153,6 +155,14 @@ export default function index(props) {
               component={Index}
             >
             </Stack.Screen>
+            <Stack.Screen 
+              name = "All Launches"
+              component = {Launches}
+            ></Stack.Screen>
+            <Stack.Screen 
+              name = "All Events"
+              component = {Events}
+            ></Stack.Screen>
             <Stack.Screen 
               name = "Launches"
               component = {LaunchesPage}

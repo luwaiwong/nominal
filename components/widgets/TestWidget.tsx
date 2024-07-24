@@ -14,10 +14,9 @@ export function TestWidget() {
       }}
     >
       <TextWidget
-        text="SpaceGrotesk"
+        text="Rockets are cool!"
         style={{
           fontSize: 32,
-          fontFamily: 'Inter',
           color: '#000000',
         }}
       />

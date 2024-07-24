@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, FlatList, StatusBar, Dimensions, ScrollView, Linking } from 'react-native';
+import { StyleSheet, View, Text, Image, FlatList, StatusBar, Dimensions, ScrollView, Linking, Alert } from 'react-native';
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
 import Event from '../../../styled/Event';
@@ -16,12 +16,8 @@ const streamID = highDefStream
 export function ISSDashboard(){
     const userContext = useContext(UserContext);
     const [data, setData] = useState(undefined);
-    const [mapLoaded, setMapLoaded] = useState(false);
     let launches = undefined;
     let events = undefined;
-    let related = undefined;
-    let crew = 0
-    let docked = 0
 
     function getISSrelated(){
         launches = userContext.launches;
@@ -111,7 +107,7 @@ export function ISSDashboard(){
             
             setData(data);
         }).catch((error) => {
-            console.log("Error getting ISS data:", error);
+            Alert.alert("Error getting ISS data: " + error)
         })
     }
 
@@ -188,7 +184,7 @@ export function ISSDashboard(){
             
             getISSPositionData();
             
-            let updateTime = 10000;
+            let updateTime = 5000;
             if (update != undefined){
                 updateTime = update;
             }
@@ -628,7 +624,7 @@ const dstyles = StyleSheet.create({
         flexWrap: 'wrap',
         // width: '100%',
         // marginBottom: 10,
-        marginHorizontal: 10,
+        marginHorizontal: 8,
         // backgroundColor: 'white',
         // paddingBottom: 15,
         // margin: 10,

@@ -2,13 +2,15 @@ import React, { useEffect , useState} from 'react';
 import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Switch, Dimensions, Pressable, Alert, TouchableHighlight, TouchableNativeFeedback} from 'react-native';
 import { BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT } from '../styles';
 import { ScrollView } from 'react-native-gesture-handler';
+import { MaterialIcons } from 'react-native-vector-icons';
 
 import { UserContext } from '../data/UserContext';
 
-const versioncode = "0.4.6";
+const versioncode = "0.4.7";
 
-export default function Settings(){
+export default function Settings(props){
     let userContext = React.useContext(UserContext);
+    let nav = userContext.nav;
     const [lastCallTime, setLastCallTime] = useState(getLastCallText());
     const [notifs, setNotifs] = useState([]);
     const [curSettings, setSettings] = useState(null);
@@ -91,6 +93,21 @@ export default function Settings(){
         )
     }
 
+    function Link(props:{page: string, title: string, nav: any}){
+        let nav = props.nav;
+        let page = props.page;
+        let title = props.title;
+        return (
+            <TouchableOpacity onPress={()=>{nav.navigate(page)}}>
+                <View style={styles.linkContainer} >
+                    <Text style={styles.linkText}>{title}</Text>
+                    <MaterialIcons name="keyboard-arrow-right" style={styles.linkIcon}/>
+
+                </View>
+            </TouchableOpacity>
+        )
+    }
+
     function clearCache(){
         Alert.alert("Clear Data", "Are you sure you want to clear data?\n\nThis action will delete all stored launch data, event data, and stored settings on your device.\n\nThis may result in being unable to load data, causing instability and the app to be unable to load for up to one hour\n\nPROCEED AT YOUR OWN RISK", [
             {
@@ -112,6 +129,13 @@ export default function Settings(){
             <ScrollView>
                 <View style={styles.scrollContainer}>
                     <View>
+                        <View style={styles.sectionContainer}>
+                            <Text style={styles.title}>Other Pages</Text>
+                            <Link page="All Launches" title="All Launches" nav={nav}/>
+                            <Link page="All Events" title="All Events" nav={nav}/>
+                            <Link page="All News" title="Articles" nav={nav}/>
+                            <View style={styles.smallBuffer}></View>
+                        </View>
                         <View style={styles.sectionContainer}>
                             <Text style={styles.title}>Notifications</Text>
                             <SettingToggle setting="enablenotifs" title={"Enable Notifications"}/>
@@ -357,5 +381,24 @@ const styles = StyleSheet.create({
         marginBottom: 15,
 
         borderRadius: 10,
+    },
+    linkContainer:{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        marginHorizontal: 10,
+        marginTop: 5,
+        borderRadius: 10,
+    },
+    linkText:{
+        fontSize: 20,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+    },
+    linkIcon:{
+        fontSize: 30,
+        color: COLORS.FOREGROUND,
     }
 })

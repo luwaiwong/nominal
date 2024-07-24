@@ -7,9 +7,11 @@ import Loading from "../styled/Loading";
 
 import {ForYouLaunch, ForYouEvent, ForYouEnd, ForYouImageOfDay} from "../styled/ForYouItem";
 import { UserContext } from "../data/UserContext";
-import EventEmitter from "eventemitter3";
 
-var EE = new EventEmitter();
+
+// OK I know this is not supposed to be shared, BUT anyone can get this key from the NASA API website
+// and I don't really care... 
+const NASA_API_KEY = "yIeGdYwNALets4ochBIhfAHIuiijMnaObY6leMA7";
 
 export default function ForYou(props) {
   const userContext = useContext(UserContext);
@@ -45,7 +47,7 @@ export default function ForYou(props) {
   }, []);// Subscribe and check app state
 
   async function fetchIOD() {
-    return await fetch("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY")
+    return await fetch("https://api.nasa.gov/planetary/apod?api_key="+NASA_API_KEY)
     .then((response) => {
         return response.json();
     })

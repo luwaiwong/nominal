@@ -82,7 +82,7 @@ export default function App(props) {
         try {
           reloadData()
         } catch(e){
-          console.log("Error when reloading data", e)
+          Alert.alert("Error when reloading data", "Error "+ e);
         }
       }
       else {
@@ -142,8 +142,7 @@ export default function App(props) {
 
       setLaunchData(data);
     }).catch((error)=>{
-      console.log("Error when getting data (Index Page)", error)
-      Alert.alert("Error getting data", "Error: "+ error);
+      Alert.alert("Error getting data: "+ error);
       return false;
     })
   }
@@ -170,6 +169,10 @@ export default function App(props) {
 
       setLaunchData(data);
       return true;
+    }).catch((error)=>{
+      Alert.alert("Error getting data"+ error);
+      refreshOpacity.setValue(0);
+      return false;
     })
   }
 

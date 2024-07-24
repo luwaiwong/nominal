@@ -2,10 +2,10 @@ import React from "react";
 import * as APIHandler from "./APIHandler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
+import * as Device from "expo-device";
 
 import Tags from "./Tags";
-import EventEmitter from "eventemitter3";
-var EE = new EventEmitter();
+import { Alert } from "react-native";
 // Set cache call time
 // If last call less than x minutes ago, use cache
 const cachecalltime = 1000 * 60 * 30;
@@ -344,13 +344,12 @@ export class UserData {
     } catch (error) {
       // If unable to pull data
       console.log("Error getting data: " + error);
+      // Alert.alert("Error getting data: " + error);
       console.log("Returning cached data");
 
       this.launches = JSON.parse(this.cache.launches);
       this.events = JSON.parse(this.cache.events);
       this.news = JSON.parse(this.cache.news);
-
-      EE.emit("LaunchesFetched");
 
       this.gettingdata = false;
 
@@ -641,8 +640,8 @@ export class UserData {
       // Schedule 24 hour
       if (this.settings.notifevent24hbefore && timeDiff > 1000 * 60 * 60 * 24) {
         schedulePushNotification(
-          event.name + " Launch Tomorrow",
-          "Launch in 24 hours",
+          event.name + " Tomorrow",
+          "Event in 24 hours",
           new Date(eventTime.getTime() - 1000 * 60 * 60 * 24)
         );
       }
@@ -655,8 +654,8 @@ export class UserData {
       // Schedule 1 hour
       if (this.settings.notifevent1hbefore) {
         schedulePushNotification(
-          event.name + " Launch in 1 Hour",
-          "Launch in 1 hour",
+          event.name + " in 1 Hour",
+          "Event in 1 hour",
           new Date(eventTime.getTime() - 1000 * 60 * 60)
         );
       }
@@ -669,8 +668,8 @@ export class UserData {
       // Schedule 10 minutes
       if (this.settings.notifevent10mbefore) {
         schedulePushNotification(
-          event.name + " Launch in 10 Minutes",
-          "Launching Soon!",
+          event.name + " in 10 Minutes",
+          "Event Soon!",
           new Date(eventTime.getTime() - 1000 * 60 * 10)
         );
       }
