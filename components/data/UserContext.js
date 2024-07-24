@@ -198,7 +198,6 @@ export class UserData {
     }
 
     console.log("Returning Starship Cache");
-    // console.log(this.starship);
     return this.starship;
   }
   async getISSData() {
@@ -668,7 +667,18 @@ export class UserData {
 
     // Set notification for 3 days away for news
     schedulePushNotification(
-      "New Spaceflight Articles",
+      "Check out NASA's astronomical picture of the day!",
+      "See a new picture every day.",
+      new Date(Date.now() + 1000 * 60 * 60 * 24 * 1)
+    );
+    schedulePushNotification(
+      "Check out NASA's astronomical picture of the day!",
+      "See a new picture every day.",
+      new Date(Date.now() + 1000 * 60 * 60 * 24 * 5)
+    );
+    // Set notification for 3 days away for news
+    schedulePushNotification(
+      "New spaceflight articles",
       "Keep up to date with recent space news",
       new Date(Date.now() + 1000 * 60 * 60 * 24 * 3)
     );
@@ -676,13 +686,13 @@ export class UserData {
     schedulePushNotification(
       "Check out upcoming launches and events",
       "Stay on top of the latest spaceflight events",
-      new Date(Date.now() + 1000 * 60 * 60 * 24 * 5)
+      new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
     );
     // Set notification for 5 days away for rockets and events
     schedulePushNotification(
       "Are you ready for the next launch?",
       "Check out launches and events happening soon",
-      new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
+      new Date(Date.now() + 1000 * 60 * 60 * 24 * 10)
     );
     // Set notification for 5 days away for rockets and events
     schedulePushNotification(
@@ -928,7 +938,17 @@ export class UserData {
     // return this.launches.upcoming.slice(0, 5);
     // Filter the launches based on the tags
     // Cutoff at launches that are more than 1 month away
-    return this.launches.upcoming.slice(1, 4);
+    // return this.launches.upcoming.slice(1, 4);
+    // Filter out starship launches
+    return this.launches.upcoming
+      .filter((launch) => {
+        let name = launch.rocket.name;
+        if (name === "Starship") {
+          return false;
+        }
+        return true;
+      })
+      .slice(1, 4);
   }
   #getDashboardEvents() {
     return this.events.upcoming.slice(0, 1);

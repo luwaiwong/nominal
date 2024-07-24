@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         
-        backgroundColor: 'rgba('+COLORS.BACKGROUND_HIGHLIGHT_RGB+' 0.4)',
+        backgroundColor: 'rgba('+COLORS.BACKGROUND_HIGHLIGHT_RGB+' 0.6)',
         // backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         padding: 4,
 
@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
         padding: 0,
         paddingTop: 3,
         flex: 1,
+        zIndex  : 100,
     },
     buttonContainerActive:{
         display: 'flex',
@@ -61,16 +62,19 @@ const styles = StyleSheet.create({
         flex: 1,
 
         borderRadius: 20,
+        zIndex  : 100,
 
     },
     buttonIcon: {
         fontSize: 40,
         color: COLORS.SUBFOREGROUND,
+        opacity: 0.4,
     },
     buttonIconActive: {
         fontSize: 45,
         marginBottom: 5,
-        color: COLORS.FOREGROUND,
+        color: COLORS.SUBFOREGROUND,
+        opacity: 1,
     },
     buttonText: {
         fontSize: 13,
@@ -97,7 +101,7 @@ const MenuBar = React.forwardRef((props: any, ref: any)=> {
     if (page.current == -1) return null;
     if (setPage == null) return null;
     return (
-        <BlurView intensity={45} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.menuBar} >           
+        <BlurView intensity={50}  tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.menuBar} >           
             {/* <MenuButton icon="settings" setPage={()=>setPage(0)} label="settings" active={page.current==0} />
             <MenuButton icon="rocket-launch" setPage={()=>setPage(1)} label="launches" active={page.current == 1} />
             <MenuButton icon="home" setPage={()=>setPage(2)} label="for you" active={page.current == 2} />
@@ -105,8 +109,8 @@ const MenuBar = React.forwardRef((props: any, ref: any)=> {
             <MenuButton icon="home" setPage={()=>setPage(0)} label="for you" active={page.current == 0} />
             <MenuButton icon="rocket-launch" setPage={()=>setPage(1)} label="dashboard" active={page.current == 1} />
             <MenuButtonCommunity icon="newspaper-variant" setPage={()=>setPage(2)} label="launches" active={page.current == 2} />
-            <MenuButtonCommunity icon="space-station" setPage={()=>setPage(3)} label="dashboard" active={page.current == 3} />
-            <MenuButton icon="settings" setPage={()=>setPage(4)} label="settings" active={page.current==4} />
+            {/* <MenuButtonCommunity icon="space-station" setPage={()=>setPage(3)} label="dashboard" active={page.current == 3} /> */}
+            <MenuButton icon="settings" setPage={()=>setPage(3)} label="settings" active={page.current==3} />
         </BlurView>
     );
     

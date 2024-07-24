@@ -33,7 +33,6 @@ Notifications.setNotificationHandler({
 });
 
 async function schedulePushNotification() {
-  // console.log("bruh")
   await Notifications.scheduleNotificationAsync({
     content: {
       title: "You've got mail! 📬",

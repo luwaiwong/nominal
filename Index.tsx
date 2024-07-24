@@ -26,7 +26,7 @@ import { UserContext } from "./components/data/UserContext";
 import Locations from "./components/pages/More";
 
 
-const titleOffset = 300
+const titleOffset = 225
 
 export default function Index(props) {
   // App Data Variables
@@ -82,7 +82,6 @@ export default function Index(props) {
         }
       }
       else {
-        // console.log('App state', nextAppState);
       }
         appState.current = nextAppState;
     })
@@ -247,7 +246,7 @@ export default function Index(props) {
           <ForYou data={data}/>
           <Dashboard data={data}/>
           <News data={data}/>
-          <Locations data={data}/>
+          {/* <Locations data={data}/> */}
           <Settings />
         </PagerView>
       )

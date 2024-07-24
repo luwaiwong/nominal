@@ -53,7 +53,7 @@ container:{
     width: Dimensions.get('window').width - 20,
     height: 300,
     // padding: 10,
-    margin: 10,
+    // margin: 10,
     marginTop: 0,
 
     borderRadius: 10,

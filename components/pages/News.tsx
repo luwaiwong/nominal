@@ -16,6 +16,8 @@ export default function News(props){
     let userContext = useContext(UserContext);
     let callingData = useRef(false);
     let currentOffset = useRef(10);
+    let upcomingEvents = userContext.events.upcoming;
+    let previousEvents = userContext.events.previous;
     const [data, setData] = useState(null);
 
     const nav = props.data.nav;
@@ -31,7 +33,7 @@ export default function News(props){
 
     useEffect(() => {
         if (userContext != null && userContext.news != null){
-            setData(userContext.news.slice(0,5))
+            setData(userContext.news.slice(0,4))
         }
     }, [])
 
@@ -46,7 +48,6 @@ export default function News(props){
 
         callingData.current = true;
         await fetch(NEWS_API_URL+"articles/?offset="+currentOffset.current).then((response) => {
-            // console.log(response)
             return response.json()
         }).then((articles) => {
             if (articles == null){
@@ -79,7 +80,7 @@ export default function News(props){
                         <View style={styles.sectionHeader}>
                             <Text style={styles.sectionTitle}>Articles</Text>
                             <View style={styles.seeMoreSection}>
-                                {/* <Text style={styles.seeMoreText}>See All</Text> */}
+                                <Text style={styles.seeMoreText}>Read More</Text>
                                 <MaterialIcons name="arrow-forward-ios" style={styles.sectionIcon}/>
                             </View>
                         </View>
@@ -88,6 +89,37 @@ export default function News(props){
                     {data != undefined && data.map((item, index) => {return (<Article articleData={item} key={index}/>);})}
                     {/* <Article articleData={news[4]}></Article> */}
                 </View>
+
+
+                {upcomingEvents != undefined && upcomingEvents.length != 0 && 
+                <View style={styles.sectionContainer}>
+                    <TouchableOpacity onPress={() => {nav.navigate('Events', {data:upcomingEvents})}}>
+                        <View style={styles.sectionHeader}>
+                            <Text style={styles.sectionTitle}>Upcoming Events</Text>
+                            <View style={styles.seeMoreSection}>
+                                <Text style={styles.seeMoreText}>See All</Text>
+                                <MaterialIcons name="arrow-forward-ios" style={styles.sectionIcon}/>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                    {upcomingEvents != undefined && upcomingEvents.slice(0,2).map((item, index) => {return (<Event nav={nav} eventData={item} key={index}/>);})}        
+                </View>
+                }
+                {previousEvents != undefined && previousEvents.length != 0 && 
+                <View style={styles.sectionContainer}>
+                    <TouchableOpacity onPress={() => {nav.navigate('Events', {data:previousEvents})}}>
+                        <View style={styles.sectionHeader}>
+                            <Text style={styles.sectionTitle}>Recent Events</Text>
+                            <View style={styles.seeMoreSection}>
+                                <Text style={styles.seeMoreText}>See All</Text>
+                                <MaterialIcons name="arrow-forward-ios" style={styles.sectionIcon}/>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                    {previousEvents != undefined && previousEvents.slice(0,1).map((item, index) => {return (<Event nav={nav} eventData={item} key={index}/>);})}        
+                </View>
+                }
+
                 {/* <Text style={styles.eventsTitle}>Events</Text>  */}
                 <View style={styles.bottomPadding}></View>
                     

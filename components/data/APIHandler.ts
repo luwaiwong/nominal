@@ -10,7 +10,6 @@ export async function getUpcomingLaunches(){
         return response.json();
     })
     .then((data) => {
-        // console.log("API Response Recieved, Upcoming Launches:",data);
         return processLaunchData(data.results);
     })
 }
@@ -22,7 +21,6 @@ export async function getPreviousLaunches(){
         return response.json();
     })
     .then((data) => {
-        // console.log("API Response Recieved, Previous Launches:",data);
         return processLaunchData(data.results);
     })
 }
@@ -102,7 +100,6 @@ export async function fetchISSData(){
 export function processLaunchData(data: any){
     try {
     let processedData = data.map((launch: any) => {
-        // console.log(Object.keys(launch));
         return {
             // Dashboard Launch Data
             // Launch Info

@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 import { UserContext } from '../data/UserContext';
 
-const versioncode = "0.4.4";
+const versioncode = "0.4.5";
 
 export default function Settings(){
     let userContext = React.useContext(UserContext);
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         // margin: 10,
         marginHorizontal: 10,
-        marginTop: 15,
+        marginTop: 10,
         // paddingVertical: 10,
         paddingTop: 10,
         // marginBottom: 15,
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     contactSection:{
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         margin: 10,
-        marginTop: 20,
+        marginTop: 10,
         paddingVertical: 10,
         marginBottom: 15,
 

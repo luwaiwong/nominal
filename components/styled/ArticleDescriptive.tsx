@@ -13,9 +13,15 @@ export default function ArticleDescriptive(props:{articleData:any}){
     const timeDiff = today.getTime() - articleDateData.getTime();
 
     let articleDate = articleDateData.toLocaleString('default', { month: 'long', day: 'numeric', weekday: 'long', year: 'numeric' });
-    if (timeDiff < 1000 * 60 * 60 * 24 * 2){
+    if (timeDiff <= 1000 * 60 * 60 ){
+        const minutes = Math.floor(timeDiff / 60000);
+        articleDate = minutes.toString() + " minutes ago";
+        console.log(articleDate)
+    }
+    else if (timeDiff < 1000 * 60 * 60 * 24 * 2){
         const hours = Math.floor(timeDiff / 3600000);
-        articleDate = hours.toString() + " hours ago";
+        const text = hours > 1 ? " hours ago" : " hour ago";
+        articleDate = hours.toString() + text;
         // articleDate = "Today";
     }
     // If time is more than 72 hours ago, display the date
@@ -59,7 +65,7 @@ const styles = StyleSheet.create({
         margin: 10,
         marginTop: 0,
         padding: 5,
-        paddingBottom: 3,
+        paddingBottom: 0,
         // backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         borderRadius: 12,
     },
@@ -134,8 +140,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
 
         marginHorizontal: 15,
-        marginTop: 5,
-        marginBottom: 10,
+        marginTop: -3,
+        marginBottom: 5,
     }
     
 });

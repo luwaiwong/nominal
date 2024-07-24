@@ -40,24 +40,22 @@ export default function FirstLoad(props) {
         <View style={styles.container}>
             {/* <PagerView style={styles.pagerContainer} initialPage={0}> */}
                 <Animated.View style={[styles.page,{opacity:opacity}]}>
-                    <Text style={styles.title}>Welcome to Nominal</Text>
+                    <Text style={styles.title}>Nominal</Text>
                     <View>
-                        <Text style={styles.text}>View upcoming launches and events, view recently launched missions and be informed on breaking news and articles about space.</Text>
+                        <Text style={styles.text}>View upcoming launches and events, view recently launched missions, and be informed on breaking news and articles about space.</Text>
 
                         <Text style={styles.buffer}></Text>
-                        <Text style={styles.text}>get quick access to livestreams,</Text>
-                        <Text style={styles.text}>recieve notifications for launches,</Text>
-
-                        <Text style={styles.text}>and use the For You page for an immersive overview of all spaceflight activities.</Text>
+                        <Text style={styles.text}>Get quick access to livestreams, recieve notifications for launches, and use the For You page for an immersive overview of all spaceflight activities.</Text>
 
                         <Text style={styles.buffer}></Text>
 
+                        <Text style={styles.text}>Stay up to date with Starship, ISS, and spaceflight topics that you're interested in with a clean, modern UI.</Text>
+
+                        {/* <Text style={styles.buffer}></Text> */}
 
 
 
                     </View>
-                    <View></View>
-                    <View></View>
                     <View>
                         {/* <Text style={styles.text}>Thanks for downloading!</Text> */}
                         <TouchableOpacity onPress={fadeOut}>
@@ -105,7 +103,7 @@ const styles = StyleSheet.create({
     
     
     text: {
-        fontSize: 19,
+        fontSize: 18,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         marginHorizontal: 20,

@@ -1,5 +1,5 @@
 import { StyleSheet, View, Text, ScrollView, RefreshControl, StatusBar, Dimensions, Pressable, TouchableHighlight } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 
@@ -11,22 +11,33 @@ import Event from "../styled/Event";
 import Article from "../styled/Article";
 import LaunchCarousel from "../styled/LaunchCarousel";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { ISSDashboard } from "./subpages/Locations/ISSPage";
+import { StarshipDashboard } from "./subpages/Locations/StarshipPage";
+import LaunchHighlight from "../styled/HighlightLaunch";
+import { UserContext } from "../data/UserContext";
 
 
 export default function Dashboard(props) {
-  let userData = props.data.userData;
+  const userContext = useContext(UserContext);
+  
 
   // All data
   let launchData = props.data.launchData
   let upcoming = launchData.upcoming
   let recentlyLaunched = launchData.dashboardRecent
-  let upcomingFiltered = launchData.dashboardFiltered
+  let upcomingFiltered = null
+  // calculate upcoming filtered
+  upcomingFiltered = userContext.launches.upcoming.slice(1,8)
+    .filter((launch) => {
+      let name = launch.rocket.configuration.name;
+      if (name == "Starship") {
+        return false;
+      }
+      return true;
+    })
+    .slice(0, 3);
   let highlights = launchData.dashboardHighlights
-  const upcomingEvents = props.data.launchData.events.upcoming;
-  const previousEvents = props.data.launchData.events.previous;
 
-  let events = props.data.launchData.dashboardEvents
-  let news = props.data.launchData.dashboardNews
 
   let nav = props.data.nav
 
@@ -58,7 +69,10 @@ export default function Dashboard(props) {
               >
                 <View style={{height: 10}}/>
                 {/* Highlight Launch */}
-                {highlights[0] != undefined && <HighlightLaunch data={highlights[0]} nav={nav}  />}
+                {highlights[0] != undefined &&
+                <View style={{marginHorizontal: 10, marginBottom: 10}}>
+                  <LaunchHighlight data={highlights[0]} nav={nav}  />
+                </View> }
 
                 {/* <View style={{marginTop: -10}}></View> */}
 
@@ -66,7 +80,7 @@ export default function Dashboard(props) {
 
                 {/* Upcoming Launches */}
                 <View style={[styles.contentSection]}>
-                  <TouchableOpacity onPress={()=>{nav.navigate('Launches', {data: launchData.upcoming,user: userData, title:"Upcoming Launches" })}}>
+                  <TouchableOpacity onPress={()=>{nav.navigate('Launches', {data: launchData.upcoming, title:"Upcoming Launches" })}}>
                     <View style={styles.contentHeaderSection} >
                         <Text style={styles.contentHeaderText} >Upcoming Launches</Text>
                         <View style={styles.seeMoreSection}>
@@ -85,96 +99,11 @@ export default function Dashboard(props) {
                   );
                   })}
                 </View>
-
-                {upcomingEvents != undefined && upcomingEvents.length != 0 && 
-                <View style={styles.sectionContainer}>
-                    <TouchableOpacity onPress={() => {nav.navigate('Events', {data:upcomingEvents})}}>
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionTitle}>Upcoming Events</Text>
-                            <View style={styles.seeMoreSection}>
-                                <Text style={styles.seeMoreText}>See All</Text>
-                                <MaterialIcons name="arrow-forward-ios" style={styles.sectionIcon}/>
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                    {upcomingEvents != undefined && upcomingEvents.slice(0,2).map((item, index) => {return (<Event nav={nav} eventData={item} key={index}/>);})}        
-                </View>
-                }
-                {previousEvents != undefined && previousEvents.length != 0 && 
-                <View style={styles.sectionContainer}>
-                    <TouchableOpacity onPress={() => {nav.navigate('Events', {data:previousEvents})}}>
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionTitle}>Recent Events</Text>
-                            <View style={styles.seeMoreSection}>
-                                <Text style={styles.seeMoreText}>See All</Text>
-                                <MaterialIcons name="arrow-forward-ios" style={styles.sectionIcon}/>
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                    {previousEvents != undefined && previousEvents.slice(0,1).map((item, index) => {return (<Event nav={nav} eventData={item} key={index}/>);})}        
-                </View>
-                }
-
+                <StarshipDashboard />
+                <ISSDashboard />
                 <View style={[styles.buffer]}></View>
+                
 
-                {/* Show events here */}
-                
-                {/* <Pressable onPress={()=>props.data.setPage(4)}>
-                  <View style={styles.newsHeaderSection} >
-                      <Text style={styles.sectionHeaderText} >News & Events </Text>
-            
-                  </View>
-                </Pressable> */}
-                {/* Events */}
-                {/* <View style={[styles.contentSection]}>
-                  <TouchableOpacity onPress={()=>nav.navigate("All Events", {data: launchData.events, title:"Events" })}>
-                    <View style={styles.contentHeaderSection} >
-                        <Text style={styles.contentHeaderText} >Events </Text>
-                        
-                        <View style={styles.seeMoreSection}>
-                          <Text style={styles.contentSeeMore} >See All </Text>
-                          <MaterialIcons 
-                          name="arrow-forward-ios" 
-                          style={styles.contentHeaderIcon} 
-                          />
-
-                        </View>
-                    </View>
-                  </TouchableOpacity>
-                  {events.map((launch: any) => {
-                  return (
-                      <Event key={launch.id} eventData={launch} nav={nav} />
-                  );
-                  })} 
-                </View>
-                
-                <View style={[styles.contentSection]}>
-                  <TouchableOpacity onPress={()=>nav.navigate("All News", {data: launchData.news, title:"Articles" })}>
-                    <View style={styles.contentHeaderSection} >
-                        <Text style={styles.contentHeaderText} >Articles </Text>
-                        
-                        <View style={styles.seeMoreSection}>
-                          <Text style={styles.contentSeeMore} >See All </Text>
-                          <MaterialIcons 
-                          name="arrow-forward-ios" 
-                          style={styles.contentHeaderIcon} 
-                          />
-
-                        </View>
-                    </View>
-                  </TouchableOpacity>
-                
-                      {news.map((launch: any) => {
-                      // console.log(launch)
-                      return (
-
-                          <Article key={launch.id} articleData={launch}  />
-                      );
-                  })}
-                </View> */}
-                
-                
-                {/* <View style={[styles.buffer]}></View> */}
                 <View style={styles.bottomPadding}></View>
               </ScrollView>
           </View>
@@ -229,16 +158,17 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       alignItems: 'flex-end',
       justifyContent: 'space-between',
+      marginBottom: 5,
     },
     sectionHeaderText:{
       fontSize: 25,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
-      marginLeft: 12,
+      marginLeft: 10,
       marginTop: 5
     },
     contentHeaderText: {
-      fontSize: 22,
+      fontSize: 20,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
 

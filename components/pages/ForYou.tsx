@@ -31,9 +31,8 @@ export default function ForYou(props) {
 
     const intervalId = setInterval(() => {
       // Your code here...
-      // console.log('This line is executed every second!');
       timer.current += 1;
-      if (timer.current >= 75){
+      if (timer.current >= 90){
         timer.current = 0;
         setPage(0);
       }
@@ -74,30 +73,27 @@ export default function ForYou(props) {
   }, [userContext])
 
   function sortForYouItems(){
-    foryou.map((item: any, index) => {
-      if (item.type == "between" ){
-        // console.log("hasbetween")
-        // return (<ForYouImageOfDay key={item.id} data={imageOfDay}/>);
-      }
-    })
     let items = []
     items = foryou.map((item: any, index) => {
-      // console.log(item.type)
       if (item.type == "launch"){
         return (
           <ForYouLaunch first={index == 0} key={item.id} data={item} user={userData} nav={props.data.nav}/>
         );
       }
       else if (item.type == "between" && imageOfDay != null){
-        console.log("Image of the day", imageOfDay)
-        return (<ForYouImageOfDay key={item.id} data={imageOfDay}/>);
+        // return (<ForYouImageOfDay key={item.id} data={imageOfDay}/>);
       }
       else if (item.type != "between"){
         return (<ForYouEvent key={item.id} data={item} user={userData}  nav={props.data.nav}/>);
       }
     })
     items = items.filter(notUndefined => notUndefined != undefined)
-    setItems(items)
+    if (imageOfDay != null){
+      items = [items[0],<ForYouImageOfDay key={1000000} data={imageOfDay}/>,...items.slice(1)]
+    }
+    else {
+      setItems(items)
+    }
   }
   
   const onPageScroll = (state) => {

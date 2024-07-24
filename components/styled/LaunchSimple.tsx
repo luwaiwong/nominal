@@ -113,7 +113,7 @@ export default function LaunchSimple(data: {data: any}) {
               <View style={styles.infoSection}>
 
                 <Text style={[styles.titleText]} numberOfLines={1}>{launch.mission.name} </Text>
-            
+        
                 {
                   isPrecise ? <Text style={styles.smallText}>{tminus}</Text> : <Text style={styles.smallText}>{status}</Text>
                 }

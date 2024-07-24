@@ -33,7 +33,6 @@ export default function LaunchCarousel(props:{content, type, nav}){
     }, [currentPage]);
 
     function setPage(page){
-        // console.log(page)
         if (pagerRef.current != null){
             pagerRef.current.setPage(page); 
         }
@@ -120,9 +119,10 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       alignItems: 'flex-end',
       justifyContent: 'space-between',
+      marginBottom: 5,
     },
     contentHeaderText: {
-      fontSize: 22,
+      fontSize: 20,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
 

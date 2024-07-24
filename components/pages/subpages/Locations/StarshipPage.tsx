@@ -1,13 +1,13 @@
-import { StyleSheet, View, Text, Image, FlatList, StatusBar, ScrollView, Dimensions, Linking } from 'react-native';
+import { StyleSheet, View, Text, Image, FlatList, StatusBar, ScrollView, Dimensions, Linking, Animated } from 'react-native';
 import { MaterialIcons, MaterialCommunityIcons} from 'react-native-vector-icons';
-import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
+import { BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
 import Event from '../../../styled/Event';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { UserContext } from '../../../data/UserContext';
 import LaunchSimple from '../../../styled/LaunchSimple';
 import WebView from 'react-native-webview';
 import YoutubeIframe from 'react-native-youtube-iframe';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Gesture, GestureDetector, TouchableOpacity } from 'react-native-gesture-handler';
 import Launch from '../../../styled/Launch';
 import LaunchHighlight from '../../../styled/HighlightLaunch';
 
@@ -38,40 +38,27 @@ export function StarshipDashboard(){
 
         let upcominglaunches = data.upcoming.launches;
         let upcomingevents = data.upcoming.events;
+        
+        let isSameAsFeatured = upcominglaunches[0] != undefined && upcominglaunches[0].id ==userContext.launches.upcoming[0].id
 
         // Set next event to most recent launch or event
         if (upcominglaunches == undefined || upcominglaunches[0] == undefined){
             newData.nextEvent = upcomingevents[0];
         }
-        else if (upcomingevents == undefined || upcomingevents[0] == undefined){
+        else if ((
+            upcomingevents == undefined || upcomingevents[0] == undefined) && !isSameAsFeatured){
             newData.nextEvent = upcominglaunches[0];
         }
-        else if (upcominglaunches[0].net < upcomingevents[0].date){
+        else if (
+            (upcominglaunches[0].net < upcomingevents[0].date) && !isSameAsFeatured){
             newData.nextEvent = upcominglaunches[0];
         }
-        else{
+        else if (upcomingevents[0] != undefined){
             newData.nextEvent = upcomingevents[0];
         }
-        newData.nextEvent = upcominglaunches[0]
-
-        let previousevent = data.previous.events.at(-1);
-        let previouslaunch = data.previous.launches.at(-1);
-
-        
-        // Set next event to most recent launch or event
-        if (previouslaunch == undefined ){
-            newData.lastEvent = previousevent;
+        else if (upcominglaunches[1] != undefined){
+            newData.nextEvent = upcominglaunches[1];
         }
-        else if (previousevent == undefined){
-            newData.lastEvent = previouslaunch;
-        }
-        else if (new Date(previouslaunch.net).getTime()-today > new Date(previousevent.date).getTime()-today){
-            newData.lastEvent = previouslaunch;
-        }
-        else{
-            newData.lastEvent = previousevent;
-        }
-
         
         setData(newData)
 
@@ -86,7 +73,7 @@ export function StarshipDashboard(){
     if (data == undefined) {
         return (
             <View style={dstyles.container}>
-                <Text style={dstyles.title}>Starship Loading...</Text>
+                <Text style={dstyles.title}>Starship & Starbase Loading...</Text>
             </View>
         )
     }
@@ -99,16 +86,25 @@ export function StarshipDashboard(){
     return (
         
         <View style={dstyles.container}>
+            <TouchableOpacity onPress={() => {userContext.nav.navigate("Starship")}}>
+                <View style={dstyles.sectionHeader}>
+                    <Text style={dstyles.sectionTitle}>Starship & Starbase</Text>
+                    <View style={dstyles.seeMoreSection}>
+                        <Text style={dstyles.seeMoreText}>See All</Text>
+                        <MaterialIcons name="arrow-forward-ios" style={dstyles.sectionIcon}/>
+                    </View>
+                </View>
+            </TouchableOpacity>
+
             {data != undefined && data.nextEvent != undefined &&
                 <View style={dstyles.eventsContainer}>
                     {
-                        data.nextEvent != undefined && data.nextEvent.type == "launch" ? <LaunchHighlight data={data.nextEvent}></LaunchHighlight> :
+                        data.nextEvent != undefined && data.nextEvent.type == "launch" ? <LaunchSimple data={data.nextEvent}></LaunchSimple> :
                         <Event eventData={data.nextEvent}></Event>
                     }
                 </View>
             }
             <View style={[dstyles.infoContainer, infoContainerStyle]}>
-
 
                 {data != undefined && data.lastEvent != undefined && data.nextEvent == undefined &&
                     <View >
@@ -121,15 +117,6 @@ export function StarshipDashboard(){
                         }
                     </View>
                 }
-                <TouchableOpacity onPress={() => {userContext.nav.navigate("Starship")}}>
-                    <View style={dstyles.sectionHeader}>
-                        <Text style={dstyles.sectionTitle}>Starship & Starbase</Text>
-                        <View style={dstyles.seeMoreSection}>
-                            <Text style={dstyles.seeMoreText}>See More</Text>
-                            <MaterialIcons name="arrow-forward-ios" style={dstyles.sectionIcon}/>
-                        </View>
-                    </View>
-                </TouchableOpacity>
 
                 
             </View>
@@ -145,6 +132,65 @@ export default function StarshipPage(props) {
     // console.log(data.previous.events[0].name)
 
 
+                //#region Animation & Input for Top Bar
+    let upcoming = Gesture.Tap();
+    let previous = Gesture.Tap();
+
+    upcoming.onFinalize(()=>toggleSelection("upcoming"));
+    previous.onFinalize(()=>toggleSelection("previous"));
+
+    let barMargin = useRef(new Animated.Value(0)).current;
+    let inputRange = [0, 100];
+    let outputRange = ["5%", "55%"];
+    let animatedBarMargin = barMargin.interpolate({inputRange, outputRange});
+
+    let pageMargin = useRef(new Animated.Value(0)).current;
+    inputRange = [0,100]
+    outputRange = ["0%", "-100%"];
+    let animatedPageMargin = pageMargin.interpolate({inputRange, outputRange});
+
+    const [showHeight, setShowHeight] = useState(true);
+
+    const toggleSelection = (selected: string) => {
+      if (selected == "upcoming"){
+        setShowHeight(true)
+        Animated.parallel([
+          Animated.timing(barMargin, {
+            
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: false,
+            
+          }),
+          Animated.timing(pageMargin, {
+            toValue: 0,
+            duration: 200, 
+            useNativeDriver: false
+          })
+
+        ]).start()
+      } else if (selected == "previous"){
+
+        Animated.parallel([
+          Animated.timing(barMargin, {
+            toValue: 100,
+            duration: 200,
+            useNativeDriver: false,
+            
+          }),
+          Animated.timing(pageMargin, {
+            toValue: 100,
+            duration: 200, 
+            useNativeDriver: false
+          })
+        ]).start(()=>setShowHeight(false))
+      }
+      
+    }
+
+    //#endregion
+
+
 
     return (
         <View style={styles.container}>
@@ -157,31 +203,22 @@ export default function StarshipPage(props) {
                 <Text style={styles.title}>Starship & Starbase</Text>
             </View>
             <ScrollView>
-                {/* <View style={dstyles.streamContainer} >
-                    <YoutubeIframe videoId='A8QLrVAOE1k' width={Dimensions.get("window").width} height={Dimensions.get("window").width*1} play={false} mute={true} />
-                </View> */} 
 
                 <View style={styles.infoUrls}>
-                        <TouchableOpacity  onPress={() => Linking.openURL("https://www.youtube.com/watch?v=mhJRzQsLZGg")} >
+                        <TouchableOpacity  onPress={() => Linking.openURL("https://www.youtube.com/watch?v=A8QLrVAOE1k")} >
                             <View style={styles.infoUrl}>
                                 <Text style={styles.infoUrlText}>LabPadre</Text>
                                 <MaterialCommunityIcons name="video-outline" style={styles.infoUrlIcon} />
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity  onPress={() => Linking.openURL("https://www.youtube.com/watch?v=A8QLrVAOE1k")} >
+                        <TouchableOpacity  onPress={() => Linking.openURL("https://www.youtube.com/watch?v=mhJRzQsLZGg")} >
                             <View style={styles.infoUrl}>
                                 <Text style={styles.infoUrlText}>NasaSpaceflight</Text>
                                 <MaterialCommunityIcons name="video-outline" style={styles.infoUrlIcon} />
                             </View>
                         </TouchableOpacity>
-
                 </View>
 
-                {/* {
-                    data.upcoming.launches[0] != null &&
-                    <LaunchHighlight data={data.upcoming.launches[0]}></LaunchHighlight>
-                } */}
-                {/* <Text style={styles.description}>Future and past Starship events </Text> */}
                 {/* Upcoming Launches */}{
                     data.upcoming.launches[0] != null && 
                     <View style={styles.section}>
@@ -253,31 +290,69 @@ export default function StarshipPage(props) {
                     <Event eventData={previousEvents[0]}></Event>
                     </View> 
                 }
-                
+        <View>
+          <View style={styles.topSelectionContainer}>
+            <GestureDetector gesture={upcoming}>
+              <Text style={styles.topSelectionText}>Vehicles</Text> 
+            </GestureDetector>
+            <GestureDetector gesture={previous}>
+              <Text style={styles.topSelectionText}>Orbiters</Text> 
+            </GestureDetector>
+          </View>
+          {/* Animated Bar */}
+          <Animated.View style={[styles.topSelectionBar, {marginLeft:animatedBarMargin}]}></Animated.View>
 
-                {
-                    userContext.settings.devmode &&
-                    <View>
-                        <Text>Notices: {JSON.stringify(data.notices)}</Text>
-                        <Text>Road Closures: {JSON.stringify(data.road_closures)}</Text>
-                    </View>
-                }
+          {/* Content Section */}
+          <Animated.View style={[styles.contentContainer, {marginLeft:animatedPageMargin}]}>
+            <Animated.View style={[styles.contentSection,{height:showHeight?"100%":0, overflow:'hidden'}]}>
+                {data.vehicles.map((vehicle, index) => {
+                    return (
+                        <Vehicle key={index} data={vehicle}/>
+                    )
+                })}
+            </Animated.View> 
+            <View style={[styles.contentSection]}>
+                {data.orbiters.map((orbiter, index) => {
+                    return (
+                        <Orbiter key={index} data={orbiter}/>
+                    )
+                })}
+            </View>
+          </Animated.View>
+        </View>
             </ScrollView>
         </View>
     )
 }
 function Vehicle(props){
+    const data = props.data;
+    // console.log(data)
     return (
-        <View>
-            <Text>{props.data.name}</Text>
+        <View style={styles.vehicleContainer}>
+            <View style={styles.vehicleInfo}>
+                <Text style={styles.vehicleTitle}>{props.data.serial_number}</Text>
+                {data.last_launch_date != null && <Text style={styles.vehicleDate}>Last Launched {new Date(data.last_launch_date).toLocaleString([],{day:'numeric', month: 'long', year:'numeric' })}</Text>}
+                <Text style={styles.vehicleStatus}>{data.status.charAt(0).toUpperCase() + data.status.slice(1)}</Text>
+                <Text style={styles.vehicleStatus}>flights: {data.flights}</Text>
+                <Text style={styles.vehicleDetails}>{props.data.details}</Text>
+            </View>
+            {<Image source={{uri: data.image_url}} style={styles.vehicleImage }/> }
         </View>
     )
 }
 
 function Orbiter(props){
+    const data = props.data;
     return (
-        <View>
-            <Text>{props.data.name}</Text>
+        <View style={styles.vehicleContainer}>
+
+            <View style={styles.vehicleInfo}>
+                <Text style={styles.vehicleTitle}>{props.data.name}</Text>
+                <Text style={styles.vehicleStatus}>{data.status.name}</Text>
+                <Text style={styles.vehicleStatus}>flights: {data.flights_count}</Text>
+                <Text style={styles.vehicleDetails}>{data.description}</Text>
+            </View>
+            {<Image source={{uri: data.spacecraft_config.image_url}} style={styles.vehicleImage }/> }
         </View>
     )
 
@@ -287,30 +362,22 @@ const dstyles = StyleSheet.create({
         flex: 1,
         // justifyContent: 'center',
         // width: '100%',
-        // backgroundColor : COLORS.BACKGROUND_HIGHLIGHT,
-        // marginHorizontal: 10,
+        backgroundColor : COLORS.BACKGROUND_HIGHLIGHT,
+        marginHorizontal: 10,
         marginTop: 10,
         borderRadius: 10,
         overflow: 'hidden',
-
-        // padding: 10
-        
-        // zIndex: 100,
     },
     title:{
-        fontSize: 26,
+        fontSize: 19,
         color: COLORS.FOREGROUND,
         width: "100%",
 
         fontFamily: FONT,
 
-        marginBottom: 10,
-    },
-    image: {
-        width: "100%",
-        aspectRatio: 1.5,
-        borderRadius: 10,
-        // margin: 10,
+        marginBottom: 12,
+        marginLeft: 10,
+        marginTop: 10,
     },
     // SECTION HEADERS
     sectionHeader:{
@@ -322,7 +389,7 @@ const dstyles = StyleSheet.create({
         paddingHorizontal: 11,
         // marginTop: -5,
         paddingTop: 5,
-        marginBottom: 5,
+        marginBottom: 10,
     },
     sectionTitle:{
         fontSize: 19,
@@ -331,7 +398,7 @@ const dstyles = StyleSheet.create({
         textAlign: 'left',
     },
     seeMoreText:{
-        fontSize: 16,
+        fontSize: 18,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'right',
@@ -352,7 +419,7 @@ const dstyles = StyleSheet.create({
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
         alignContent: 'flex-end',
-        marginBottom:2,
+        // marginBottom:2,
     },
     infoContainer:{
         display: 'flex',
@@ -369,25 +436,6 @@ const dstyles = StyleSheet.create({
         // elevation: 10,
         zIndex: -10,
     },
-    streamContainer:{
-        width: '100%',
-        aspectRatio: 16/9,
-        borderRadius: 10,
-        overflow: 'hidden',
-        // marginBottom: 10,
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
-    },
-    streamCredit:{
-        fontSize: 14,
-        color: COLORS.FOREGROUND,
-        fontFamily: FONT,
-        textAlign: 'right',
-        marginRight: 10,
-        // marginBottom: 5,
-        width: '100%',
-        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-    },
     eventsContainer:{
         display: 'flex',
         flexDirection: 'column',
@@ -398,6 +446,7 @@ const dstyles = StyleSheet.create({
         borderRadius: 10,
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
+        // marginHorizontal: 10,
     
 
     },
@@ -411,28 +460,6 @@ const dstyles = StyleSheet.create({
         // marginTop: 10,
         zIndex: 100,
     },
-    subInfoContainer:{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        // paddingHorizontal: 11,
-        // marginBottom: 5,
-    },
-    sourceText:{
-        fontSize: 14,
-        color: COLORS.SUBFOREGROUND,
-        fontFamily: FONT,
-        textAlign: 'right',
-        textAlignVertical: 'bottom',
-        marginHorizontal: 10,
-        
-        marginTop: 2,
-        marginLeft: 12,
-        height: "100%",
-    },
-    
 })
 const styles = StyleSheet.create({
     container: {
@@ -504,13 +531,6 @@ const styles = StyleSheet.create({
       marginLeft: 5,
       marginTop: 2,
     },
-    description: {
-        fontSize: 20,
-        color: COLORS.FOREGROUND,
-        fontFamily: FONT,
-        marginHorizontal: 15,
-
-    },
     back:{
         position: 'absolute',
         width: 30,
@@ -519,10 +539,6 @@ const styles = StyleSheet.create({
         fontSize: 26,
         color: COLORS.FOREGROUND,
         zIndex: 200,
-    },
-    image: {
-        width: "100%",
-        aspectRatio: 1,
     },
     sectionTitle:{
         fontSize: 26,
@@ -540,10 +556,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
 
         marginTop: 10,
-
-        // width: '100%',
-        
-        
     },
     contentHeaderSection:{
         display: 'flex',
@@ -590,4 +602,106 @@ const styles = StyleSheet.create({
         fontFamily: FONT,
         textAlign: 'right',
     },
+
+    // Top Upcoming and Previous Selection Area
+    topSelectionContainer:{
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      padding: 5,
+      marginBottom: 5,
+      marginTop: 10,
+    },
+    topSelectionText:{
+      fontSize: 24,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      width: '50%',
+      textAlign: 'center',
+    },
+    topSelectionBar:{
+      width: '40%',
+      height: 2,
+      backgroundColor: COLORS.FOREGROUND,
+      borderRadius: 100,
+      marginBottom: 10,
+      marginLeft: "5%",
+    
+    },
+    bottomPadding:{
+      height: BOTTOM_BAR_HEIGHT+20,
+      width: "100%",
+    },
+
+    // Content Section
+    contentContainer:{
+      display: 'flex',
+      flexDirection: 'row',
+      // position: 'absolute',
+      marginLeft: "0%",
+      width: "200%",
+    //   height: Dimensions.get('window').height-StatusBar.currentHeight,
+    //   paddingBottom: BOTTOM_BAR_HEIGHT,
+      
+      overflow: "hidden",
+    },
+    contentSection: {
+      display: 'flex',
+      backgroundColor: COLORS.BACKGROUND,
+      // marginBottom: BOTTOM_BAR_HEIGHT+250,
+      // overflow: 'hidden',
+      flex: 1
+    },
+    vehicleContainer:{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        // justifyContent: 'center',
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        marginHorizontal: 10,
+        borderRadius: 10,
+        marginTop: 10,
+        // marginBottom: 10,
+        paddingHorizontal: 10,
+        paddingTop: 10,
+        paddingBottom: 10,
+    },
+    vehicleInfo:{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        width: "60%",
+    },
+    vehicleTitle:{
+        fontSize: 22,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+    },
+    vehicleStatus:{
+        fontSize: 14,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+    },
+    vehicleDate:{
+        fontSize: 14,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+    },
+    vehicleDetails:{
+        fontSize: 12,
+        color: COLORS.FOREGROUND,
+        fontFamily: FONT,
+        textAlign: 'left',
+        marginRight: 10,
+    },
+    vehicleImage:{
+        width: "40%",
+        height: "100%",
+        resizeMode: "cover",
+        borderRadius: 10,
+    }
 })

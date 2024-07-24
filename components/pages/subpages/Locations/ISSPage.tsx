@@ -1,5 +1,5 @@
 import { StyleSheet, View, Text, Image, FlatList, StatusBar, Dimensions, ScrollView, Linking } from 'react-native';
-import { MaterialIcons } from 'react-native-vector-icons';
+import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
 import Event from '../../../styled/Event';
 import { useContext, useEffect, useState } from 'react';
@@ -131,6 +131,17 @@ export function ISSDashboard(){
     }
     return (
         <View style={dstyles.container}>
+                <TouchableOpacity onPress={() => {userContext.nav.navigate("ISS")}}>
+                    {/* <Text style={dstyles.sourceText}>Live Source: ESA</Text>   */}
+                    <View style={dstyles.sectionHeader}>
+                        <Text style={dstyles.sectionTitle}>International Space Station</Text>
+                        <View style={dstyles.seeMoreSection}>
+                            <Text style={dstyles.seeMoreText}>See All</Text>
+                            <MaterialIcons name="arrow-forward-ios" style={dstyles.sectionIcon}/>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+                <LiveData data={data}/>
                 <View style={dstyles.infoContainer}>
                         {/* <View style={dstyles.issMapContainer} pointerEvents='none'>
                             <WebView source={{uri: 'http://wsn.spaceflight.esa.int/iss/index_portal.php'}} style={dstyles.issMap} scrollEnabled={false} cacheEnabled={true} cacheMode='LOAD_CACHE_ELSE_NETWORK'/>
@@ -138,7 +149,7 @@ export function ISSDashboard(){
                         <View style={dstyles.subInfoContainer}>
                             <Text style={dstyles.sourceText}>Live ISS Position: ESA</Text>
                         </View> */}
-                    {data.related != undefined && 
+                    {data.related != undefined && false && 
                     <View style={dstyles.relatedSection}> 
                         {/* <Text style={dstyles.subtitle}>Next ISS Event:</Text> */}
                         {data.related.type == "event" ? 
@@ -148,17 +159,6 @@ export function ISSDashboard(){
                         }
                     </View>}
                     
-                    <LiveData data={data}/>
-                    <TouchableOpacity onPress={() => {userContext.nav.navigate("ISS")}}>
-                        {/* <Text style={dstyles.sourceText}>Live Source: ESA</Text>   */}
-                        <View style={dstyles.sectionHeader}>
-                            <Text style={dstyles.sectionTitle}>International Space Station</Text>
-                            <View style={dstyles.seeMoreSection}>
-                                <Text style={dstyles.seeMoreText}>See More</Text>
-                                <MaterialIcons name="arrow-forward-ios" style={dstyles.sectionIcon}/>
-                            </View>
-                        </View>
-                    </TouchableOpacity>
                 </View>
         </View>
     )
@@ -184,14 +184,14 @@ export function ISSDashboard(){
         }
 
         useEffect(() => {
-                getISSPositionData();
-
+            
+            getISSPositionData();
             // Set timer to reload live data
             const interval = setInterval(() => {
                 getISSPositionData();
-            }, 2000);
+            }, 10000);
             return () => clearInterval(interval);
-        }, [])
+        }, [props.data])
 
         if (liveData == undefined || props.data == undefined){
             return (
@@ -201,10 +201,8 @@ export function ISSDashboard(){
             )
         }
         return (
-            <View> 
-                <View style={dstyles.subInfoContainer}>
-                    <Text style={dstyles.sourceText}>Live ISS Stats:</Text>
-                </View>
+            <View style={dstyles.statsSection}> 
+                <Text style={dstyles.statsTitle}>Current:</Text>
                 <View style={dstyles.statsContainer}>
                     <Text style={dstyles.statsText}>Altitude: {liveData.altitude.toFixed(1)}km</Text>
                     <Text style={dstyles.statsText}>Longitude: {liveData.longitude.toFixed(1)}</Text>
@@ -240,16 +238,6 @@ export default function ISSPage(props) {
     const [launches, setLaunches] = useState({upcoming: [], previous: []});
     const [events, setEvents] = useState({upcoming: [], previous: []});
 
-    async function getISSPositionData(){
-        await fetch("https://api.wheretheiss.at/v1/satellites/25544").then((data) => {
-            return data.json();
-        }).then((data)=>{
-            // console.log("ISS Data:", data);
-            setLiveData(data);
-        }).catch((error) => {
-            console.log("Error getting ISS data:", error);
-        })
-    }
     useEffect(() => {
         // Set data
 
@@ -317,11 +305,6 @@ export default function ISSPage(props) {
         setLaunches({upcoming: lu, previous: lp});
         setEvents({upcoming: eu, previous: ep});
 
-        // Set timer to reload live data
-        const interval = setInterval(() => {
-            getISSPositionData();
-        }, 2000);
-        return () => clearInterval(interval);
     }, [])
 
     // console.log("ISS Data:", Object.keys(iss.docking_location[4].docked.flight_vehicle.launch))
@@ -340,49 +323,40 @@ export default function ISSPage(props) {
                 <View style={styles.issMapContainer} pointerEvents='none'>
                     <WebView source={{uri: 'http://wsn.spaceflight.esa.int/iss/index_portal.php'}} style={styles.issMap} scrollEnabled={false} cacheEnabled={true} cacheMode='LOAD_CACHE_ELSE_NETWORK'/>
                 </View>
-                {/* <View style={{marginHorizontal: 10, overflow: 'hidden', borderRadius: 10}}> */}
-                    {/* <YoutubeIframe videoId={streamID} width={Dimensions.get("window").width} height={Dimensions.get("window").width*0.57} play={false} mute={true} /> */}
-                {/* </View> */}
                 <View style={dstyles.subInfoContainer}>
                     <Text style={dstyles.sourceText}>ISS Live Position: ESA</Text>
                     {/* <Text style={dstyles.sourceText}>ISS Livestream: NASA</Text> */}
                 </View>
-                <View style={styles.streamsContainer}>
-                    <TouchableOpacity onPress={()=>Linking.openURL("https://www.youtube.com/watch?v=P9C25Un7xaM")}>
-                        <Text style={styles.stream}>HD Livestream</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>Linking.openURL("https://www.youtube.com/watch?v=VdFK-xs_r-4")}>
-                        <Text style={styles.stream}>Livestream</Text>
-                    </TouchableOpacity>
+                <View style={styles.infoUrls}>
+                        <TouchableOpacity  onPress={() => Linking.openURL("https://www.youtube.com/watch?v=P9C25Un7xaM")} >
+                            <View style={styles.infoUrl}>
+                                <Text style={styles.infoUrlText}>HD Live Views</Text>
+                                <MaterialCommunityIcons name="video-outline" style={styles.infoUrlIcon} />
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity  onPress={() => Linking.openURL("https://www.youtube.com/watch?v=VdFK-xs_r-4")} >
+                            <View style={styles.infoUrl}>
+                                <Text style={styles.infoUrlText}>Live Video</Text>
+                                <MaterialCommunityIcons name="video-outline" style={styles.infoUrlIcon} />
+                            </View>
+                        </TouchableOpacity>
                 </View>
-                <View> 
-                    <View style={dstyles.statsContainer}>
-                        { liveData != undefined && 
-                            <>
-                                <Text style={dstyles.statsText}>Altitude: {liveData.altitude.toFixed(1)}km</Text>
-                                <Text style={dstyles.statsText}>Longitude: {liveData.longitude.toFixed(1)}</Text>
-                                <Text style={dstyles.statsText}>Velocity: {liveData.velocity.toFixed(1)}km/s</Text>
-                                <Text style={dstyles.statsText}>Latitude: {liveData.latitude.toFixed(1)}</Text>
-                                <Text style={dstyles.statsText}>Crew: {iss.onboard_crew}</Text>
-                                <Text style={dstyles.statsText}>Docked Spacecraft: {iss.docked_vehicles}</Text>
-                                <Text style={dstyles.statsText}></Text>
-                                <Text style={dstyles.statsText}></Text>
-                            </>
-                        }
-                        <Text style={dstyles.statsText}>Height: {iss.height}</Text>
-                        <Text style={dstyles.statsText}>Mass: {iss.mass}</Text>
-                        <Text style={dstyles.statsText}>Width: {iss.width}</Text>
-                        <Text style={dstyles.statsText}>Volume: {iss.volume}</Text>
-                        <Text style={dstyles.statsText}>Founded: {iss.founded}</Text>
-                        <Text style={dstyles.statsText}>Orbit: {iss.orbit}</Text>
+                
+                <LiveData data={iss}/>
 
-                    </View>
-                    {/* <Text style={dstyles.statsTitle}>Live Data:</Text> */}
-                </View>
                 <TouchableOpacity onPress={()=>setDescriptionShown(!descriptionShown)}> 
                     <Text style={styles.subtitle} numberOfLines={3}>Description:</Text>
                     <Text style={styles.description} numberOfLines={descriptionShown?100:5} >{'\t'}{description}</Text>
                 </TouchableOpacity>
+
+                <View style={dstyles.statsContainer}>
+                    <Text style={dstyles.statsText}>Height: {iss.height}</Text>
+                    <Text style={dstyles.statsText}>Mass: {iss.mass}</Text>
+                    <Text style={dstyles.statsText}>Width: {iss.width}</Text>
+                    <Text style={dstyles.statsText}>Volume: {iss.volume}</Text>
+                    <Text style={dstyles.statsText}>Founded: {iss.founded}</Text>
+                    <Text style={dstyles.statsText}>Orbit: {iss.orbit}</Text>
+                </View>
                 {/* Show recent, upcoming events and launches */}
 
                 {/* Upcoming Launches */}{
@@ -487,7 +461,8 @@ const dstyles = StyleSheet.create({
         marginHorizontal: 10,
         borderRadius: 10,
         overflow: 'hidden',
-        marginBottom: 10,
+        marginTop: 10,
+        // marginBottom: 10,
         // marginTop: 10,
         // paddingTop: 10,
 
@@ -500,13 +475,16 @@ const dstyles = StyleSheet.create({
         // elevation: 5,
     },
     title:{
-        fontSize: 26,
+        fontSize: 19,
         color: COLORS.FOREGROUND,
         width: "100%",
 
         fontFamily: FONT,
 
         // marginBottom: 15,
+        marginTop: 10,
+        marginBottom: 12,
+        marginLeft: 15,
     },
     image: {
         width: "100%",
@@ -521,9 +499,10 @@ const dstyles = StyleSheet.create({
         alignItems: 'flex-end',
         justifyContent: 'space-between',
         width: '100%',
-        paddingHorizontal: 10,
+        paddingHorizontal: 12,
+        marginTop: 5,
         // marginHorizontal: 10,
-        // marginBottom: 5,
+        marginBottom: 5,
     },
     sectionTitle:{
         fontSize: 19,
@@ -533,7 +512,7 @@ const dstyles = StyleSheet.create({
         // marginBottom: 1,
     },
     seeMoreText:{
-        fontSize: 16,
+        fontSize: 18,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'right',
@@ -554,7 +533,7 @@ const dstyles = StyleSheet.create({
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
         alignContent: 'flex-end',
-        marginBottom: 1,
+        // marginBottom: 1,
         // backgroundColor: 'white',
         
     },
@@ -635,6 +614,23 @@ const dstyles = StyleSheet.create({
         // borderTopRightRadius: 0,
         // marginTop: 10,
     },
+    statsSection:{
+        display: 'flex',
+        flexDirection: 'column',
+        flexWrap: 'wrap',
+        // width: '100%',
+        // marginBottom: 10,
+        marginHorizontal: 10,
+        // backgroundColor: 'white',
+        // paddingBottom: 15,
+        // margin: 10,
+        marginTop: 10,
+        borderWidth: 3,
+        borderColor: COLORS.BACKGROUND,
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+
+        borderRadius: 11,
+    },
     statsContainer:{
         display: 'flex',
         flexDirection: 'row',
@@ -642,28 +638,27 @@ const dstyles = StyleSheet.create({
         alignItems: 'flex-start',
         justifyContent: 'space-between',
         // width: '100%',
-        marginTop: 5,
-        marginBottom: 10,
-        marginHorizontal: 7,
-        padding: 5,
+        // paddingBottom: 10,
         // backgroundColor: 'white',
-        // padding: 10,
+        padding: 10,
         // margin: 10,
         borderRadius: 10,
-        borderWidth: 3,
-        borderColor: COLORS.BACKGROUND,
-        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        // borderWidth: 3,
+        // borderColor: COLORS.BACKGROUND,
+        // backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
 
     },
     statsTitle:{
-        fontSize: 18,
-        color: COLORS.FOREGROUND,
+        fontSize: 14,
+        color: COLORS.SUBFOREGROUND,
         fontFamily: FONT,
-        textAlign: 'right',
+        // textAlign: 'right',
         // marginLeft: 10,
         // marginTop: 10,
-        marginHorizontal: 5,
+        // marginHorizontal: 5,]
         marginLeft: 15,
+        marginTop: 5,
+        marginBottom: -5,
     },
     
     statsText:{
@@ -746,7 +741,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: FONT,
         color: COLORS.SUBFOREGROUND,
-        marginHorizontal: 10,
+        marginHorizontal: 15,
         marginTop: 10,
 
     },
@@ -754,7 +749,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
-        marginHorizontal: 10,
+        marginHorizontal: 15,
         // marginTop: 10,
         marginBottom: 10,
 
@@ -785,7 +780,7 @@ const styles = StyleSheet.create({
         // marginBottom: 10,
     },
     dockTitle:{
-        fontSize: 24,
+        fontSize: 22,
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
         marginHorizontal: 20,
@@ -874,6 +869,49 @@ const styles = StyleSheet.create({
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'right',
+    },
+    infoUrls:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        flexWrap: "wrap",
+        width: "100%",
+        marginLeft: 11,
+        // marginTop: 5,
+        // marginBottom: 20,
+        
+    },
+    infoUrl:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        marginRight: 5,
+        marginTop: 10,
+        padding: 5,
+        paddingHorizontal: 10,
+        borderRadius: 10,
+    },
+    infoUrlText:{
+        
+      fontSize: 14,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+      backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+      borderRadius: 10,
+
+    },
+    infoUrlIcon:{
+      fontSize: 25,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "400",
+      textAlign: "left",
+      marginLeft: 5,
+      marginTop: 2,
     },
     
 })

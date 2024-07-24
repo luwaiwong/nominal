@@ -84,7 +84,6 @@ export function ForYouEvent(data) {
 
   let description = eventData.description;
   // description = description.replace(/\. (?=[A-Z])/g, );
-  // console.log(description)
 
   let status = "Upcoming Event";
 
@@ -94,8 +93,6 @@ export function ForYouEvent(data) {
   }
 
   let [descriptionOpen, setDescriptionOpen] = useState(false);
-
-  // console.log();
 
   return (
   <Pressable onPress={()=>data.nav.navigate("Event", {data: eventData})}>
@@ -160,18 +157,17 @@ export function ForYouImageOfDay(props) {
   let description = data.explanation;
   // description.replace(/\.(?=[A-Z])/g, '<br /><br />');
 
-  // console.log(data.url)
-
   return (
     <Pressable onPress={()=>{Linking.openURL(data.hdurl)}}>
       
     <View style={styles.page}>
         <Image style={styles.image} source={{uri: data.url}} />
         <View style={styles.contentContainer}>
-          <View>
-            <Text style={styles.title} numberOfLines={3} >{data.title}</Text>
-            <Text style={[styles.subtitle]} numberOfLines={1} >NASA Astronomy Picture of the Day</Text>
-          </View>
+
+          <BlurView intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.eventSection}>
+                <Text style={styles.title} numberOfLines={3} >{data.title}</Text>
+                <Text style={[styles.subtitle]} numberOfLines={1} >NASA Astronomy Picture of the Day</Text>     
+          </BlurView>
 
           <View>
             <BlurView  intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView'
@@ -234,6 +230,7 @@ const styles = StyleSheet.create({
       margin: 10,
       borderRadius: 10,
       padding: 5,
+      paddingBottom: 0,
 
       // width:"92%",
       // height: 250,
@@ -268,8 +265,8 @@ const styles = StyleSheet.create({
       fontWeight: "600",
       textAlign: "left",
 
-      textShadowColor: 'rgba(0, 0, 0, 0.6)',
-      textShadowOffset: {width: 1, height: 2},
+      textShadowColor: 'rgba(0, 0, 0, 0.8)',
+      textShadowOffset: {width: 1.5, height: 2},
       textShadowRadius: 5,
       elevation: 200,
       
@@ -282,7 +279,7 @@ const styles = StyleSheet.create({
       fontWeight: "600",
       textAlign: "left",
 
-      textShadowColor: 'rgba(0, 0, 0, 0.6)',
+      textShadowColor: 'rgba(0, 0, 0, 0.8)',
       textShadowOffset: {width: 1.5, height: 1.5},
       textShadowRadius: 5,
       elevation: 200,

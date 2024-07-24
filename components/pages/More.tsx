@@ -31,8 +31,6 @@ export default function Locations(props){
         })
     }
 
-    // console.log(userContext.starship)
-
     return (<>
         <View style={styles.container}>
             <ScrollView 

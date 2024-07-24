@@ -1,6 +1,6 @@
 
 import { useState, useRef, useContext } from "react";
-import { StyleSheet, View, Image, Text, Animated, Linking} from "react-native";
+import { StyleSheet, View, Image, Text, Animated, Linking, TouchableOpacity} from "react-native";
 
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
@@ -55,19 +55,10 @@ export default function Event(props){
     };
 
 
-    // Gestures
-    const tap = Gesture.Tap();
-
-    tap.onTouchesDown(()=>animateIn());
-    tap.onEnd(()=>animateOut(true));
-    tap.onTouchesMove(()=>animateOut(false));
-    tap.onTouchesCancelled(()=>animateOut(false));
-    // tap.onEnd(()=>toggle()); // UNCOMMENT TO RESTORE PINNED
-    tap.numberOfTaps(1);
 
     // console.log("Loading");
     return (
-        <GestureDetector gesture={tap}>
+        <TouchableOpacity onPress={()=>{ userContext.nav.navigate("Event", {data: eventData})}}>
             <Animated.View style={[styles.container, {transform:[{scale}]}]}>
                 <View style={styles.top}>
                     <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: eventData.feature_image}} />        
@@ -97,7 +88,7 @@ export default function Event(props){
                     </View>
                 </View>
             </Animated.View>
-        </GestureDetector>
+        </TouchableOpacity>
     );
 }
 
