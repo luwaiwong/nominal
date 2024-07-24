@@ -16,6 +16,9 @@ import { StarshipDashboard } from "./subpages/Locations/StarshipPage";
 import LaunchHighlight from "../styled/HighlightLaunch";
 import { UserContext } from "../data/UserContext";
 
+import { WidgetPreview } from "react-native-android-widget";
+import { TestWidget } from "../widgets/TestWidget";
+
 
 export default function Dashboard(props) {
   const userContext = useContext(UserContext);
@@ -59,6 +62,7 @@ export default function Dashboard(props) {
               {/* Padding for title bar */}
               <View style={styles.topBackground} />
               <View style={styles.topPadding}/>
+              
               {/* Scolling Area */}
               <ScrollView 
                 // Refresh Control

@@ -1,3 +1,5 @@
+
+
 {
   "expo": {
     "name": "Nominal",
@@ -40,14 +42,37 @@
         "projectId": "c90f5fc8-86de-487e-8727-59f725ccd519"
       }
     },
-    "plugins": [
-      ["expo-build-properties", {
-        "android": {
-          "usesCleartextTraffic": true
-        },
-        "ios": {
+    "plugins": 
+    [
+      [
+        "expo-build-properties", 
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          },
+          "ios": {
+          }
         }
-        }]
+      ],
+      [
+        "react-native-android-widget", {
+          "fonts": ["./assets/fonts/SpaceGrotesk.ttf"],
+          "widgets": 
+          [
+            {
+              "name": "Test",
+              "label": "TESTING WIDGET",
+              "minWidth": "320dp",
+              "minHeight": "120dp",
+              "targetCellWidth": 5,
+              "targetCellHeight": 2,
+              "description": "UNDER CONSTRUCTION",
+              "previewImage": "./assets/widget-preview/download.png", 
+              "updatePeriodMillis": 1800000
+            }
+          ]
+      }
+      ]
     ]
   }
 }

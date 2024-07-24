@@ -171,6 +171,10 @@ export default function Settings(){
                             <Text style={styles.description}>If refreshing data, only fetch data if the last API call is more than 15 minutes ago</Text>
                             <SettingToggle setting="reloadonfocused" title={"Reload when app is focused"} />
                             <Text style={styles.description}>When app is focused from background, reload data (Reload app to enable)</Text>
+                            
+                            <TouchableOpacity onPress={()=>{userContext.nav.navigate("Widget Preview")}}>
+                                <Text style={styles.button}>Preview Widget</Text>
+                            </TouchableOpacity> 
                             </View>
                             }
                         </View>  
