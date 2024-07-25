@@ -32,7 +32,8 @@
         "foregroundImage": "./assets/icon-temp-adaptive.png",
         "backgroundColor": "#1e1e1e"
       },
-      "package": "com.luwaiwong.nominal"
+      "package": "com.luwaiwong.nominal",
+      "versionCode": 2 
     },
     "web": {
       "favicon": "./assets/icon-temp.png"

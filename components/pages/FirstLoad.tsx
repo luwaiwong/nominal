@@ -51,11 +51,12 @@ export default function FirstLoad(props) {
 
                         <Text style={styles.text}>Stay up to date with Starship, ISS, and spaceflight topics that you're interested in with a clean, modern UI.</Text>
 
-                        {/* <Text style={styles.buffer}></Text> */}
+                        <Text style={styles.buffer}></Text>
 
 
 
                     </View>
+                    <Text style={styles.buffer}></Text>
                     <View>
                         {/* <Text style={styles.text}>Thanks for downloading!</Text> */}
                         <TouchableOpacity onPress={fadeOut}>
