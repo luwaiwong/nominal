@@ -1,11 +1,13 @@
 # Nominal, a spaceflight and rocket launch tracking app
 
-There are a couple rocket launch tracking apps out there, but I want one thats more customizable and with prettier and modern UI. That's why I'm working on Nominal
+<img src="https://github.com/user-attachments/assets/a00f1a67-e20a-402c-9bd2-fcf11624ea65" width="200" />
 
-![Screenshot_20240724-214437](https://github.com/user-attachments/assets/4a9b1b9b-9aaf-48a8-b2eb-4882749e9b6d)
-![image](https://github.com/user-attachments/assets/d00e85fe-aab0-4560-b3fd-32a4428f486a)
-![Screenshot_20240724-214455](https://github.com/user-attachments/assets/79064405-be11-43df-8ede-e20b2cf6fc90)
-![Screenshot_20240724-204004](https://github.com/user-attachments/assets/a6029be9-49ae-4d5b-af1f-52c443702625)
+There are a couple rocket launch tracking apps out there, but I want one thats more customizable and with a prettier UI. 
+That's why I'm working on Nominal
+
+
+<img src="https://github.com/user-attachments/assets/73702b95-cd84-4014-9a9c-b32a340b8724" width="300" />
+<img src="https://github.com/user-attachments/assets/fb8a4a98-4703-4d7b-b2f2-6e88a7489a01" width="300" />
 
 Built with React Native
 Using [TheSpaceDevs](https://thespacedevs.com/llapi) API
