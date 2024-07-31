@@ -1,5 +1,5 @@
-import React, { useImperativeHandle } from 'react'; 
-import { View, Text , StyleSheet, Dimensions} from 'react-native'; 
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'; 
+import { View, Text , StyleSheet, Dimensions, Animated, ViewBase} from 'react-native'; 
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons'; 
 import { BlurView } from 'expo-blur';
 
@@ -19,6 +19,26 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         
+        // backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        padding: 4,
+
+
+        width: Dimensions.get('window').width-20,
+        height: BOTTOM_BAR_HEIGHT-10,
+        position: "absolute",
+        // bottom: -0,
+        left: 10,
+        borderRadius: 10,
+        overflow: "hidden",
+
+        zIndex: 5000,
+    },
+    menuContainer: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        
         backgroundColor: 'rgba('+COLORS.BACKGROUND_HIGHLIGHT_RGB+' 0.6)',
         // backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         padding: 4,
@@ -27,8 +47,6 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width-20,
         height: BOTTOM_BAR_HEIGHT-10,
         position: "absolute",
-        bottom: 10,
-        left: 10,
         borderRadius: 10,
         overflow: "hidden",
 
@@ -90,6 +108,8 @@ const MenuBar = React.forwardRef((props: any, ref: any)=> {
     const setPage = props.setPage;
     const page = props.page;
 
+    const bottomAnim = useRef(new Animated.Value(-80)).current;
+
     // This is done so I can force a rerender of the menu bar from the parent
     const [f, forceRerender] = React.useState(0);
     useImperativeHandle(ref, ()=>({
@@ -97,24 +117,53 @@ const MenuBar = React.forwardRef((props: any, ref: any)=> {
             forceRerender((x)=>x+1);
         }
     }));
+    
+    useEffect(()=>{
+        if (page.current == 0) hideMenu();
+        else showMenu();
+    }, [page.current]);
+
+    useEffect(()=>{
+        console.log("Menu Bar Rendered");
+    }, []);
+
+
+    const showMenu = ()=>{
+        Animated.spring(bottomAnim, {
+            toValue: 10,
+            friction: 10,
+            useNativeDriver: false,
+        }).start();
+    }
+
+    const hideMenu = ()=>{
+        Animated.spring(bottomAnim, {
+            toValue: -80,
+            friction: 10,
+            useNativeDriver: false,
+        }).start();
+    }
 
     if (page.current == -1) return null;
     if (setPage == null) return null;
+
     return (
-        <BlurView intensity={50}  tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.menuBar} >           
-            {/* <MenuButton icon="settings" setPage={()=>setPage(0)} label="settings" active={page.current==0} />
-            <MenuButton icon="rocket-launch" setPage={()=>setPage(1)} label="launches" active={page.current == 1} />
-            <MenuButton icon="home" setPage={()=>setPage(2)} label="for you" active={page.current == 2} />
-            <MenuButtonCommunity icon="newspaper-variant" setPage={()=>setPage(4)} label="news" active={page.current == 4 } /> */}
-            <MenuButton icon="home" setPage={()=>setPage(0)} label="for you" active={page.current == 0} />
-            <MenuButton icon="rocket-launch" setPage={()=>setPage(1)} label="dashboard" active={page.current == 1} />
-            <MenuButtonCommunity icon="newspaper-variant" setPage={()=>setPage(2)} label="launches" active={page.current == 2} />
-            {/* <MenuButtonCommunity icon="space-station" setPage={()=>setPage(3)} label="dashboard" active={page.current == 3} /> */}
-            <MenuButton icon="settings" setPage={()=>setPage(3)} label="settings" active={page.current==3} />
-        </BlurView>
+        <Animated.View style={[styles.menuBar, {bottom: bottomAnim}]}>
+            <BlurView intensity={50}  tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.menuContainer} >           
+                {/* <MenuButton icon="settings" setPage={()=>setPage(0)} label="settings" active={page.current==0} />
+                <MenuButton icon="rocket-launch" setPage={()=>setPage(1)} label="launches" active={page.current == 1} />
+                <MenuButton icon="home" setPage={()=>setPage(2)} label="for you" active={page.current == 2} />
+                <MenuButtonCommunity icon="newspaper-variant" setPage={()=>setPage(4)} label="news" active={page.current == 4 } /> */}
+                <MenuButton icon="home" setPage={()=>setPage(1)}  active={page.current == 1} />
+                <MenuButton icon="rocket-launch" setPage={()=>setPage(2)}active={page.current == 2} />
+                <MenuButtonCommunity icon="newspaper-variant" setPage={()=>setPage(3)}active={page.current == 3} />
+                {/* <MenuButtonCommunity icon="space-station" setPage={()=>setPage(3)} label="dashboard" active={page.current == 3} /> */}
+                <MenuButton icon="settings" setPage={()=>setPage(4)}  active={page.current==4} />
+            </BlurView>
+        </Animated.View>
     );
     
-function MenuButton({icon, setPage, label, active}){
+function MenuButton({icon, setPage, active}){
     function onPressed(){
         setPage();
     }
@@ -125,7 +174,6 @@ function MenuButton({icon, setPage, label, active}){
         <GestureDetector gesture={tap}>
             <View style={active?styles.buttonContainerActive:styles.buttonContainer}>
                 <MaterialIcons name={icon} style={active?styles.buttonIconActive:styles.buttonIcon} />
-                {/* <Text style={styles.buttonText}>{label}</Text> */}
             </View>
         </GestureDetector>
     );
@@ -133,7 +181,7 @@ function MenuButton({icon, setPage, label, active}){
 }
 
 
-function MenuButtonCommunity({icon, setPage, label, active}){
+function MenuButtonCommunity({icon, setPage,active}){
     function onPressed(){
         setPage();
     }
@@ -144,7 +192,6 @@ function MenuButtonCommunity({icon, setPage, label, active}){
         <GestureDetector gesture={tap}>
             <View style={active?styles.buttonContainerActive:styles.buttonContainer}>
                 <MaterialCommunityIcons name={icon} style={active?styles.buttonIconActive:styles.buttonIcon} />
-                {/* <Text style={styles.buttonText}>{label}</Text> */}
             </View>
         </GestureDetector>
     );

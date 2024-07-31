@@ -30,15 +30,16 @@
             //         console.log(data)
             //     })
             console.log("fetching")
-            fetch(starship)
+            fetch("https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=100")
                 .then((response) => {
                     console.log(response);
                     return response.json();
                 })
                 .then((data) => {
                     console.log(data)
-                })
-
-        }
+                }).catch((error) => {
+                    console.error('Error:', error);
+                });
+            }
     </script>
 </html>

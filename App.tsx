@@ -26,7 +26,7 @@ import { UserContext } from "./components/data/UserContext";
 import Locations from "./components/pages/More";
 
 
-const titleOffset = 225
+const titleOffset = 300
 
 export default function App(props) {
   // App Data Variables
@@ -252,6 +252,7 @@ export default function App(props) {
         >
           <ForYou data={data}/>
           <Dashboard data={data}/>
+          <Launches data={data}/>
           <News data={data}/>
           {/* <Locations data={data}/> */}
           <Settings />

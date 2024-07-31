@@ -1,5 +1,5 @@
 import React, { useRef, useState, useContext } from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { View, Button} from "react-native";
 import * as Notifications from 'expo-notifications';
@@ -127,10 +127,22 @@ export default function index(props) {
     user.current = createUserContext(); 
   }, []);
 
+  const Theme = {
+    dark: true,
+    colors: {
+      primary: COLORS.BACKGROUND,
+      background: COLORS.BACKGROUND,
+      card: COLORS.BACKGROUND,
+      text: COLORS.TEXT,
+      border: COLORS.BORDER,
+      notification: COLORS.BACKGROUND,
+    },
+  }
+
   return (
     <View style={{flex:1, backgroundColor:COLORS.BACKGROUND}}>
       <UserContext.Provider value={user.current}>
-        <NavigationContainer >
+        <NavigationContainer theme={Theme} >
           <Stack.Navigator
             screenOptions={{
               headerShown:false, 

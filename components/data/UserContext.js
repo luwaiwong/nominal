@@ -5,7 +5,9 @@ import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 
 import Tags from "./Tags";
-import { Alert } from "react-native";
+
+import { scheduleNotifications } from "./NotificationHandler";
+
 // Set cache call time
 // If last call less than x minutes ago, use cache
 const cachecalltime = 1000 * 60 * 30;
@@ -43,6 +45,8 @@ export class UserData {
     this.notifs = [];
     this.gettingdata = false;
 
+    this.gettingupcominglaunches = false;
+
     // Current User Data
     this.launches = undefined;
     this.news = undefined;
@@ -52,30 +56,20 @@ export class UserData {
 
     // User Stuff
     this.nav = undefined;
+    this.showMenu = undefined;
+    this.hideMenu = undefined;
 
     this.settings = {
       // Notifications
       enablenotifs: true,
+      notifevents: true,
+      notiflaunches: true,
       notif24hbefore: true,
       notif12hbefore: false,
       notif1hbefore: true,
       notif30mbefore: false,
       notif10mbefore: true,
       notif0mbefore: false,
-
-      notiflaunch24hbefore: true,
-      notiflaunch12hbefore: false,
-      notiflaunch1hbefore: true,
-      notiflaunch30mbefore: false,
-      notiflaunch10mbefore: true,
-      notiflaunch0mbefore: false,
-
-      notifevent24hbefore: true,
-      notifevent12hbefore: false,
-      notifevent1hbefore: true,
-      notifevent30mbefore: false,
-      notifevent10mbefore: true,
-      notifevent0mbefore: false,
 
       // FOR YOU SETTINGS
       fyshowupcomingevents: true,
@@ -491,227 +485,12 @@ export class UserData {
 
   //#region NOTIFICATION FUNCTIONS
   async scheduleNotifications() {
-    console.log("Notifications enabled:", this.settings.enablenotifs);
-    if (Device.isDevice) {
-      const { status: existingStatus } =
-        await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-      if (existingStatus !== "granted") {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-      if (finalStatus !== "granted") {
-        alert("Failed to get push token for push notification!");
-      }
-    }
-
-    console.log("Cancelling Notifications");
-    try {
-      await Notifications.cancelAllScheduledNotificationsAsync();
-    } catch (error) {
-      console.log("Error cancelling notifications: " + error);
-    }
-
-    // Don't schedule notifications if notifications are disabled
-    if (!this.settings.enablenotifs) {
-      return;
-    }
-
-    console.log("Scheduling Notifications");
-    let notifs = 0;
-    // Load notifications for launches & events within the next 2 weeks
-    // Loop through launches
-    for (let i = 0; i < this.launches.upcoming.length; i++) {
-      let launch = this.launches.upcoming[i];
-      let launchTime = new Date(launch.net);
-      let today = new Date();
-      let preciseMinute = launch.net_precision.name == "Minute";
-      let preciseHour = launch.net_precision.name == "Hour";
-      let preciseDay = launch.net_precision.name == "Day";
-      let preciseMonth = launch.net_precision.name == "Month";
-
-      let timeDiff = launchTime.getTime() - today.getTime();
-
-      // Check if launch is before today
-      if (timeDiff < 0) {
-        // Skip
-        continue;
-      }
-
-      // Check if launch is within 2 weeks
-      if (timeDiff > 1000 * 60 * 60 * 24 * 14) {
-        // Skip
-        continue;
-      }
-
-      // ignore if precise month
-      if (preciseMonth) {
-        continue;
-      }
-
-      // Schedule 24 hour
-      if (this.settings.notif24hbefore && timeDiff > 1000 * 60 * 60 * 24) {
-        notifs += 1;
-        schedulePushNotification(
-          launch.mission.name + " Launch Tomorrow",
-          launch.rocket.configuration.full_name +
-            " launch scheduled tomorrow at " +
-            launchTime.toLocaleTimeString([], {
-              hour: "2-digit",
-            }),
-          new Date(launchTime.getTime() - 1000 * 60 * 60 * 24)
-        );
-      }
-
-      // If not precise, skip next notifications
-      if (preciseDay) {
-        continue;
-      }
-
-      // Schedule 1 hour
-      if (this.settings.notif1hbefore) {
-        notifs += 1;
-        schedulePushNotification(
-          launch.mission.name + " Launch in 1 Hour",
-          launch.rocket.configuration.full_name +
-            " launch scheduled at " +
-            launchTime.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            }) +
-            (launch.launch_pad != null
-              ? " from " + launch.launch_pad.location.name
-              : ""),
-          new Date(launchTime.getTime() - 1000 * 60 * 60)
-        );
-      }
-
-      // If not precise, skip next notifications
-      if (preciseHour) {
-        continue;
-      }
-
-      // Schedule 10 minutes
-      if (this.settings.notif10mbefore) {
-        notifs += 1;
-        schedulePushNotification(
-          launch.mission.name + " Launch in 10 Minutes",
-          launch.rocket.configuration.full_name + " launching now!",
-          new Date(launchTime.getTime() - 1000 * 60 * 10)
-        );
-      }
-    }
-
-    console.log("Scheduled " + notifs + " Launch Notifications");
-    // Loop through events
-    for (let i = 0; i < this.events.upcoming.length; i++) {
-      let event = this.events.upcoming[i];
-      let eventTime = new Date(event.date);
-      let today = new Date();
-
-      if (event.date_precision == null) {
-        continue;
-      }
-
-      let preciseMinute = event.date_precision.name == "Minute";
-      let preciseHour = event.date_precision.name == "Hour";
-      let preciseDay = event.date_precision.name == "Day";
-      let preciseMonth = event.date_precision.name == "Month";
-
-      let timeDiff = eventTime.getTime() - today.getTime();
-
-      // Check if launch is before today
-      if (timeDiff < 1) {
-        // Skip
-        continue;
-      }
-
-      // Check if launch is within 2 weeks
-      if (timeDiff > 1000 * 60 * 60 * 24 * 14) {
-        // Skip
-        continue;
-      }
-
-      // ignore if precise month
-      if (preciseMonth) {
-        continue;
-      }
-
-      // Schedule 24 hour
-      if (this.settings.notifevent24hbefore && timeDiff > 1000 * 60 * 60 * 24) {
-        schedulePushNotification(
-          event.name + " Tomorrow",
-          "Event in 24 hours",
-          new Date(eventTime.getTime() - 1000 * 60 * 60 * 24)
-        );
-      }
-
-      // If not precise, skip next notifications
-      if (preciseDay) {
-        continue;
-      }
-
-      // Schedule 1 hour
-      if (this.settings.notifevent1hbefore) {
-        schedulePushNotification(
-          event.name + " in 1 Hour",
-          "Event in 1 hour",
-          new Date(eventTime.getTime() - 1000 * 60 * 60)
-        );
-      }
-
-      // If not precise, skip next notifications
-      if (preciseHour) {
-        continue;
-      }
-
-      // Schedule 10 minutes
-      if (this.settings.notifevent10mbefore) {
-        schedulePushNotification(
-          event.name + " in 10 Minutes",
-          "Event Soon!",
-          new Date(eventTime.getTime() - 1000 * 60 * 10)
-        );
-      }
-    }
-
-    console.log("Scheduled Event Notifications");
-
-    // Set notification for 3 days away for news
-    schedulePushNotification(
-      "Check out NASA's astronomical picture of the day!",
-      "See a new picture every day.",
-      new Date(Date.now() + 1000 * 60 * 60 * 24 * 1)
+    this.notifs = await scheduleNotifications(
+      this.settings,
+      this.launches,
+      this.events
     );
-    schedulePushNotification(
-      "Check out NASA's astronomical picture of the day!",
-      "See a new picture every day.",
-      new Date(Date.now() + 1000 * 60 * 60 * 24 * 5)
-    );
-    // Set notification for 3 days away for news
-    schedulePushNotification(
-      "New spaceflight articles",
-      "Keep up to date with recent space news",
-      new Date(Date.now() + 1000 * 60 * 60 * 24 * 3)
-    );
-    // Set notification for 5 days away for rockets and events
-    schedulePushNotification(
-      "Check out upcoming launches and events",
-      "Stay on top of the latest spaceflight events",
-      new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
-    );
-    // Set notification for 5 days away for rockets and events
-    schedulePushNotification(
-      "Are you ready for the next launch?",
-      "Check out launches and events happening soon",
-      new Date(Date.now() + 1000 * 60 * 60 * 24 * 10)
-    );
-    // Set notification for 5 days away for rockets and events
-    schedulePushNotification(
-      "Are you still there?",
-      "H…hey! Just checking in… you haven’t opened me in a while. But it’s not like I want you to or anything!",
-      new Date(Date.now() + 1000 * 60 * 60 * 24 * 14)
-    );
+    return this.notifs;
   }
 
   async sendTestNotification() {
@@ -723,8 +502,6 @@ export class UserData {
         new Date(Date.now() + 500)
       );
     }
-
-    return await Notifications.getAllScheduledNotificationsAsync();
   }
   //#endregion
   //#region STARSHIP DATA

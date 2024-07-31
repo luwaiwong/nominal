@@ -50,9 +50,9 @@ export function ForYouLaunch(data) {
           <View>
             <BlurView  intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView'
               style={styles.infoSection}>
-                <TouchableOpacity onPress={()=>setDescriptionOpen(!descriptionOpen)}>
+                <Pressable onPress={()=>setDescriptionOpen(!descriptionOpen)}>
                   <Text style={styles.descriptionText} numberOfLines={descriptionOpen?10:2}>{launchInfo.mission.description}</Text>
-                </TouchableOpacity>
+                </Pressable>
               <View style={styles.infoTextSection}>
                 <Text style={styles.launcherText} numberOfLines={1}>{launchInfo.rocket.configuration.full_name}</Text>
 
@@ -107,10 +107,10 @@ export function ForYouEvent(data) {
       <BlurView  intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView'
         style={styles.infoSection}>
         <View style={styles.infoTextSection}>
-          <TouchableOpacity onPress={()=>setDescriptionOpen(!descriptionOpen)}>
+          <Pressable onPress={()=>setDescriptionOpen(!descriptionOpen)}>
             <Text style={styles.descriptionText} numberOfLines={descriptionOpen?15:3}>{description}</Text>
 
-          </TouchableOpacity>
+          </Pressable>
           {eventData.type.name != null &&
           <Text style={styles.largeText} numberOfLines={1}>{eventData.type.name}</Text>}
           {name != "" && <Text style={styles.text} numberOfLines={1}>{name}</Text>}
@@ -171,12 +171,12 @@ export function ForYouImageOfDay(props) {
                 <Text style={[styles.subtitle]} numberOfLines={1} >NASA Astronomy Picture of the Day</Text>     
           </BlurView>
 
-          <View>
+          <TouchableOpacity>
             <BlurView  intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView'
               style={styles.infoSection}>
-                <TouchableOpacity onPress={()=>setDescriptionOpen(!descriptionOpen)}>
+                <Pressable onPress={()=>setDescriptionOpen(!descriptionOpen)}>
                   <Text style={styles.descriptionText} numberOfLines={descriptionOpen?100:4}>{description}</Text>
-                </TouchableOpacity>
+                </Pressable>
               <View style={styles.infoTextSection}>
                 {/* <Text style={styles.launcherText} numberOfLines={1}>{data.copyright}</Text> */}
 
@@ -184,7 +184,7 @@ export function ForYouImageOfDay(props) {
                 <Text style={styles.timeText} >{DAYS[date.getUTCDay()]+" "+ MONTHS[date.getUTCMonth()] + " " +date.getUTCDate()+", " +date.getUTCFullYear()}</Text>
               </View>
             </BlurView>
-          </View>
+          </TouchableOpacity>
         </View>
 
     </View>
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     contentContainer:{
       width:"100%",
       height: "100%",
-      paddingBottom: BOTTOM_BAR_HEIGHT,
+      // paddingBottom: BOTTOM_BAR_HEIGHT,
       paddingTop: StatusBar.currentHeight+TOP_BAR_HEIGHT,
       
       display: "flex",

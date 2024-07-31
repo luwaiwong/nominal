@@ -7,6 +7,7 @@ import LaunchInfo from '../styled/Launch';
 import Loading from '../styled/Loading';
 import {BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT} from '../styles';
 import { UserContext } from '../data/UserContext';
+import { BottomSheetAndroid } from '@react-navigation/stack/lib/typescript/src/TransitionConfigs/TransitionPresets';
 
 export default function Launches(props){
     const userContext = useContext(UserContext);
@@ -70,12 +71,12 @@ export default function Launches(props){
     return (
         <View style={styles.container}>
           <View style={styles.titleContainer}>
-              <MaterialIcons 
+              {/* <MaterialIcons 
                   name="arrow-back-ios" 
                   style={styles.back} 
                   onPress={() => props.navigation.goBack()}>
               </MaterialIcons>
-                <Text style={styles.title}>Launches</Text>
+                <Text style={styles.title}>Launches</Text> */}
           </View>
           {/* Upcoming and Previous button */}
           <View style={styles.topSelectionContainer}>
@@ -96,7 +97,10 @@ export default function Launches(props){
               <FlatList
                   data={upcomingLaunches}
                   keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item }) => <LaunchInfo data={item}  nav={nav}> </LaunchInfo>}>
+                  renderItem={({ item }) => <LaunchInfo data={item}  nav={nav}> </LaunchInfo>}
+                  ListFooterComponent={<View style={styles.bottomPadding}></View>}
+                  >
+                  
               </FlatList>
             </View>
             {/* Previous Section */}
@@ -104,7 +108,10 @@ export default function Launches(props){
               <FlatList
                   data={previousLaunches}
                   keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item }) => <LaunchInfo data={item}  nav={nav}></LaunchInfo>}>
+                  renderItem={({ item }) => <LaunchInfo data={item}  nav={nav}></LaunchInfo>}
+                  ListFooterComponent={<View style={styles.bottomPadding}></View>}
+                  >
+                  
               </FlatList>
             </View> 
           </Animated.View>
@@ -191,5 +198,8 @@ const styles = StyleSheet.create({
         fontSize: 26,
         color: COLORS.FOREGROUND,
         zIndex: 200,
+    },
+    bottomPadding:{
+      height: BOTTOM_BAR_HEIGHT+6,
     }
 });
