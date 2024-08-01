@@ -5,6 +5,7 @@ import Article from '../../styled/Article';
 import ArticleDescriptive from '../../styled/ArticleDescriptive';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { UserContext } from '../../data/UserContext';
+import Loading from '../../styled/Loading';
 
 
 const NEWS_API_URL = "https://api.spaceflightnewsapi.net/v4/";
@@ -12,9 +13,15 @@ const NEWS_API_URL = "https://api.spaceflightnewsapi.net/v4/";
 
 export default function NewsPage(props) {
     let userContext = useContext(UserContext);
+
+    // Check has data
+    if (userContext == null || userContext.news == null){
+        return <Loading/>
+    }
+
     let callingData = useRef(false);
-    let currentOffset = useRef(10);
-    const [data, setData] = useState(null);
+    let currentOffset = useRef(0);
+    const [data, setData] = useState([]);
 
     
     const refreshOpacity = useRef(new Animated.Value(0)).current
@@ -44,9 +51,11 @@ export default function NewsPage(props) {
     }
 
     useEffect(() => {
-        if (userContext != null && userContext.news != null){
-            setData(userContext.news)
-        }
+        // if (userContext != null && userContext.news != null){
+        //     setData(userContext.news)
+        // }
+        
+        getMoreData();
     }, [])
 
     const onEndReached = () => {

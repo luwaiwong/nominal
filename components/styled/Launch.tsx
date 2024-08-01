@@ -96,7 +96,7 @@ export default function Launch(data) {
         <View style={styles.bodySection}>
           <View style={styles.infoSection}>
             <View>
-              <Text style={styles.titleText} numberOfLines={1}>{launch.mission.name} </Text>
+              {launch.mission != null && <Text style={styles.titleText} numberOfLines={1}>{launch.mission.name} </Text>}
           
               {
                 isPrecise ? <Text style={styles.smallText}>{tminus}</Text> : <Text style={styles.smallText}>{status}</Text>

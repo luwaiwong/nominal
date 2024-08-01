@@ -6,7 +6,7 @@ import { MaterialIcons } from 'react-native-vector-icons';
 
 import { UserContext } from '../data/UserContext';
 
-const versioncode = "0.4.7";
+const versioncode = "0.4.9.0";
 
 export default function Settings(props){
     let userContext = React.useContext(UserContext);
@@ -129,13 +129,13 @@ export default function Settings(props){
             <ScrollView>
                 <View style={styles.scrollContainer}>
                     <View>
-                        <View style={styles.sectionContainer}>
+                        {/* <View style={styles.sectionContainer}>
                             <Text style={styles.title}>Other Pages</Text>
                             <Link page="All Launches" title="All Launches" nav={nav}/>
                             <Link page="All Events" title="All Events" nav={nav}/>
                             <Link page="All News" title="Articles" nav={nav}/>
                             <View style={styles.smallBuffer}></View>
-                        </View>
+                        </View> */}
                         <View style={styles.sectionContainer}>
                             <Text style={styles.title}>Notifications</Text>
                             <SettingToggle setting="enablenotifs" title={"Enable Notifications"}/>

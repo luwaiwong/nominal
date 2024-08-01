@@ -1,5 +1,5 @@
 import { StyleSheet, View, Text, Image, StatusBar, Dimensions, FlatList, Pressable, TouchableOpacity, TouchableHighlight, TouchableNativeFeedback, Linking, ScrollView } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons} from "@expo/vector-icons";
 
@@ -8,12 +8,14 @@ import { BlurView } from "expo-blur";
 import TMinus from "./TMinus";
 import Article from "./Article";
 import ArticleDescriptive from "./ArticleDescriptive";
+import { UserContext } from "../data/UserContext";
 // import { BlurView } from "@react-native-community/blur";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export function ForYouLaunch(data) {
+  const userContext = useContext(UserContext);
   let launchInfo = data.data;  
   let [launchTime, setLaunchTime] = useState<any>(new Date(launchInfo.net));
 
@@ -25,6 +27,8 @@ export function ForYouLaunch(data) {
   if (launchTime.getTime() < Date.now()) {
       status = "Recently Launched";
   }
+  // console.log(Object.keys(launchInfo))
+  // return <></>
   // Check Status for Launch
   if (launchInfo.status.id === 4) {
       status = "Failed Launch";
@@ -38,7 +42,7 @@ export function ForYouLaunch(data) {
   }
 
   return (
-    <Pressable onPress={()=>data.nav.navigate("Launch", {data: launchInfo})}>
+    <Pressable onPress={()=>userContext.nav.navigate("Launch", {data: launchInfo})}>
     <View style={styles.page}>
         <Image style={styles.image} source={{uri: launchInfo.image}} />
         <View style={styles.contentContainer}>
@@ -75,6 +79,7 @@ export function ForYouLaunch(data) {
 }
 
 export function ForYouEvent(data) {
+  const userContext = useContext(UserContext);
   const eventData = data.data;
   const date = new Date(eventData.date);
   let name = "";
@@ -95,7 +100,7 @@ export function ForYouEvent(data) {
   let [descriptionOpen, setDescriptionOpen] = useState(false);
 
   return (
-  <Pressable onPress={()=>data.nav.navigate("Event", {data: eventData})}>
+  <Pressable onPress={()=>userContext.nav.navigate("Event", {data: eventData})}>
       
   <View style={styles.page}>
     <Image style={styles.image} source={{uri: eventData.feature_image}} />
@@ -130,7 +135,7 @@ export function ForYouEvent(data) {
   )
 }
 
-export function ForYouEnd(props){
+export function ForYouNews(props){
   const news = props.data;
   return (
   <View style={styles.page}>
@@ -140,13 +145,37 @@ export function ForYouEnd(props){
           <Text style={styles.articleSubtitle}>Here are some recent articles:</Text>    
         </View>
 
-        <ScrollView>
+        {/* <ScrollView> */}
               {news.map((article) => {
                 return <ArticleDescriptive articleData={article} key={article.id} />
               })
             }
-            <View style={styles.bottomPadding}></View>
-        </ScrollView>
+        {/* </ScrollView> */}
+          {/* <Text style={styles.bottomText}>Swipe right to view your dashboard, or </Text>   */}
+          <Text style={styles.bottomText}>Keep scrolling for recent launches & events...</Text>    
+          {/* <View style={styles.bottomPadding}></View> */}
+
+      </View>
+  </View>
+  )
+
+}
+export function ForYouEnd(props){
+  const news = props.data;
+  return (
+  <View style={styles.page}>
+    <View style={styles.articleSection}>
+        <View>
+          <Text style={styles.articleTitle}>That's all for now! </Text>    
+          <Text style={styles.articleSubtitle}>Here are some more articles:</Text>  
+          {/* <Text style={styles.bottomText}>Swipe right to view your dashboard</Text>      */}
+        </View> 
+
+        {news.map((article) => {
+          return <ArticleDescriptive articleData={article} key={article.id} />
+        })}
+        <Text style={styles.bottomText}>{"Swipe right to view your dashboard >"} </Text>   
+
       </View>
   </View>
   )
@@ -157,8 +186,6 @@ export function ForYouImageOfDay(props) {
   let [descriptionOpen, setDescriptionOpen] = useState(false);
   let description = data.explanation;
   let date = new Date(data.date);
-  // description.replace(/\.(?=[A-Z])/g, '<br /><br />');
-  console.log(new Date(data.date));
   return (
     <Pressable onPress={()=>{Linking.openURL(data.hdurl)}}>
       
@@ -201,8 +228,9 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         justifyContent: "flex-start",
         backgroundColor: COLORS.BACKGROUND,
-        width: "100%",
-        height: "100%",
+        // width: "100%",
+        // height: "100%",
+        height: Dimensions.get('window').height,
     },
     image:{
         position: "absolute",
@@ -210,12 +238,15 @@ const styles = StyleSheet.create({
         left: 0,
         width: "100%",
         height: "110%",
+        // height: Dimensions.get('window').height,
     },
     // Sections
     contentContainer:{
-      width:"100%",
-      height: "100%",
+      // width:"100%",
+      // height: "100%",
       // paddingBottom: BOTTOM_BAR_HEIGHT,
+
+      height: Dimensions.get('window').height,
       paddingTop: StatusBar.currentHeight+TOP_BAR_HEIGHT,
       
       display: "flex",
@@ -444,7 +475,7 @@ const styles = StyleSheet.create({
       height: Dimensions.get('window').height-StatusBar.currentHeight-BOTTOM_BAR_HEIGHT-10,
     },
     articleTitle:{
-      fontSize: 24,
+      fontSize: 30,
       color: COLORS.FOREGROUND,
       fontFamily: FONT,
       fontWeight: "600",
@@ -457,6 +488,7 @@ const styles = StyleSheet.create({
       
       marginHorizontal: 15,
       marginRight: 10,
+      marginTop: 10
     },
     articleSubtitle:{
       fontSize: 18,
@@ -473,6 +505,18 @@ const styles = StyleSheet.create({
       marginHorizontal: 15,
       marginRight: 10,
       marginBottom  : 10,
+    },
+    bottomText:{
+      fontSize: 20,
+      color: COLORS.FOREGROUND,
+      fontFamily: FONT,
+      fontWeight: "600",
+      textAlign: "left",
+      
+      marginHorizontal: 15,
+      marginRight: 10,
+      marginBottom  : 25,
+
     },
     bottomPadding:{
       height: BOTTOM_BAR_HEIGHT+10,

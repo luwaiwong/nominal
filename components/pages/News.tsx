@@ -10,19 +10,26 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../data/UserContext";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import ArticleDescriptive from "../styled/ArticleDescriptive";
+import Loading from "../styled/Loading";
 const NEWS_API_URL = "https://api.spaceflightnewsapi.net/v4/";
 
 export default function News(props){
     let userContext = useContext(UserContext);
     let callingData = useRef(false);
     let currentOffset = useRef(10);
-    let upcomingEvents = userContext.events.upcoming;
+    const [refreshing, setRefreshing] = useState(false)
+
+    // Check data loaded
+    if (userContext == null || userContext.news == null){
+        return <Loading/>
+    }
+
+    let upcomingEvents = userContext.events.upcoming.filter((event)=>{return new Date(event.date).getTime() > new Date().getTime()});
     let previousEvents = userContext.events.previous;
-    const [data, setData] = useState(null);
+    let news = userContext.news.slice(0,4);
 
     const nav = props.data.nav;
 
-    const [refreshing, setRefreshing] = useState(false)
     async function refreshData(){
         setRefreshing(true)
         await props.data.reloadData().then((data)=> {
@@ -31,42 +38,11 @@ export default function News(props){
         })
     }
 
-    useEffect(() => {
-        if (userContext != null && userContext.news != null){
-            setData(userContext.news.slice(0,4))
-        }
-    }, [])
 
     const onEndReached = () => {
         // getMoreData();
     }
 
-    async function getMoreData(){
-        if (callingData.current){
-            return
-        }
-
-        callingData.current = true;
-        await fetch(NEWS_API_URL+"articles/?offset="+currentOffset.current).then((response) => {
-            return response.json()
-        }).then((articles) => {
-            if (articles == null){
-                console.log("Article data null")
-                callingData.current = false;
-                return
-            }
-            setData([...data,...articles.results])
-            currentOffset.current = currentOffset.current + 10;
-            callingData.current = false;
-        }).catch((error) => {
-            console.log("Error fetching article data", error)
-            callingData.current = false;
-        })
-    }
-
-    if (data == null){
-        return (<></>)
-    }
     return (<>
         <View style={styles.container}>
             <ScrollView 
@@ -86,7 +62,7 @@ export default function News(props){
                         </View>
                     </TouchableOpacity>
                     <View style={{height:10}}></View>
-                    {data != undefined && data.map((item, index) => {return (<Article articleData={item} key={index}/>);})}
+                    {news.map((item, index) => {return (<Article articleData={item} key={index}/>);})}
                     {/* <Article articleData={news[4]}></Article> */}
                 </View>
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'; 
+import React, { useContext, useEffect, useImperativeHandle, useRef, useState } from 'react'; 
 import { View, Text , StyleSheet, Dimensions, Animated, ViewBase} from 'react-native'; 
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons'; 
 import { BlurView } from 'expo-blur';
@@ -7,6 +7,7 @@ import { BlurView } from 'expo-blur';
 
 import {COLORS, FONT, BOTTOM_BAR_HEIGHT} from '../styles';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import { UserContext } from '../data/UserContext';
 
 
 
@@ -105,6 +106,7 @@ const styles = StyleSheet.create({
 });
 
 const MenuBar = React.forwardRef((props: any, ref: any)=> {
+    const userContext = useContext(UserContext);
     const setPage = props.setPage;
     const page = props.page;
 
@@ -124,8 +126,12 @@ const MenuBar = React.forwardRef((props: any, ref: any)=> {
     }, [page.current]);
 
     useEffect(()=>{
-        console.log("Menu Bar Rendered");
-    }, []);
+        if (userContext != null){
+            userContext.showMenu = showMenu;
+            userContext.hideMenu = hideMenu;
+        }
+        
+    }, [userContext]);
 
 
     const showMenu = ()=>{

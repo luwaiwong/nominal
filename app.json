@@ -4,7 +4,7 @@
   "expo": {
     "name": "Nominal",
     "slug": "nominal",
-    "version": "0.4.7",
+    "version": "0.4.9.0",
     "orientation": "portrait",
     "icon": "./assets/icon-temp.png",
     "userInterfaceStyle": "light",

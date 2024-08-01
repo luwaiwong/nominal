@@ -112,6 +112,7 @@ export default function App(props) {
     fetchData(userContext);
 
   }, [userContext]);
+  
 
   async function checkFirstLoad(){
     if (userContext == null){
@@ -184,7 +185,6 @@ export default function App(props) {
     return <Loading />;
   }
 
-
   // Page Change Handling
   // Use to change current page when button pressed
   function setPage(page){
@@ -225,40 +225,32 @@ export default function App(props) {
 
   // Returns current page
   function CurrentPage(){
-    if (launchData == null) {
-      return <Loading />;
-    }
-    else{
-      // Data object fed into all pages
-      // Includes current state of app
-      let data = {
-        launchData: launchData, 
-        upcoming: launchData.upcoming,
-        previous: launchData.previous,
-        pinned: launchData.pinned,
-        reloadData: reloadData,
-        nav: props.navigation,
-        setPage: setPage,
-      };
-      return (
-        <PagerView 
-          style={styles.pagerView} 
-          initialPage={currentPage.current} 
-          orientation="horizontal" 
-          ref={pagerRef} 
-          onPageScrollStateChanged={onPageScrollStateChanged}
-          onPageScroll={onPageScroll}
-          onPageSelected={onPageSelected}
-        >
-          <ForYou data={data}/>
-          <Dashboard data={data}/>
-          <Launches data={data}/>
-          <News data={data}/>
-          {/* <Locations data={data}/> */}
-          <Settings />
-        </PagerView>
-      )
-    }
+    // Data object fed into all pages
+    // Includes current state of app
+    let data = {
+      reloadData: reloadData,
+      nav: props.navigation,
+      setPage: setPage,
+    };
+    return (
+      <PagerView 
+        style={styles.pagerView} 
+        initialPage={currentPage.current} 
+        orientation="horizontal" 
+        ref={pagerRef} 
+        onPageScrollStateChanged={onPageScrollStateChanged}
+        onPageScroll={onPageScroll}
+        onPageSelected={onPageSelected}
+      >
+        <ForYou data={data}/>
+        <Dashboard data={data}/>
+        <Launches data={data}/>
+        <News data={data}/>
+        {/* <Locations data={data}/> */}
+        <Settings />
+      </PagerView>
+    )
+    
   }
 
   // Main App View

@@ -4,8 +4,22 @@ const LAUNCH_API_URL = LAUNCH_PROD_API_URL;
 
 const NEWS_API_URL = "https://api.spaceflightnewsapi.net/v4/";
 
+export async function fetchLaunches(type: string, limit: number, offset: number){
+    return await fetch(LAUNCH_API_URL+"launch/"+type+"/?limit="+limit+"&offset="+offset+"&hide_recent_previous=true")
+    .then((response) => {
+        return response.json();
+    })
+    .then((data) => {
+        return processLaunchData(data.results);
+    })
+    .catch((error) => {
+        console.log("Error fetching launch data:", error);
+        return {}
+    })
+
+}
 export async function getUpcomingLaunches(){
-    return await fetch(LAUNCH_API_URL+"launch/upcoming/")
+    return await fetch(LAUNCH_API_URL+"launch/upcoming/?hide_recent_previous=true")
     .then((response) => {
         return response.json();
     })
@@ -118,6 +132,8 @@ export function processLaunchData(data: any){
             // Launch Time
             net: launch.net,
             net_precision: launch.net_precision,
+            date: launch.net,
+            date_precision: launch.net_precision,
             window_start: launch.window_start,
             window_end: launch.window_end,
 

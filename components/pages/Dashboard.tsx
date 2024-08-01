@@ -24,10 +24,14 @@ export default function Dashboard(props) {
   const userContext = useContext(UserContext);
   
 
+  // Check if data is loaded
+  if (userContext.launches === undefined){
+    return <Loading/>
+  }
+
   // All data
-  let launchData = props.data.launchData
-  let upcoming = launchData.upcoming
-  let recentlyLaunched = launchData.dashboardRecent
+  let upcoming = userContext.launches.upcoming
+  let recentlyLaunched = userContext.launches.previous.slice(0,5)
   let upcomingFiltered = null
   // calculate upcoming filtered
   upcomingFiltered = userContext.launches.upcoming.slice(1,8)
@@ -39,13 +43,10 @@ export default function Dashboard(props) {
       return true;
     })
     .slice(0, 3);
-  let highlights = launchData.dashboardHighlights
+  let highlights = [userContext.launches.upcoming[0]]
 
 
   let nav = props.data.nav
-
-
-  let pinnedLaunches = props.data.launchData.pinned._j // I DON'T KNOW WHY _J IS REQUIRED
 
   const [refreshing, setRefreshing] = useState(false)
   async function refreshData(){
@@ -55,6 +56,8 @@ export default function Dashboard(props) {
       setRefreshing(false)
     })
   }
+
+  
     
   function Content(){
     return (
@@ -84,7 +87,7 @@ export default function Dashboard(props) {
 
                 {/* Upcoming Launches */}
                 <View style={[styles.contentSection]}>
-                  <TouchableOpacity onPress={()=>{nav.navigate('Launches', {data: launchData.upcoming, title:"Upcoming Launches" })}}>
+                  <TouchableOpacity onPress={()=>{nav.navigate('Launches', {data: userContext.launches.upcoming, title:"Upcoming Launches" })}}>
                     <View style={styles.contentHeaderSection} >
                         <Text style={styles.contentHeaderText} >Upcoming Launches</Text>
                         <View style={styles.seeMoreSection}>
@@ -116,9 +119,6 @@ export default function Dashboard(props) {
       
   }
 
-  if (launchData === undefined){
-    return <Loading/>
-  }
   return <Content/>;
     
 }

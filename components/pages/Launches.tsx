@@ -1,4 +1,4 @@
-import React, {useContext, useRef} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import { StyleSheet, View, Text, Animated, ScrollView, StatusBar, Dimensions, FlatList, Pressable } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { MaterialIcons } from 'react-native-vector-icons';
@@ -8,12 +8,40 @@ import Loading from '../styled/Loading';
 import {BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT} from '../styles';
 import { UserContext } from '../data/UserContext';
 import { BottomSheetAndroid } from '@react-navigation/stack/lib/typescript/src/TransitionConfigs/TransitionPresets';
+import LaunchHighlight from '../styled/HighlightLaunch';
 
 export default function Launches(props){
     const userContext = useContext(UserContext);
+
+    // Animation Hooks
+    let barMargin = useRef(new Animated.Value(0)).current;
+    let pageMargin = useRef(new Animated.Value(0)).current;
+
+    const [launches, setLaunches] = useState({upcoming: [], previous: []})
+
+    // Check if data is updated every 5 seconds, if so update stuff
+    useEffect(()=>{
+      const intervalId = setInterval(() => {
+        // console.log("bruh")
+        let hasLaunches = userContext != null && userContext.launches != null && userContext.launches.upcoming != undefined && userContext.launches.upcoming.length > 0
+        if (hasLaunches)
+        {
+          setLaunches(userContext.launches)
+          
+        }
+      }, 2000); // 1000 milliseconds = 1 second
+
+      // Clear interval on re-render to avoid memory leaks
+      return () => clearInterval(intervalId);
+    }, [])
+
+    // Check if data is loaded
+    if (userContext.launches === undefined){
+        return <Loading/>
+    }
+
+    // INFO
     const nav = userContext.nav; 
-    const upcomingLaunches = userContext.launches.upcoming;
-    const previousLaunches = userContext.launches.previous;
 
     //#region Animation & Input for Top Bar
     let upcoming = Gesture.Tap();
@@ -22,12 +50,10 @@ export default function Launches(props){
     upcoming.onFinalize(()=>toggleSelection("upcoming"));
     previous.onFinalize(()=>toggleSelection("previous"));
 
-    let barMargin = useRef(new Animated.Value(0)).current;
     let inputRange = [0, 100];
     let outputRange = ["5%", "55%"];
     let animatedBarMargin = barMargin.interpolate({inputRange, outputRange});
 
-    let pageMargin = useRef(new Animated.Value(0)).current;
     inputRange = [0,100]
     outputRange = ["0%", "-100%"];
     let animatedPageMargin = pageMargin.interpolate({inputRange, outputRange});
@@ -95,7 +121,7 @@ export default function Launches(props){
             {/* Upcoming Section */}
             <View style={[styles.contentSection]}>
               <FlatList
-                  data={upcomingLaunches}
+                  data={launches.upcoming}
                   keyExtractor={(item, index) => index.toString()}
                   renderItem={({ item }) => <LaunchInfo data={item}  nav={nav}> </LaunchInfo>}
                   ListFooterComponent={<View style={styles.bottomPadding}></View>}
@@ -106,7 +132,8 @@ export default function Launches(props){
             {/* Previous Section */}
             <View style={[styles.contentSection]}>
               <FlatList
-                  data={previousLaunches}
+                  data={launches.previous
+                  }
                   keyExtractor={(item, index) => index.toString()}
                   renderItem={({ item }) => <LaunchInfo data={item}  nav={nav}></LaunchInfo>}
                   ListFooterComponent={<View style={styles.bottomPadding}></View>}
@@ -133,6 +160,7 @@ const styles = StyleSheet.create({
       justifyContent: 'space-around',
       padding: 5,
       marginBottom: 5,
+      height:43
     },
     topSelectionText:{
       fontSize: 24,
@@ -147,7 +175,7 @@ const styles = StyleSheet.create({
       backgroundColor: COLORS.FOREGROUND,
       borderRadius: 100,
       marginBottom: 10,
-      marginLeft: "5%",
+      marginHorizontal: "8%",
     
     },
 
@@ -158,15 +186,16 @@ const styles = StyleSheet.create({
       // position: 'absolute',
       marginLeft: "0%",
       width: "200%",
-      height: Dimensions.get('window').height,
-      paddingBottom: BOTTOM_BAR_HEIGHT,
+      height: Dimensions.get('window').height-TOP_BAR_HEIGHT-StatusBar.currentHeight-60,
+      // paddingBottom: BOTTOM_BAR_HEIGHT,
+      // backgroundColor: 'white',
       
       overflow: "hidden",
     },
     contentSection: {
       display: 'flex',
-      backgroundColor: COLORS.BACKGROUND,
-      marginBottom: 50,
+
+      // marginBottom: 50,
       // overflow: 'hidden',
       flex: 1
     },
@@ -200,6 +229,6 @@ const styles = StyleSheet.create({
         zIndex: 200,
     },
     bottomPadding:{
-      height: BOTTOM_BAR_HEIGHT+6,
+      height: BOTTOM_BAR_HEIGHT+9,
     }
 });

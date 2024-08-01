@@ -125,6 +125,10 @@ export default function index(props) {
       return;
     }
     user.current = createUserContext(); 
+
+    return () => {
+      user.current = null;
+    }
   }, []);
 
   const Theme = {

@@ -10,7 +10,7 @@ import { scheduleNotifications } from "./NotificationHandler";
 
 // Set cache call time
 // If last call less than x minutes ago, use cache
-const cachecalltime = 1000 * 60 * 30;
+const cachecalltime = 1000 * 60 * 60;
 const extradatacalltime = 1000 * 60 * 90;
 const twomin = 1000 * 60 * 2;
 
@@ -37,7 +37,6 @@ export class UserData {
     // INFO
     this.name = "User Data";
     this.APIHandler = APIHandler;
-    this.systemTags = Tags;
 
     // State
     this.lastcall = 0;
@@ -133,19 +132,19 @@ export class UserData {
 
   async getCache() {
     console.log("Getting Cache");
-    const lastcall = await AsyncStorage.getItem("lastcall");
-    const launches = await AsyncStorage.getItem("launches");
-    const events = await AsyncStorage.getItem("events");
-    const news = await AsyncStorage.getItem("news");
-    const starship = await AsyncStorage.getItem("starship");
-    const iss = await AsyncStorage.getItem("iss");
+    const lastcall = JSON.parse(await AsyncStorage.getItem("lastcall"));
+    const launches = JSON.parse(await AsyncStorage.getItem("launches"));
+    const events = JSON.parse(await AsyncStorage.getItem("events"));
+    const news = JSON.parse(await AsyncStorage.getItem("news"));
+    const starship = JSON.parse(await AsyncStorage.getItem("starship"));
+    const iss = JSON.parse(await AsyncStorage.getItem("iss"));
 
     let hasData =
       lastcall !== null &&
       launches !== null &&
-      launches.upcoming != [] &&
+      launches.upcoming != undefined &&
       events !== null &&
-      events.upcoming != [] &&
+      events.upcoming != undefined &&
       news !== null;
 
     // Log the last call time
@@ -240,11 +239,16 @@ export class UserData {
     ) {
       console.log("Data fetched from cache");
 
-      this.launches = JSON.parse(this.cache.launches);
-      this.events = JSON.parse(this.cache.events);
-      this.news = JSON.parse(this.cache.news);
-      this.starship = JSON.parse(this.cache.starship);
-      this.iss = JSON.parse(this.cache.iss);
+      // this.launches = JSON.parse(this.cache.launches);
+      // this.events = JSON.parse(this.cache.events);
+      // this.news = JSON.parse(this.cache.news);
+      // this.starship = JSON.parse(this.cache.starship);
+      // this.iss = JSON.parse(this.cache.iss);
+      this.launches = this.cache.launches;
+      this.events = this.cache.events;
+      this.news = this.cache.news;
+      this.starship = this.cache.starship;
+      this.iss = this.cache.iss;
 
       this.gettingdata = false;
       return this.#getData();
@@ -272,6 +276,7 @@ export class UserData {
       // Calls the storedata function after returning the data
       setTimeout.bind(this, this.storeData(), 0);
       setTimeout.bind(this, this.scheduleNotifications(), 0);
+      setTimeout.bind(this, this.getAllLaunches(), 0);
 
       return this.#getData();
     } catch (error) {
@@ -316,10 +321,9 @@ export class UserData {
     // Try fetching the data and return the upcoming launches
     try {
       let curTime = new Date().getTime();
-      await this.getUpcomingData();
+      await this.getAllLaunches();
       await this.getEvents();
       await this.getNews();
-      this.updateStarshipLaunchesAndEvents();
 
       console.log("Data Fetched");
       // How long did it take to fetch data?
@@ -352,37 +356,37 @@ export class UserData {
   }
   // Stores the data in local storage
   async storeData() {
+    console.log("Storing Data");
     try {
       await AsyncStorage.setItem("lastcall", this.lastcall.toString());
-      console.log("Last call stored");
+      // console.log("Last call stored");
     } catch (error) {
       console.log("Error storing last call: " + error);
     }
 
     try {
       await AsyncStorage.setItem("launches", JSON.stringify(this.launches));
-      console.log("Launches stored");
     } catch (error) {
       console.log("Error storing data: " + error);
     }
 
     try {
       await AsyncStorage.setItem("events", JSON.stringify(this.events));
-      console.log("Events stored");
+      // console.log("Events stored");
     } catch (error) {
       console.log("Error storing events: " + error);
     }
 
     try {
       await AsyncStorage.setItem("news", JSON.stringify(this.news));
-      console.log("News stored");
+      // console.log("News stored");
     } catch (error) {
       console.log("Error storing news: " + error);
     }
     try {
       if (this.starship !== undefined) {
         await AsyncStorage.setItem("starship", JSON.stringify(this.starship));
-        console.log("Starship stored");
+        // console.log("Starship stored");
       }
     } catch (e) {
       console.log("Error Storing starship: " + e);
@@ -390,12 +394,37 @@ export class UserData {
     try {
       if (this.iss !== undefined) {
         await AsyncStorage.setItem("iss", JSON.stringify(this.iss));
-        console.log("ISS stored");
+        // console.log("ISS stored");
       }
     } catch (e) {
       console.log("Error Storing ISS: " + e);
     }
   }
+  async getAllLaunches() {
+    console.log("Getting all Launches");
+
+    // First get 100 upcoming launches, then 100 previous launches, then 100 more of each
+
+    // get 100 launches
+    let data = await this.fetchLaunches("upcoming", 100, 0);
+
+    // check that there is data
+    if (data.length > 0) {
+      this.#setLaunchData({ upcoming: data, previous: [] });
+    }
+
+    // Get 100 previous launches
+    data = await this.fetchLaunches("previous", 100, 0);
+
+    // check that there is data
+    if (data.length > 0) {
+      this.#setLaunchData({ upcoming: [], previous: data });
+    }
+
+    // store data
+    this.storeData();
+  }
+
   async getSettings() {
     try {
       const settings = await AsyncStorage.getItem("settings");
@@ -436,54 +465,8 @@ export class UserData {
     }
   }
   // #endregion
-  //#region PINNED FUNCTIONS
-  async getPinnedLaunches() {
-    let pinned = [];
-    for (let i = 0; i < this.launches.upcoming.length; i++) {
-      if (
-        this.pinned.includes(this.launches.upcoming[i].id) &&
-        !pinned.includes(this.launches.upcoming[i])
-      ) {
-        pinned.push(this.launches.upcoming[i]);
-      }
-    }
-    for (let i = 0; i < this.launches.previous.length; i++) {
-      if (
-        this.pinned.includes(this.launches.previous[i].id) &&
-        !pinned.includes(this.launches.previous[i])
-      ) {
-        pinned.push(this.launches.previous[i]);
-      }
-    }
-    return pinned;
-  }
 
-  // Pinned Functions
-  addPinned(launchInfo) {
-    this.pinned.push(launchInfo);
-  }
-  removePinned(launchInfo) {
-    let index = this.pinned.indexOf(launchInfo);
-    if (index > -1) {
-      this.pinned.splice(index, 1);
-    }
-  }
-  togglePinned(launchInfo) {
-    if (this.pinned.includes(launchInfo)) {
-      this.removePinned(launchInfo);
-      return false;
-    } else {
-      this.addPinned(launchInfo);
-      return true;
-    }
-  }
-  getPinned() {
-    return this.pinned;
-  }
-
-  //#endregion
-
-  //#region NOTIFICATION FUNCTIONS
+  //#region NOTIFICATIONS
   async scheduleNotifications() {
     this.notifs = await scheduleNotifications(
       this.settings,
@@ -504,264 +487,92 @@ export class UserData {
     }
   }
   //#endregion
-  //#region STARSHIP DATA
-  updateStarshipLaunchesAndEvents() {}
-  //#endregion
 
   // #region PRIVATE DATA FUNCTIONS
   #getData() {
     data = {
-      foryou: [],
-      pinned: [],
-      dashboardHighlights: [],
-      dashboardFiltered: [],
-      dashboardRecent: [],
-      upcoming: [],
-      previous: [],
+      launches: [],
       events: [],
       news: [],
     };
-
-    data.upcoming = this.#getUpcomingLaunches();
-    data.previous = this.#getPreviousLaunches();
-    // data.pinned = this.getPinnedLaunches();
-
-    data.dashboardHighlights = this.#getDashboardHighlightLaunches();
-    data.dashboardFiltered = this.#getDashboardFilteredLaunches();
-    data.dashboardRecent = this.#getDashboardRecentLaunches();
-    data.dashboardEvents = this.#getDashboardEvents();
-    data.dashboardNews = this.#getDashboardNews();
-
-    data.foryou = this.#getForYouData();
-
-    data.news = this.#getNewsData();
-    data.events = this.#getEventsData();
-    data.eventsHighlights = this.#getEventsDataHighlights();
-    data.newsHighlights = this.#getNewsDataHighlights();
+    data.launches = this.launches;
+    data.events = this.events;
     return data;
   }
-
-  #getUpcomingLaunches() {
-    return this.launches.upcoming;
-  }
-  #getPreviousLaunches() {
-    return this.launches.previous;
-  }
-  #getNewsData() {
-    return this.news;
-  }
-  #getNewsDataHighlights() {
-    return this.news.slice(0, 5);
-  }
-  #getEventsData() {
-    return this.events;
-  }
-  #getEventsDataHighlights() {
-    return this.events.upcoming.slice(0, 2);
-  }
-
-  // FOR YOU ALGORITHM
-  #getForYouData() {
-    const now = new Date().getTime();
-
-    let recentLaunches = [];
-    let recentEvents = [];
-    let recent = [];
-    // First, get recently launched launches within the last 7 days
-    for (let i = 0; i < this.launches.previous.length; i++) {
-      let launch = this.launches.previous[i];
-      let launchTime = new Date(launch.net).getTime();
-      if (now - launchTime < 1000 * 60 * 60 * 24 * 7) {
-        recentLaunches.push(launch);
-      }
-    }
-    for (let i = 0; i < this.events.previous.length; i++) {
-      let event = this.events.previous[i];
-      let time = new Date(event.date).getTime();
-      if (now - time < 1000 * 60 * 60 * 24 * 7) {
-        recentEvents.push(event);
-      }
-    }
-
-    // Launch index and event index
-    let ei = 0;
-    let li = 0;
-
-    // Check settings
-    if (!this.settings.fyshowpastlaunches) {
-      recentLaunches = [];
-    }
-    if (!this.settings.fyshowpastevents) {
-      recentEvents = [];
-    }
-    while (ei < recentEvents.length || li < recentLaunches.length) {
-      let einrange = ei < recentEvents.length;
-      let linrange = li < recentLaunches.length;
-
-      if (!einrange && !linrange) {
-        break;
-      }
-      // If out of events
-      else if (!einrange) {
-        recent.push(recentLaunches[li]);
-        li++;
-        continue;
-      }
-      // If out of launches
-      else if (!linrange) {
-        recent.push(recentEvents[ei]);
-        ei++;
-        continue;
-      }
-
-      // Compare time of event and launch
-      let eventTime = new Date(recentEvents[ei].date).getTime();
-      let launchTime = new Date(recentLaunches[li].net).getTime();
-
-      // Add whichever is closer
-      if (eventTime >= launchTime) {
-        recent.push(recentEvents[ei]);
-        ei++;
-      } else {
-        recent.push(recentLaunches[li]);
-        li++;
-      }
-    }
-
-    // Intended behaviour:
-    // Return launch or event that is closest to current date
-    // But only if the event/launch has a date_precision of day or better
-    // Otherwise return the next launch/event that has a date_precision of day or better
-    // If no launches with date_precision of day or better, return one with date_precision of month
-    // If no event with date_precision of month, return one with date_precision of month
-
-    // Launch index and event index
-    ei = 0;
-    li = 0;
-    // Other info
-    let launches = this.launches.upcoming;
-    let data = [];
-
-    while (
-      ei < this.events.upcoming.length ||
-      li < this.launches.upcoming.length
-    ) {
-      let einrange = ei < this.events.upcoming.length;
-      let linrange = li < this.launches.upcoming.length;
-
-      if (!einrange && !linrange) {
-        break;
-      }
-      // If out of events, and launches are still accurate
-      else if (!einrange && launches[li].net_precision.name != "Month") {
-        data.push(this.launches.upcoming[li]);
-        li++;
-        continue;
-      }
-      // If out of launches, and events are still accurate
-      else if (
-        !linrange &&
-        this.events.upcoming[ei].date_precision != null &&
-        this.events.upcoming[ei].date_precision.name != "Month"
-      ) {
-        data.push(this.events.upcoming[ei]);
-        ei++;
-        continue;
-      }
-      // If out of launches, and events are not accurate
-      else if (!linrange) {
-        // Stop
-        break;
-      }
-      // If we still have events and launches, but launches are not accurate
-      else if (launches[li].net_precision.name == "Month") {
-        // Stop
-        // data.push(this.launches.upcoming[li]);
-        li = this.launches.upcoming.length + 1;
-        continue;
-      }
-      let eventTime = new Date(this.events.upcoming[ei].date).getTime();
-      let launchTime = new Date(this.launches.upcoming[li].net).getTime();
-
-      let eventHasPrecision =
-        this.events.upcoming[ei].date_precision != null &&
-        this.events.upcoming[ei].date_precision.name != "Month";
-
-      // Add whichever is closer, as long as the event has precision
-      if (eventTime <= launchTime && eventHasPrecision) {
-        data.push(this.events.upcoming[ei]);
-        ei++;
-        continue;
-      } else {
-        data.push(this.launches.upcoming[li]);
-        li++;
-        continue;
-      }
-    }
-
-    // loop through and remove duplicates
-    data = [...data, { type: "between", id: 1000000000000000000 }, ...recent];
-    let unique = [];
-    let uniqueIds = [];
-    for (let i = 0; i < data.length; i++) {
-      if (!uniqueIds.includes(data[i].id)) {
-        unique.push(data[i]);
-        uniqueIds.push(data[i].id);
-      }
-    }
-
-    return unique;
-  }
-
-  // FOR DASHBOARD
-  #getDashboardHighlightLaunches() {
-    return [this.launches.upcoming[0]];
-  }
-  // Return last 3 recently launched
-  // #TODO Change to return recently launched from last week?
-  #getDashboardRecentLaunches() {
-    return this.launches.previous.slice(0, 3);
-  }
-
-  #getDashboardFilteredLaunches() {
-    // return this.launches.upcoming.slice(0, 5);
-    // Filter the launches based on the tags
-    // Cutoff at launches that are more than 1 month away
-    // return this.launches.upcoming.slice(1, 4);
-    // Filter out starship launches
-    return this.launches.upcoming
-      .filter((launch) => {
-        let name = launch.rocket.name;
-        if (name === "Starship") {
-          return false;
-        }
-        return true;
-      })
-      .slice(1, 4);
-  }
-  #getDashboardEvents() {
-    return this.events.upcoming.slice(0, 1);
-  }
-  #getDashboardNews() {
-    return this.news.slice(0, 2);
-  }
-
   //#endregion
 
+  //#region DATA SETTING FUNCTIONS
+  // Overrides launch data
+  #setLaunchData(data) {
+    if (this.launches === undefined)
+      this.launches = {
+        upcoming: [],
+        previous: [],
+      };
+
+    // Check if has upcoming and previous launches
+    if (
+      data.upcoming != undefined &&
+      data.upcoming != [] &&
+      data.upcoming.length > 0
+    ) {
+      this.launches.upcoming = data.upcoming;
+    }
+
+    if (
+      data.previous != undefined &&
+      data.previous != [] &&
+      data.previous.length > 0
+    ) {
+      this.launches.previous = data.previous;
+    }
+  }
+
+  // Goes through each launch
+  #updateLaunchData(data) {
+    if (this.launches === undefined) {
+      this.launches = {
+        upcoming: [],
+        previous: [],
+      };
+    }
+  }
+
+  #setEventData(data) {}
   //#region DATA FETCHING FUNCTIONS
   // Data fetching functions
+
+  async fetchLaunches(type, limit, offset) {
+    this.apiCallTimes += 1;
+    console.log(
+      "Fetching " +
+        limit +
+        " " +
+        type +
+        " Launches, API Calls: " +
+        this.apiCallTimes
+    );
+    return await this.APIHandler.fetchLaunches(type, limit, offset)
+      .then((data) => {
+        data.lastCalledTime = new Date().getTime();
+        return data;
+      })
+      .catch((error) => {
+        console.log("Error fetching launches: " + error);
+      });
+  }
   async getUpcomingData() {
     this.apiCallTimes += 1;
     console.log("Getting Upcoming, API Calls: " + this.apiCallTimes);
 
     return await this.APIHandler.getUpcomingLaunches().then((data) => {
       data.lastCalledTime = new Date().getTime();
-      // TODO - Store data in local storage
-      // TODO - Instead of overwriting the data, merge the new data with the old data
-      if (this.launches === undefined) this.launches = {};
-      if (this.launches.upcoming === undefined) this.launches.upcoming = [];
 
-      this.launches.upcoming = data;
+      let launches = {
+        upcoming: data,
+        previous: [],
+      };
+      this.#setLaunchData(launches);
 
       return this.launches;
     });
@@ -772,10 +583,13 @@ export class UserData {
     console.log("Getting Previous, API Calls: " + this.apiCallTimes);
 
     return await this.APIHandler.getPreviousLaunches().then((data) => {
-      if (this.launches === undefined) this.launches = {};
-      if (this.launches.previous === undefined) this.launches.previous = [];
+      data.lastCalledTime = new Date().getTime();
 
-      this.launches.previous = data;
+      let launches = {
+        upcoming: [],
+        previous: data,
+      };
+      this.#setLaunchData(launches);
 
       return this.launches;
     });
