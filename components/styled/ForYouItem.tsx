@@ -237,8 +237,8 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         width: "100%",
-        height: "110%",
-        // height: Dimensions.get('window').height,
+        // height: "110%",
+        height: Dimensions.get('window').height,
     },
     // Sections
     contentContainer:{

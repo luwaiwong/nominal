@@ -151,6 +151,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: COLORS.BACKGROUND,
+      height: Dimensions.get('window').height,
     },
 
     // Top Upcoming and Previous Selection Area
@@ -186,11 +187,12 @@ const styles = StyleSheet.create({
       // position: 'absolute',
       marginLeft: "0%",
       width: "200%",
-      height: Dimensions.get('window').height-TOP_BAR_HEIGHT-StatusBar.currentHeight-60,
+      // height: Dimensions.get('window').height-TOP_BAR_HEIGHT-StatusBar.currentHeight-60,
       // paddingBottom: BOTTOM_BAR_HEIGHT,
-      // backgroundColor: 'white',
+      backgroundColor: 'white',
       
       overflow: "hidden",
+      flex: 1
     },
     contentSection: {
       display: 'flex',
@@ -229,6 +231,6 @@ const styles = StyleSheet.create({
         zIndex: 200,
     },
     bottomPadding:{
-      height: BOTTOM_BAR_HEIGHT+9,
+      height: BOTTOM_BAR_HEIGHT+5,
     }
 });

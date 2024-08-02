@@ -236,9 +236,9 @@ export default function ForYou(props) {
       //   })}
       //   {/* <ForYouEnd data={userContext.news.slice(0,3)}/> */}
       // </PagerView>
-      // <View>
+      <View style={styles.immersiveSection}>
         <FlatList 
-          contentContainerStyle={styles.immersiveSection}
+          contentContainerStyle={styles.immersivePage}
           data={items}
           renderItem={({item}) => item}
           initialScrollIndex={0}
@@ -248,7 +248,7 @@ export default function ForYou(props) {
           showsVerticalScrollIndicator={false}
           
         />
-      // </View>
+      </View>
 
 
       
@@ -268,23 +268,24 @@ const styles = StyleSheet.create({
     // flex: 1,
     // width: '100%',
     // height: '100%',
+    height: Dimensions.get('window').height,
 
-    backgroundColor: COLORS.FOREGROUND,
+    // backgroundColor: COLORS.FOREGROUND,
 
     // zIndex: -1000
   },
   immersivePage: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    flexWrap: 'wrap',
+    // display: 'flex',
+    // flexDirection: 'column',
+    // justifyContent: 'flex-start',
+    // flexWrap: 'wrap',
     
-    width: '100%',
-    height: '100%',
+    // width: '100%',
+    // height: '100%',
 
 
-    paddingTop: 60,
-    backgroundColor: COLORS.FOREGROUND,
+    // paddingTop: 60,
+    // backgroundColor: COLORS.FOREGROUND,
   },
   immersivePageTitle:{
     fontSize: 32,
