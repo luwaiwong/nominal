@@ -382,7 +382,7 @@ export default function ISSPage(props) {
                 }
                 { launches.previous[0] != null && 
                 <View style={styles.section}>
-                  <TouchableOpacity onPress={()=>{userContext.nav.navigate('Launches', {data: launches.previous,title:"Previous Starship Launches" })}}>
+                  <TouchableOpacity onPress={()=>{userContext.nav.navigate('Launches', {data: launches.previous,title:"Previous ISS Launches" })}}>
                     <View style={styles.contentHeaderSection} >
                         <Text style={styles.contentHeaderText} >Previous Launch</Text>
                         <View style={styles.seeMoreSection}>

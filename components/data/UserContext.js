@@ -406,7 +406,12 @@ export class UserData {
     // First get 100 upcoming launches, then 100 previous launches, then 100 more of each
 
     // get 100 launches
-    let data = await this.fetchLaunches("upcoming", 100, 0);
+    let data = [];
+    try {
+      data = await this.fetchLaunches("upcoming", 100, 0);
+    } catch (error) {
+      console.log("Error getting upcoming 100 launches: " + error);
+    }
 
     // check that there is data
     if (data.length > 0) {
@@ -414,7 +419,12 @@ export class UserData {
     }
 
     // Get 100 previous launches
-    data = await this.fetchLaunches("previous", 100, 0);
+    data = [];
+    try {
+      data = await this.fetchLaunches("previous", 100, 0);
+    } catch (error) {
+      console.log("Error getting upcoming 100 launches: " + error);
+    }
 
     // check that there is data
     if (data.length > 0) {
