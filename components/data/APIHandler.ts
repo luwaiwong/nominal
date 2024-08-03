@@ -1,6 +1,6 @@
 const LAUNCH_DEV_API_URL = "https://lldev.thespacedevs.com/2.2.0/";
 const LAUNCH_PROD_API_URL = "https://ll.thespacedevs.com/2.2.0/";
-const LAUNCH_API_URL = LAUNCH_DEV_API_URL;
+const LAUNCH_API_URL = LAUNCH_PROD_API_URL;
 
 const NEWS_API_URL = "https://api.spaceflightnewsapi.net/v4/";
 
