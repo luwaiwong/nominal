@@ -54,6 +54,8 @@ const styles = StyleSheet.create({
     height: TOP_BAR_HEIGHT,
     zIndex: 110,
 
+    // backgroundColor: "white",
+
     overflow: 'hidden',
   },
     topAnimatedSection: {
@@ -81,6 +83,7 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       
       width: 150,
+      marginTop: -5,
 
       
       textShadowColor: 'rgba(0, 0, 0, 0.6)',

@@ -20,19 +20,41 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         
+        
         // backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-        padding: 4,
+        // padding: 4,
 
 
-        width: Dimensions.get('window').width-20,
+        width: Dimensions.get('window').width,
         height: BOTTOM_BAR_HEIGHT-10,
         position: "absolute",
-        // bottom: -0,
-        left: 10,
-        borderRadius: 10,
-        overflow: "hidden",
+        // bottom: BOTTOM_BAR_HEIGHT,
+        // left: 10,
+        // paddingHorizontal: 10,
 
         zIndex: 5000,
+    },
+    blurViewContainer: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        
+        backgroundColor: 'rgba('+COLORS.BACKGROUND_HIGHLIGHT_RGB+' 0)',
+        // backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+        padding: 4,
+        paddingVertical: 0,
+
+
+        // width: Dimensions.get('window').width-20,
+        width: "100%",
+        // height: BOTTOM_BAR_HEIGHT-10,
+        height: "100%",
+        position: "absolute",
+        // borderRadius: 10,
+        overflow: "hidden",
+
+        zIndex: 4000,
     },
     menuContainer: {
         display: "flex",
@@ -40,16 +62,19 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         
-        backgroundColor: 'rgba('+COLORS.BACKGROUND_HIGHLIGHT_RGB+' 0.6)',
+        backgroundColor: 'rgba('+COLORS.BACKGROUND_RGB+' 1)',
         // backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
         padding: 4,
+        paddingVertical: 0,
 
 
-        width: Dimensions.get('window').width-20,
-        height: BOTTOM_BAR_HEIGHT-10,
+        // width: Dimensions.get('window').width-10,
+        width: "100%",
+        height: "100%",
         position: "absolute",
-        borderRadius: 10,
+        // borderRadius: 10,
         overflow: "hidden",
+        elevation: 10,
 
         zIndex: 5000,
     },
@@ -85,13 +110,13 @@ const styles = StyleSheet.create({
 
     },
     buttonIcon: {
-        fontSize: 40,
+        fontSize: 38,
         color: COLORS.SUBFOREGROUND,
         opacity: 0.4,
     },
     buttonIconActive: {
-        fontSize: 45,
-        marginBottom: 5,
+        fontSize: 42,
+        marginBottom: 2,
         color: COLORS.SUBFOREGROUND,
         opacity: 1,
     },
@@ -136,7 +161,7 @@ const MenuBar = React.forwardRef((props: any, ref: any)=> {
 
     const showMenu = ()=>{
         Animated.spring(bottomAnim, {
-            toValue: 10,
+            toValue: 0,
             friction: 10,
             useNativeDriver: false,
         }).start();
@@ -155,17 +180,20 @@ const MenuBar = React.forwardRef((props: any, ref: any)=> {
 
     return (
         <Animated.View style={[styles.menuBar, {bottom: bottomAnim}]}>
-            <BlurView intensity={50}  tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.menuContainer} >           
+            <BlurView intensity={0}  tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.blurViewContainer} >           
                 {/* <MenuButton icon="settings" setPage={()=>setPage(0)} label="settings" active={page.current==0} />
                 <MenuButton icon="rocket-launch" setPage={()=>setPage(1)} label="launches" active={page.current == 1} />
                 <MenuButton icon="home" setPage={()=>setPage(2)} label="for you" active={page.current == 2} />
                 <MenuButtonCommunity icon="newspaper-variant" setPage={()=>setPage(4)} label="news" active={page.current == 4 } /> */}
+            </BlurView>
+            <View style={styles.menuContainer}>
+                
                 <MenuButton icon="home" setPage={()=>setPage(1)}  active={page.current == 1} />
                 <MenuButton icon="rocket-launch" setPage={()=>setPage(2)}active={page.current == 2} />
                 <MenuButtonCommunity icon="newspaper-variant" setPage={()=>setPage(3)}active={page.current == 3} />
                 {/* <MenuButtonCommunity icon="space-station" setPage={()=>setPage(3)} label="dashboard" active={page.current == 3} /> */}
                 <MenuButton icon="settings" setPage={()=>setPage(4)}  active={page.current==4} />
-            </BlurView>
+            </View>
         </Animated.View>
     );
     

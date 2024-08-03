@@ -23,6 +23,7 @@
     "expo-device": "~6.0.2",
     "expo-notifications": "~0.28.10",
     "expo-status-bar": "~1.12.1",
+    "nominal": "file:",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "^0.74.3",

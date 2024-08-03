@@ -71,7 +71,10 @@ export default function LaunchPage(props) {
             <ScrollView>
                 {/* Title and date */}
                 <View style={styles.headerInfo}>
-                    <Text style={styles.launchTitle}>{launch.mission.name}</Text>
+                    {launch.mission != null ? 
+                        <Text style={styles.launchTitle}>{launch.mission.name}</Text>:
+                        <Text style={styles.launchTitle}>{launch.rocket.configuration.full_name}</Text> 
+                    }
                     
                     { (isPrecise) ? 
                         <Text style={styles.launchTime}>{launchTime.toLocaleString([],{
@@ -110,7 +113,7 @@ export default function LaunchPage(props) {
                 {launch.failreason != null && launch.failreason != "" && <Text style={styles.failReason} >Cause of Failure: {launch.failreason}</Text>}
                 
                 {/* Note that information may not be accurate as the launch is happening when launch is < 10 minutes away*/}
-                {timeDiff > 0 && timeDiff < 1000 * 60 * 10 && <Text style={styles.liveWarning}>Note that information may not be accurate as the launch is happening, use official sources and livestreams for more accurate, up to date information! </Text>}
+                {timeDiff > 0 && timeDiff < 1000 * 60 * 10 && <Text style={styles.liveWarning}>Note: info may not be accurate as launch is happening, use official sources and livestreams for more accurate, up to date information.</Text>}
                 <View style={styles.infoUrls}>
                     {launch.vid_urls != null && launch.vid_urls[0] != null && launch.vid_urls[0].url != null &&
                         <TouchableOpacity  onPress={() => Linking.openURL(launch.vid_url[0].url)} >
@@ -123,18 +126,26 @@ export default function LaunchPage(props) {
                 </View>
 
                 {/* Description */}
-                <Text style={styles.descriptionTitle}>Description:</Text>
-                <Text style={styles.launchDescription} >{launch.mission.description}</Text>
+                { launch.mission != null && 
+                <>
+                    <Text style={styles.descriptionTitle}>Description:</Text>
+                    <Text style={styles.launchDescription} >{launch.mission.description}</Text>
+                </>
+                }
 
 
-                <Text style={styles.descriptionTitle}>Tags:</Text>
-                <View style={styles.tagsSection}>
-                    <Text style={styles.tag}>{launch.mission.type}</Text>
-                    {launch.mission.agencies.map((agency, index) => {
-                        return <Text style={styles.tag} key={index}>{agency.type}</Text>
-                    })}
-                    <Text style={styles.tag} >{launch.mission.orbit.name}</Text>
-                </View>
+                {launch.mission != null && 
+                <>
+                    <Text style={styles.descriptionTitle}>Tags:</Text>
+                    <View style={styles.tagsSection}>
+                        <Text style={styles.tag}>{launch.mission.type}</Text>
+                        {launch.mission.agencies.map((agency, index) => {
+                            return <Text style={styles.tag} key={index}>{agency.type}</Text>
+                        })}
+                        <Text style={styles.tag} >{launch.mission.orbit.name}</Text>
+                    </View>
+                </>
+                }
                 
                 {/* Other info */}
                 <View style={styles.section}>
@@ -173,10 +184,10 @@ export default function LaunchPage(props) {
                     </Pressable>
                     }
                     
-                    <Text style={styles.orbitText}>Target: {launch.mission.orbit.name}</Text>
+                    {launch.mission != null && <Text style={styles.orbitText}>Target: {launch.mission.orbit.name}</Text>}
 
                 </View>
-                { launch.mission.agencies.length > 0 &&
+                {launch.mission != null && launch.mission.agencies.length > 0 &&
                 <View style={styles.section}>
                     <Text style={styles.subtitle}>Agencies</Text>
                     {launch.mission.agencies.map((agency, index) => {return <Agency key={index} data={agency} />})}
@@ -376,8 +387,8 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         marginTop: 10,
         textShadowColor: 'rgba(0, 0, 0, 0.8)',
-        textShadowOffset: {width: 1, height: 2},
-        textShadowRadius: 1,
+        textShadowOffset: {width: 2, height: 2},
+        textShadowRadius: 5,
         elevation: 200,
     },
     launchTime:{
@@ -444,7 +455,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
     },
     liveWarning:{
-        fontSize: 15,
+        fontSize: 14,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'justify',

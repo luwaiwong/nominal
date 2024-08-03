@@ -6,7 +6,7 @@ import { MaterialIcons } from 'react-native-vector-icons';
 
 import { UserContext } from '../data/UserContext';
 
-const versioncode = "0.4.9.0";
+const versioncode = "0.5.0.1";
 
 export default function Settings(props){
     let userContext = React.useContext(UserContext);
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     },
     bottomPadding:
     {
-        height: BOTTOM_BAR_HEIGHT,
+        height: BOTTOM_BAR_HEIGHT-15,
     },
     horizontalContainer:{
         display: 'flex',

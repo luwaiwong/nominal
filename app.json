@@ -4,10 +4,10 @@
   "expo": {
     "name": "Nominal",
     "slug": "nominal",
-    "version": "0.4.9.0",
+    "version": "0.5.0",
     "orientation": "portrait",
     "icon": "./assets/icon-temp.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",

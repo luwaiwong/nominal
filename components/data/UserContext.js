@@ -473,6 +473,7 @@ export class UserData {
       this.launches,
       this.events
     );
+    // console.log(this.notifs);
     return this.notifs;
   }
 
@@ -484,6 +485,7 @@ export class UserData {
         "Rockets are cool!",
         new Date(Date.now() + 500)
       );
+      return await Notifications.getAllScheduledNotificationsAsync();
     }
   }
   //#endregion

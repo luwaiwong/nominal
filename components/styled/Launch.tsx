@@ -95,32 +95,41 @@ export default function Launch(data) {
       <Animated.View style={[styles.background, {transform:[{scale}]}]}>
         <View style={styles.bodySection}>
           <View style={styles.infoSection}>
+            {launch.mission != null ? 
+            
             <View>
-              {launch.mission != null && <Text style={styles.titleText} numberOfLines={1}>{launch.mission.name} </Text>}
-          
-              {
-                isPrecise ? <Text style={styles.smallText}>{tminus}</Text> : <Text style={styles.smallText}>{status}</Text>
-              }
-
-            </View>
-            <View style={styles.smallSpacer}></View>
-            <View>
+              <Text style={styles.titleText} numberOfLines={2}>{launch.mission.name} </Text>
               <Text style={styles.mediumText}>{launch.rocket.configuration.full_name}</Text>
               <Text style={styles.smallText} numberOfLines={1}>{launch.launch_provider.name}</Text>
 
+            </View>: 
+            <View>
+              <Text style={styles.titleText}>{launch.rocket.configuration.full_name}</Text>
+              <Text style={styles.smallText} numberOfLines={2}>{launch.launch_provider.name}</Text>
+
             </View>
+            }
+            {/* <View style={styles.smallSpacer}></View> */}
+            
             <View style={styles.smallSpacer}></View>
-            <Text style={styles.smallText} numberOfLines={2}>{launch.launch_pad.location.name}</Text>
-            {/* <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> */}
-            { isPrecise ? 
-                <Text style={styles.mediumText}>{launchTime.toLocaleString([],{
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    month: 'short',
-                    day: 'numeric',weekday: 'short'})}</Text>
-              : 
-              <Text style={styles.mediumText}>NET {MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> 
+            <Text style={styles.smallText} numberOfLines={1}>{launch.launch_pad.location.name}</Text>
+            
+            <View style={styles.smallSpacer}></View>
+            <View>
+              {/* <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> */}
+              { isPrecise ? 
+                  <Text style={styles.smallText}>{launchTime.toLocaleString([],{
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      month: 'short',
+                      day: 'numeric',weekday: 'short'})}</Text>
+                : 
+                <Text style={styles.smallText}>NET {MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> 
+                }
+              {
+                isPrecise ? <Text style={styles.mediumText}>{tminus}</Text> : <Text style={styles.mediumText}>{status}</Text>
               }
+            </View>
           </View>
           {/* Pinned Icon */}
           {/* {pinned ? 
@@ -200,8 +209,9 @@ infoSection:{
   paddingRight: 10,
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'space-around',
+  justifyContent: 'space-between',
   // backgroundColor: colors.FOREGROUND,
+  paddingTop: -5,
 
 },
 image: {
@@ -220,15 +230,15 @@ text: {
 // Header Section Stuff
 titleText: {
     // flex: 1,
-    fontSize: 17,
+    fontSize: 20,
     color: colors.FOREGROUND,
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
     // height: 30,
     fontFamily: colors.FONT,
-    marginBottom: 5,
-    marginTop: -5,
+    // marginBottom: 5,
+    // marginTop: -5,
 },
 // Info Section Stuff
 horizontalInfoContainer:{

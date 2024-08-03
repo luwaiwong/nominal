@@ -19,16 +19,21 @@ export default function Launches(props){
 
     const [launches, setLaunches] = useState({upcoming: [], previous: []})
 
+    function checkLaunchData(){
+      let hasLaunches = userContext != null && userContext.launches != null && userContext.launches.upcoming != undefined && userContext.launches.upcoming.length > 0
+      if (hasLaunches)
+      {
+        // console.log("userContext:",userContext.launches.previous.length)
+        let launches = {upcoming: userContext.launches.upcoming, previous: userContext.launches.previous}
+        setLaunches(launches)
+        // console.log("current:",launches.previous.length)
+      }
+    }
+
     // Check if data is updated every 5 seconds, if so update stuff
     useEffect(()=>{
       const intervalId = setInterval(() => {
-        // console.log("bruh")
-        let hasLaunches = userContext != null && userContext.launches != null && userContext.launches.upcoming != undefined && userContext.launches.upcoming.length > 0
-        if (hasLaunches)
-        {
-          setLaunches(userContext.launches)
-          
-        }
+        checkLaunchData()
       }, 2000); // 1000 milliseconds = 1 second
 
       // Clear interval on re-render to avoid memory leaks
@@ -189,7 +194,7 @@ const styles = StyleSheet.create({
       width: "200%",
       // height: Dimensions.get('window').height-TOP_BAR_HEIGHT-StatusBar.currentHeight-60,
       // paddingBottom: BOTTOM_BAR_HEIGHT,
-      backgroundColor: 'white',
+      // backgroundColor: 'white',
       
       overflow: "hidden",
       flex: 1
@@ -231,6 +236,6 @@ const styles = StyleSheet.create({
         zIndex: 200,
     },
     bottomPadding:{
-      height: BOTTOM_BAR_HEIGHT+5,
+      height: BOTTOM_BAR_HEIGHT-10,
     }
 });

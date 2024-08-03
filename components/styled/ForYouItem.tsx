@@ -43,7 +43,7 @@ export function ForYouLaunch(data) {
 
   return (
     <Pressable onPress={()=>userContext.nav.navigate("Launch", {data: launchInfo})}>
-    <View style={styles.page}>
+      <View style={styles.page}>
         <Image style={styles.image} source={{uri: launchInfo.image}} />
         <View style={styles.contentContainer}>
           <View>
@@ -72,7 +72,7 @@ export function ForYouLaunch(data) {
           </View>
         </View>
 
-    </View>
+      </View>
     </Pressable>
   );
 
@@ -227,26 +227,28 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         justifyContent: "flex-start",
-        backgroundColor: COLORS.BACKGROUND,
+        // backgroundColor: "white",
         // width: "100%",
         // height: "100%",
-        height: Dimensions.get('window').height,
+        height: Dimensions.get('window').height+StatusBar.currentHeight,
+        
+        
     },
     image:{
         position: "absolute",
         top: 0,
         left: 0,
         width: "100%",
-        // height: "110%",
-        height: Dimensions.get('window').height,
+        height: "100%",
+        // height: Dimensions.get('window').height+StatusBar.currentHeight,
     },
     // Sections
     contentContainer:{
       // width:"100%",
-      // height: "100%",
+      height: "100%",
       // paddingBottom: BOTTOM_BAR_HEIGHT,
 
-      height: Dimensions.get('window').height,
+      // height: Dimensions.get('window').height+StatusBar.currentHeight,
       paddingTop: StatusBar.currentHeight+TOP_BAR_HEIGHT,
       
       display: "flex",
@@ -264,12 +266,6 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       padding: 5,
       paddingBottom: 0,
-
-      // width:"92%",
-      // height: 250,
-      // height: Dimensions.get('window').height-StatusBar.currentHeight-TOP_BAR_HEIGHT-BOTTOM_BAR_HEIGHT-20,
-      // height: "80%",
-
 
       backgroundColor: 'rgba(52, 52, 52, 0.4)',
 
@@ -457,7 +453,7 @@ const styles = StyleSheet.create({
     articleContainer:{
       display: "flex",
       flexDirection: "column",
-      backgroundColor: 'white',
+      // backgroundColor: 'white',
       
       // marginTop: 25,
     },

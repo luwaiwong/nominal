@@ -154,7 +154,6 @@ export function ISSDashboard(){
                             
                         }
                     </View>}
-                    
                 </View>
         </View>
     )

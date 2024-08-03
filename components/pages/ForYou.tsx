@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Pressable, FlatList, Dimensions } from "react-native";
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Pressable, FlatList, Dimensions, StatusBar} from "react-native";
 import {useRef, useEffect, useState, useContext } from "react";
 import PagerView from "react-native-pager-view";
 
@@ -242,7 +242,7 @@ export default function ForYou(props) {
           data={items}
           renderItem={({item}) => item}
           initialScrollIndex={0}
-          snapToInterval={Dimensions.get('window').height}
+          snapToInterval={Dimensions.get('window').height+StatusBar.currentHeight}
           snapToAlignment="start"
           decelerationRate="fast"
           showsVerticalScrollIndicator={false}
@@ -268,9 +268,10 @@ const styles = StyleSheet.create({
     // flex: 1,
     // width: '100%',
     // height: '100%',
-    height: Dimensions.get('window').height,
+    height: Dimensions.get('window').height+StatusBar.currentHeight,
 
-    // backgroundColor: COLORS.FOREGROUND,
+
+    // backgroundColor: "white",
 
     // zIndex: -1000
   },

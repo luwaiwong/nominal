@@ -109,7 +109,7 @@ export default function Dashboard(props) {
                 {/* <Text style={styles.sectionTitle}>Locations:</Text> */}
                 <StarshipDashboard />
                 <ISSDashboard  />
-                <View style={[styles.buffer]}></View>
+                {/* <View style={[styles.buffer]}></View> */}
                 
 
                 <View style={styles.bottomPadding}></View>
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
       width: "100%",
     },
     bottomPadding:{
-      height: BOTTOM_BAR_HEIGHT,
+      height: BOTTOM_BAR_HEIGHT-5,
       width: "100%",
     },
     // Content Section

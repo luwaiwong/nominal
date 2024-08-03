@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
         
     },
     bottomPadding:{
-        height: BOTTOM_BAR_HEIGHT,
+        height: BOTTOM_BAR_HEIGHT-17,
     },
     
 })
