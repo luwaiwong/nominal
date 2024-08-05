@@ -35,6 +35,8 @@ export default function App(props) {
   let [launchData, setLaunchData]= useState(null)
   let currentPage = useRef(0);
   let menuBarRef = useRef(null);
+
+  let lastReload = useRef(0);
   
   const pagerRef = useRef(null);
   const pageScrollState = useSharedValue(titleOffset);
@@ -80,7 +82,7 @@ export default function App(props) {
       if (appState.current.match(/inactive|background/) && nextAppState === "active") {
         console.log("App focused")
         try {
-          reloadData()
+          reloadData(true)
         } catch(e){
           Alert.alert("Error when reloading data", "Error "+ e);
         }
@@ -128,6 +130,7 @@ export default function App(props) {
 
   // Function to fetch data
   async function fetchData(userContext) {
+    lastReload.current = Date.now();
     console.log("Fetching Data");
     await userContext.getData().then((data)=> {
       console.log("Returning Data")
@@ -149,10 +152,15 @@ export default function App(props) {
   }
 
   // Reload function called with pull down reload gesture
-  async function reloadData(){
+  async function reloadData(isPageLoad=false){
+    if (isPageLoad && lastReload.current - 1000*60*30 < Date.now()){
+      return;
+    }
     if (userContext == undefined || userContext.gettingdata){
       return;
     }
+
+    lastReload.current = Date.now();
 
     startRefreshAnimation();
     console.log("Refreshing Page")

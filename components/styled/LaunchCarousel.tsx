@@ -161,13 +161,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginVertical: 5,
+        marginVertical: 10,
 
         flex: 1,
     },
     scrollIndicatorEnabled:{
-        width: 10,
-        height: 10,
+        width: 8,
+        height: 8,
         borderRadius: 6,
         backgroundColor: COLORS.FOREGROUND,
 
@@ -180,10 +180,10 @@ const styles = StyleSheet.create({
         height: 8,
 
         borderRadius: 6,
-        // backgroundColor: COLORS.FOREGROUND,
+        backgroundColor: "rgba("+COLORS.SUBFOREGROUND_RGB+"0.5)",
         
-        borderColor: COLORS.FOREGROUND,
-        borderWidth: 1,
+        // borderColor: COLORS.SUBFOREGROUND,
+        // borderWidth: 1,
 
         // margin: 5,
         marginHorizontal: 10,

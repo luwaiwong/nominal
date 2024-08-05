@@ -60,7 +60,7 @@ export default function EventPage(props) {
             </View>
             <ScrollView>
                 {/* Title and date */}
-                <BlurView intensity={1} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.headerInfo}>
+                <BlurView intensity={35} tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.headerInfo}>
                     <Text style={styles.launchTitle}>{event.name}</Text>
                     
                     { (isPrecise) ? 
@@ -123,7 +123,7 @@ export default function EventPage(props) {
                 {/* Info Section */}
                 <Text style={styles.descriptionTitle}>Info:</Text>
                     <Text style={styles.locationText}>{event.location}</Text>
-                    <Text style={styles.typeText}>{event.type.name}</Text>
+                    {event.type.name != null&&<Text style={styles.typeText}>{event.type.name}</Text>}
                 
                 { launches.length > 0 &&
                 <View style={styles.launchSection}>
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         zIndex: 100,
-        backgroundColor: "rgba("+COLORS.BACKGROUND_RGB+"0.6)",
+        backgroundColor: "rgba("+COLORS.BACKGROUND_RGB+"0.3)",
         width: "96%",
         borderRadius: 10,
         // margin: "2%",
@@ -392,6 +392,7 @@ const styles = StyleSheet.create({
         textShadowOffset: {width: 1, height: 2},
         textShadowRadius: 1,
         elevation: 200,
+        zIndex: 2000,
     },
     launchTime:{
         fontSize: 18,
@@ -407,6 +408,7 @@ const styles = StyleSheet.create({
         textShadowOffset: {width: 1, height: 2},
         textShadowRadius: 1,
         elevation: 200,
+        zIndex: 2000,
     },
     timeText:{
         fontSize: 30,
@@ -414,6 +416,7 @@ const styles = StyleSheet.create({
         fontFamily: FONT,
         textAlign: 'center',
 
+        zIndex: 2000,
 
     },
 

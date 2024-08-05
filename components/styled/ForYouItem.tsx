@@ -55,13 +55,18 @@ export function ForYouLaunch(data) {
             <BlurView  intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView'
               style={styles.infoSection}>
                 <Pressable onPress={()=>setDescriptionOpen(!descriptionOpen)}>
-                  <Text style={styles.descriptionText} numberOfLines={descriptionOpen?10:2}>{launchInfo.mission.description}</Text>
+                  <Text style={styles.descriptionText} numberOfLines={descriptionOpen?10:5}>{launchInfo.mission.description}</Text>
                 </Pressable>
               <View style={styles.infoTextSection}>
                 <Text style={styles.launcherText} numberOfLines={1}>{launchInfo.rocket.configuration.full_name}</Text>
 
                 <Text style={styles.placeText}numberOfLines={1}>{launchInfo.launch_pad.location.name}</Text>
-                <Text style={styles.timeText} >{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text>
+                {/* <Text style={styles.timeText} >{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> */}
+                <Text style={styles.timeText} >{launchTime.toLocaleString([],{
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      month: 'long',
+                      day: 'numeric',weekday: 'long'})} </Text>
               </View>
 
               <View style={styles.timeSection}>
@@ -113,7 +118,7 @@ export function ForYouEvent(data) {
         style={styles.infoSection}>
         <View style={styles.infoTextSection}>
           <Pressable onPress={()=>setDescriptionOpen(!descriptionOpen)}>
-            <Text style={styles.descriptionText} numberOfLines={descriptionOpen?15:3}>{description}</Text>
+            <Text style={styles.descriptionText} numberOfLines={descriptionOpen?15:5}>{description}</Text>
 
           </Pressable>
           {eventData.type.name != null &&
@@ -202,7 +207,7 @@ export function ForYouImageOfDay(props) {
             <BlurView  intensity={40} tint='dark' experimentalBlurMethod='dimezisBlurView'
               style={styles.infoSection}>
                 <Pressable onPress={()=>setDescriptionOpen(!descriptionOpen)}>
-                  <Text style={styles.descriptionText} numberOfLines={descriptionOpen?100:4}>{description}</Text>
+                  <Text style={styles.descriptionText} numberOfLines={descriptionOpen?100:5}>{description}</Text>
                 </Pressable>
               <View style={styles.infoTextSection}>
                 {/* <Text style={styles.launcherText} numberOfLines={1}>{data.copyright}</Text> */}

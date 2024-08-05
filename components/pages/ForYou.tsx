@@ -28,10 +28,13 @@ export default function ForYou(props) {
   const [items, setItems]=useState([])
   let imageOfDay = useRef(null);
   let timer = useRef(0);  
+  let fetching = useRef(false);
 
   // timer to check if the user has not been in the For You page for a while
   // Constantly ticking 1 second timer
   useEffect(() => {
+
+    updateInfo();
 
     const intervalId = setInterval(() => {
       // Your code here...
@@ -49,17 +52,25 @@ export default function ForYou(props) {
   }, []);// Subscribe and check app state
 
 
-  useEffect(()=>{
+  function updateInfo(){
+    console.log("updating,", imageOfDay.current)
     if (userContext == null || userContext == undefined){
       return;
     }
     if (imageOfDay.current == null){
       fetchIOD();
-    } 
-    sortForYouItems();
-  }, [userContext])
+    } else {
+      sortForYouItems();
+    }
+  }
+
 
   async function fetchIOD() {
+    if (fetching.current){
+      sortForYouItems();
+      return;
+    }
+    fetching.current = true;
     await fetch("https://api.nasa.gov/planetary/apod?api_key="+APOD_API_KEY)
     .then((response) => {
         return response.json();
@@ -71,6 +82,9 @@ export default function ForYou(props) {
         // console.log("Image of the day fetched")
         console.log(data)
 
+        if (data.media_type == "video"){
+          return;
+        }
         data.type = "image";
         imageOfDay.current = data;
       }
@@ -78,6 +92,7 @@ export default function ForYou(props) {
     }).catch((error) => {
         console.log("Error fetching image of the day:", error);
     })
+    fetching.current = false;
     sortForYouItems();
   }
 

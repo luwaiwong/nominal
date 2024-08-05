@@ -19,6 +19,7 @@ export default function LaunchPage(props) {
     const launchTime = new Date(launch.net);
     const timeDiff = launchTime.getTime() - Date.now();
     const isPrecise = launch.net_precision != null && (launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second");
+    const hasMission = launch.mission != null || launch.mission != undefined;
 
     let status = "Upcoming Launch";
     let statusColor = COLORS.FOREGROUND;
@@ -71,7 +72,7 @@ export default function LaunchPage(props) {
             <ScrollView>
                 {/* Title and date */}
                 <View style={styles.headerInfo}>
-                    {launch.mission != null ? 
+                    {hasMission? 
                         <Text style={styles.launchTitle}>{launch.mission.name}</Text>:
                         <Text style={styles.launchTitle}>{launch.rocket.configuration.full_name}</Text> 
                     }
@@ -126,7 +127,7 @@ export default function LaunchPage(props) {
                 </View>
 
                 {/* Description */}
-                { launch.mission != null && 
+                { hasMission && 
                 <>
                     <Text style={styles.descriptionTitle}>Description:</Text>
                     <Text style={styles.launchDescription} >{launch.mission.description}</Text>
@@ -134,7 +135,7 @@ export default function LaunchPage(props) {
                 }
 
 
-                {launch.mission != null && 
+                { hasMission && 
                 <>
                     <Text style={styles.descriptionTitle}>Tags:</Text>
                     <View style={styles.tagsSection}>
@@ -187,18 +188,19 @@ export default function LaunchPage(props) {
                     {launch.mission != null && <Text style={styles.orbitText}>Target: {launch.mission.orbit.name}</Text>}
 
                 </View>
-                {launch.mission != null && launch.mission.agencies.length > 0 &&
+                {hasMission && (launch.mission.agencies.length > 0 &&
                 <View style={styles.section}>
                     <Text style={styles.subtitle}>Agencies</Text>
                     {launch.mission.agencies.map((agency, index) => {return <Agency key={index} data={agency} />})}
                     
                 </View>
+                )
                 }
                 {
                     userContext.settings.devmode && <View style={styles.section}>
                     <Text style={styles.subtitle}>Developer Info</Text>
 
-                    <Text style={styles.test}>webcast: {JSON.stringify(launch.webcast_live)},  vid_urls: {JSON.stringify(launch.mission.vid_urls)}</Text>
+                    {hasMission && <Text style={styles.test}>webcast: {JSON.stringify(launch.webcast_live)},  vid_urls: {JSON.stringify(launch.mission.vid_urls)}</Text>}
                     <Text style={styles.test}>holdreason: {JSON.stringify(launch.holdreason)}</Text>
                     <Text style={styles.test}>status: {JSON.stringify(launch.status)}</Text>
                     <Text style={styles.test}>net: {JSON.stringify(launch.net)}</Text>
@@ -209,7 +211,7 @@ export default function LaunchPage(props) {
                     <Text style={styles.test}>rocket: {JSON.stringify(launch.rocket)}</Text>
                     <Text style={styles.test}>launch_provider: {JSON.stringify(launch.launch_provider)}</Text>
                     <Text style={styles.test}>launch_pad: {JSON.stringify(launch.launch_pad)}</Text>
-                    <Text style={styles.test}>mission: {JSON.stringify(launch.mission)}</Text>
+                    {hasMission && <Text style={styles.test}>mission: {JSON.stringify(launch.mission)}</Text>}
                     </View>
                 }
 

@@ -78,7 +78,7 @@ export class UserData {
       // DEV
       devmode: false,
       waitbeforerefreshing: true,
-      reloadonfocused: false,
+      reloadonfocused: true,
     };
 
     // USER DATA
@@ -495,8 +495,8 @@ export class UserData {
         "Rockets are cool!",
         new Date(Date.now() + 500)
       );
-      return await Notifications.getAllScheduledNotificationsAsync();
     }
+    return await Notifications.getAllScheduledNotificationsAsync();
   }
   //#endregion
 

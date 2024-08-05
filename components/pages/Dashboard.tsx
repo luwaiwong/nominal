@@ -18,6 +18,7 @@ import { UserContext } from "../data/UserContext";
 
 import { WidgetPreview } from "react-native-android-widget";
 import { TestWidget } from "../widgets/TestWidget";
+import LiveChannels from "../styled/LiveChannels";
 
 
 export default function Dashboard(props) {
@@ -111,7 +112,7 @@ export default function Dashboard(props) {
                 <ISSDashboard  />
                 {/* <View style={[styles.buffer]}></View> */}
                 
-
+                <LiveChannels/>
                 <View style={styles.bottomPadding}></View>
               </ScrollView>
           </View>

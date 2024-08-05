@@ -47,21 +47,24 @@ export async function scheduleNotifications(settings, launches, events) {
     let launch = launches.upcoming[i];
     let launchTime = new Date(launch.net);
     let today = new Date();
+    let timeDiff = launchTime.getTime() - today.getTime();
+    // Check if launch is before today
+    if (
+      timeDiff < 0 ||
+      launch.net_precision == null ||
+      launch.mission == null
+    ) {
+      // Skip
+      continue;
+    }
+
     let preciseMinute = launch.net_precision.name == "Minute";
     let preciseHour = launch.net_precision.name == "Hour";
     let preciseDay = launch.net_precision.name == "Day";
     let preciseMonth = launch.net_precision.name == "Month";
 
-    let timeDiff = launchTime.getTime() - today.getTime();
-
-    // Check if launch is before today
-    if (timeDiff < 0) {
-      // Skip
-      continue;
-    }
-
-    // Check if launch is within 2 weeks
-    if (timeDiff > 1000 * 60 * 60 * 24 * 14) {
+    // Check if launch is within 1.5 weeks
+    if (timeDiff > 1000 * 60 * 60 * 24 * 10) {
       // Skip
       continue;
     }
@@ -121,7 +124,7 @@ export async function scheduleNotifications(settings, launches, events) {
     if (settings.notif10mbefore) {
       notifs += 1;
       schedulePushNotification(
-        launch.mission.name + " Launch expected in 10 Minutes",
+        launch.mission.name + " Launch Expected in 10 Minutes",
         launch.rocket.configuration.full_name + " launching now!",
         new Date(launchTime.getTime() - 1000 * 60 * 10)
       );
@@ -166,7 +169,7 @@ export async function scheduleNotifications(settings, launches, events) {
     // Schedule 24 hour
     if (settings.notif24hbefore && timeDiff > 1000 * 60 * 60 * 24) {
       schedulePushNotification(
-        event.name + "expected Tomorrow",
+        event.name + " Expected Tomorrow",
         "Event in 24 hours",
         new Date(eventTime.getTime() - 1000 * 60 * 60 * 24)
       );
@@ -180,7 +183,7 @@ export async function scheduleNotifications(settings, launches, events) {
     // Schedule 1 hour
     if (settings.notif1hbefore) {
       schedulePushNotification(
-        event.name + "expected in 1 Hour",
+        event.name + " Expected in 1 Hour",
         "Event in 1 hour",
         new Date(eventTime.getTime() - 1000 * 60 * 60)
       );
@@ -194,7 +197,7 @@ export async function scheduleNotifications(settings, launches, events) {
     // Schedule 10 minutes
     if (settings.notif10mbefore) {
       schedulePushNotification(
-        event.name + "expected in 10 Minutes",
+        event.name + " expected in 10 Minutes",
         "Event Soon!",
         new Date(eventTime.getTime() - 1000 * 60 * 10)
       );

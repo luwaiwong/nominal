@@ -68,13 +68,13 @@ export default function Launches(props){
         Animated.parallel([
           Animated.timing(barMargin, {
             toValue: 0,
-            duration: 200,
+            duration: 150,
             useNativeDriver: false,
             
           }),
           Animated.timing(pageMargin, {
             toValue: 0,
-            duration: 200, 
+            duration: 150, 
             useNativeDriver: false
           })
         ]).start()
@@ -83,13 +83,13 @@ export default function Launches(props){
         Animated.parallel([
           Animated.timing(barMargin, {
             toValue: 100,
-            duration: 200,
+            duration: 150,
             useNativeDriver: false,
             
           }),
           Animated.timing(pageMargin, {
             toValue: 100,
-            duration: 200, 
+            duration: 150, 
             useNativeDriver: false
           })
         ]).start()
