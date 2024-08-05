@@ -23,12 +23,18 @@ export function createUserContext() {
 
 //#region NOTIFICATIONS
 async function schedulePushNotification(title, description, time) {
+  // Check if time is a valid Date object
+  if (!(time instanceof Date) || isNaN(time)) {
+    console.error("Invalid date provided for scheduling notification");
+    return;
+  }
+  // const trigger = new Date(time);
   await Notifications.scheduleNotificationAsync({
     content: {
       title: title,
       body: description,
     },
-    trigger: { date: time },
+    trigger: null,
   });
 }
 

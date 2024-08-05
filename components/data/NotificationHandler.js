@@ -3,28 +3,38 @@ import * as Device from "expo-device";
 
 //#region NOTIFICATIONS
 async function schedulePushNotification(title, description, time) {
+  // Check if time is a valid Date object
+  if (!(time instanceof Date) || isNaN(time)) {
+    console.error("Invalid date provided for scheduling notification");
+    return;
+  }
+  const trigger = new Date(time);
   await Notifications.scheduleNotificationAsync({
     content: {
       title: title,
       body: description,
     },
-    trigger: { date: time },
+    trigger,
   });
 }
 
 export async function scheduleNotifications(settings, launches, events) {
   console.log("Notifications enabled:", settings.enablenotifs);
-  if (Device.isDevice) {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
+  try {
+    if (Device.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        alert("Failed to get permission for push notification!");
+      }
     }
-    if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
-    }
+  } catch (error) {
+    console.log("Error getting notification permissions: " + error);
   }
 
   console.log("Cancelling Notifications");
@@ -64,7 +74,7 @@ export async function scheduleNotifications(settings, launches, events) {
     let preciseMonth = launch.net_precision.name == "Month";
 
     // Check if launch is within 1.5 weeks
-    if (timeDiff > 1000 * 60 * 60 * 24 * 10) {
+    if (timeDiff > 1000 * 60 * 60 * 24 * 14) {
       // Skip
       continue;
     }
@@ -131,7 +141,6 @@ export async function scheduleNotifications(settings, launches, events) {
     }
   }
 
-  console.log("Scheduled " + notifs + " Launch Notifications");
   // Loop through events
   for (let i = 0; i < events.upcoming.length; i++) {
     let event = events.upcoming[i];
@@ -168,6 +177,7 @@ export async function scheduleNotifications(settings, launches, events) {
 
     // Schedule 24 hour
     if (settings.notif24hbefore && timeDiff > 1000 * 60 * 60 * 24) {
+      notifs += 1;
       schedulePushNotification(
         event.name + " Expected Tomorrow",
         "Event in 24 hours",
@@ -182,6 +192,7 @@ export async function scheduleNotifications(settings, launches, events) {
 
     // Schedule 1 hour
     if (settings.notif1hbefore) {
+      notifs += 1;
       schedulePushNotification(
         event.name + " Expected in 1 Hour",
         "Event in 1 hour",
@@ -196,26 +207,23 @@ export async function scheduleNotifications(settings, launches, events) {
 
     // Schedule 10 minutes
     if (settings.notif10mbefore) {
+      notifs += 1;
       schedulePushNotification(
-        event.name + " expected in 10 Minutes",
+        event.name + " Expected in 10 Minutes",
         "Event Soon!",
         new Date(eventTime.getTime() - 1000 * 60 * 10)
       );
     }
   }
 
-  console.log("Scheduled Event Notifications");
+  console.log("Scheduled " + notifs + " Launch Notifications");
+  // console.log("Scheduled Event Notifications");
 
   // Set notification for 3 days away for news
   schedulePushNotification(
     "Check out NASA's astronomical picture of the day!",
     "See a new picture every day.",
     new Date(Date.now() + 1000 * 60 * 60 * 24 * 1)
-  );
-  schedulePushNotification(
-    "Check out NASA's astronomical picture of the day!",
-    "See a new picture every day.",
-    new Date(Date.now() + 1000 * 60 * 60 * 24 * 5)
   );
   // Set notification for 3 days away for news
   schedulePushNotification(
