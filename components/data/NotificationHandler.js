@@ -3,19 +3,22 @@ import * as Device from "expo-device";
 
 //#region NOTIFICATIONS
 async function schedulePushNotification(title, description, time) {
-  // Check if time is a valid Date object
-  if (!(time instanceof Date) || isNaN(time)) {
-    console.error("Invalid date provided for scheduling notification");
-    return;
+  try {
+    // Check if time is a valid Date object
+    if (!(time instanceof Date) || isNaN(time)) {
+      console.error("Invalid date provided for scheduling notification");
+      return;
+    }
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: title,
+        body: description,
+      },
+      trigger: { date: time },
+    });
+  } catch (error) {
+    console.log("Error scheduling notification: " + error);
   }
-  const trigger = new Date(time);
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: title,
-      body: description,
-    },
-    trigger,
-  });
 }
 
 export async function scheduleNotifications(settings, launches, events) {

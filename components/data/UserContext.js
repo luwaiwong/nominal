@@ -22,20 +22,19 @@ export function createUserContext() {
 }
 
 //#region NOTIFICATIONS
-async function schedulePushNotification(title, description, time) {
+async function scheduleTestNotification(title, description) {
   // Check if time is a valid Date object
-  if (!(time instanceof Date) || isNaN(time)) {
-    console.error("Invalid date provided for scheduling notification");
-    return;
+  try {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: title,
+        body: description,
+      },
+      trigger: null,
+    });
+  } catch (error) {
+    console.log("Error scheduling notification: " + error);
   }
-  // const trigger = new Date(time);
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: title,
-      body: description,
-    },
-    trigger: null,
-  });
 }
 
 export class UserData {
@@ -495,12 +494,12 @@ export class UserData {
 
   async sendTestNotification() {
     console.log("Sending Test Notification");
-    if (this.settings.enablenotifs) {
-      schedulePushNotification(
-        "Test Notification",
-        "Rockets are cool!",
-        new Date(Date.now() + 500)
-      );
+    try {
+      if (this.settings.enablenotifs) {
+        scheduleTestNotification("Test Notification", "Rockets are cool!");
+      }
+    } catch (error) {
+      console.log("Error sending test notification: " + error);
     }
     return await Notifications.getAllScheduledNotificationsAsync();
   }
