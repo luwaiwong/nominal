@@ -7,11 +7,11 @@ import * as Device from 'expo-device';
 import { Platform } from "react-native";
 
 import Index from "./App";
-import LaunchesPage from "./components/pages/subpages/LaunchesPage";
-import EventsPage from "./components/pages/subpages/EventsPages";
+import LaunchesPage from "./components/pages/subpages/Launches/LaunchesPage";
+import EventsPage from "./components/pages/subpages/Events/EventsPages";
 import NewsPage from "./components/pages/subpages/NewsPages";
-import LaunchPage from "./components/pages/subpages/LaunchPage";
-import EventPage from "./components/pages/subpages/EventPage";
+import LaunchPage from "./components/pages/subpages/Launches/LaunchPage";
+import EventPage from "./components/pages/subpages/Events/EventPage";
 
 import {createUserContext, UserContext} from "./components/data/UserContext";
 

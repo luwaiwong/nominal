@@ -32,7 +32,7 @@ export default function NewsPage(props) {
             refreshOpacity,
             {
                 toValue: 1,
-                duration: 250,
+                duration: 800,
                 useNativeDriver: true,
                 delay: 0,
             }
@@ -41,7 +41,7 @@ export default function NewsPage(props) {
             refreshOpacity,
             {
                 toValue: 0,
-                duration: 250,
+                duration: 800,
                 useNativeDriver: true,
                 delay: 0,
             }

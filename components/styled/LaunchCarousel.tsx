@@ -8,7 +8,7 @@ import {COLORS, FONT, FOREGROUND}from "../styles";
 import Launch from './LaunchSimple';
 import { UserContext } from '../data/UserContext';
 
-const timerTickLength = 20;
+const timerTickLength = 400;
 export default function LaunchCarousel(props:{content, type, nav}){
     let userContext = useContext(UserContext);
     let content = props.content;
@@ -42,7 +42,7 @@ export default function LaunchCarousel(props:{content, type, nav}){
   
     return (
         <>
-            <View style={[styles.contentSection , {marginTop: 0}]}>
+            <View style={[styles.contentSection]}>
             <TouchableOpacity onPress={() => props.nav.navigate("Launches", {data:userContext.launches.previous,title:"Recent Launches"})}>
                 <View style={styles.contentHeaderSection} >
                     <Text style={styles.contentHeaderText} >Recent Launches</Text>

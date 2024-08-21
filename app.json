@@ -4,7 +4,7 @@
   "expo": {
     "name": "Nominal",
     "slug": "nominal",
-    "version": "0.5.1",
+    "version": "0.6.0",
     "orientation": "portrait",
     "icon": "./assets/icon-temp.png",
     "userInterfaceStyle": "light",
@@ -32,6 +32,7 @@
         "foregroundImage": "./assets/icon-temp-adaptive.png",
         "backgroundColor": "#1e1e1e"
       },
+      "softwareKeyboardLayoutMode": "pan",
       "package": "com.luwaiwong.nominal",
       "versionCode": 4
     },

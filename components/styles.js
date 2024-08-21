@@ -18,7 +18,7 @@ export const FOREGROUND = "#D8DEE9";
 export const SUBFOREGROUND = "#cbd1db";
 export const ACCENT = "#5E81AC";
 
-export const FONT = "SpaceGrotesk_500Medium";
+export const FONT = "IBMPlexSans_500Medium";
 
 export const TIME_OPTIONS = {
   hours: "2-digit",

@@ -3,10 +3,10 @@ import { StyleSheet, View, Text, FlatList, StatusBar, Image, ScrollView, Pressab
 import { MaterialIcons } from 'react-native-vector-icons';
 
 import {MaterialCommunityIcons} from 'react-native-vector-icons';
-import { UserContext } from '../../data/UserContext';
-import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
-import Launch from '../../styled/Launch';
-import TMinus from '../../styled/TMinus';
+import { UserContext } from '../../../data/UserContext';
+import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
+import Launch from '../../../styled/Launch';
+import TMinus from '../../../styled/TMinus';
 
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "January"];
@@ -160,18 +160,18 @@ export default function LaunchPage(props) {
                     <Text style={styles.subtitle}>Location</Text>
                     
                     <Text style={styles.launchLocationText}>{launch.launch_pad.location.name}</Text>
-                    <View style={styles.launchpadSection}>
-                        {launch.launch_pad.name != 'Unknown Pad' &&
-                        <Pressable onPress={()=>Linking.openURL(launch.launch_pad.wiki_url)} style={styles.launchpadInfoSection}>
-                            <Text style={styles.launchPadText}>{launch.launch_pad.name}</Text>
-                            {/* {launch.launch_pad.total} */}
-                            <Text style={styles.padInfoText}>Total Launches: {launch.launch_pad.total_launch_count}</Text>
-                            <View style={styles.seperationLine}></View>
-                            <Text style={styles.padInfoText}>Latitude: {launch.launch_pad.latitude}</Text>
-                            <Text style={styles.padInfoText}>Longitude: {launch.launch_pad.longitude}</Text>
-                        </Pressable>
-                        }
+                    {launch.launch_pad.name != 'Unknown Pad' && 
+                    <Pressable onPress={()=>Linking.openURL(launch.launch_pad.wiki_url)} style={styles.launchpadInfoSection}>
+                    <Text style={styles.launchPadText}>{launch.launch_pad.name}</Text>
+                        {/* {launch.launch_pad.total} */}
+                        {/* <Text style={styles.padInfoText}>Total Launches: {launch.launch_pad.total_launch_count}</Text>
+                        <View style={styles.seperationLine}></View>
+                        <Text style={styles.padInfoText}>Latitude: {launch.launch_pad.latitude}</Text>
+                        <Text style={styles.padInfoText}>Longitude: {launch.launch_pad.longitude}</Text> */}
+                    </Pressable>
+                    }
                         
+                    <View style={styles.launchpadSection}>
                         <Pressable onPress={()=>Linking.openURL(launch.launch_pad.map_url)} style={styles.launchpadImageSection}>
                             <Image style={styles.mapImage} source={{uri: launch.launch_pad.map_image}} />
                         </Pressable>
@@ -185,7 +185,7 @@ export default function LaunchPage(props) {
                     </Pressable>
                     }
                     
-                    {launch.mission != null && <Text style={styles.orbitText}>Target: {launch.mission.orbit.name}</Text>}
+                    {/* {launch.mission != null && <Text style={styles.orbitText}>Target: {launch.mission.orbit.name}</Text>} */}
 
                 </View>
                 {hasMission && (launch.mission.agencies.length > 0 &&
@@ -635,14 +635,14 @@ const styles = StyleSheet.create({
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
-        marginBottom: 5,
+        // marginBottom: 5,
     },
     launchPadText:{
-        fontSize: 14,
+        fontSize: 16,
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'left',
-        marginBottom: 15,
+        marginBottom: 5,
     },
     locationDescription:{
         fontSize: 14,

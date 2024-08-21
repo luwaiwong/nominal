@@ -23,31 +23,6 @@ import LiveChannels from "../styled/LiveChannels";
 
 export default function Dashboard(props) {
   const userContext = useContext(UserContext);
-  
-
-  // Check if data is loaded
-  if (userContext.launches === undefined){
-    return <Loading/>
-  }
-
-  // All data
-  let upcoming = userContext.launches.upcoming
-  let recentlyLaunched = userContext.launches.previous.slice(0,5)
-  let upcomingFiltered = null
-  // calculate upcoming filtered
-  upcomingFiltered = userContext.launches.upcoming.slice(1,8)
-    .filter((launch) => {
-      let name = launch.rocket.configuration.name;
-      if (name == "Starship") {
-        return false;
-      }
-      return true;
-    })
-    .slice(0, 3);
-  let highlights = [userContext.launches.upcoming[0]]
-
-
-  let nav = props.data.nav
 
   const [refreshing, setRefreshing] = useState(false)
   async function refreshData(){
@@ -57,6 +32,29 @@ export default function Dashboard(props) {
       setRefreshing(false)
     })
   }
+  
+  useEffect(()=>{
+
+  }, [])
+  
+
+  // Check if data is loaded
+  if (userContext.launches === undefined){
+    console.log("Launches Undefined")
+    return <Loading/>
+  }
+
+  // All data
+  let upcoming = userContext.launches.upcoming
+  let recentlyLaunched = userContext.launches.previous.slice(0,5)
+  let upcomingFiltered = null
+  // calculate upcoming filtered
+  upcomingFiltered = userContext.launches.upcoming.slice(0, 3);
+  let highlights = [userContext.launches.upcoming[0]]
+
+
+  let nav = props.data.nav
+
 
   
     
@@ -82,10 +80,10 @@ export default function Dashboard(props) {
                   <LaunchHighlight data={highlights[0]} nav={nav}  />
                 </View> }
 
-                {/* <View style={{marginTop: -10}}></View> */}
+                <View style={{marginTop: -10}}></View>
+
 
                 <LaunchCarousel content={recentlyLaunched} type="launch" nav={nav} />
-
                 {/* Upcoming Launches */}
                 <View style={[styles.contentSection]}>
                   <TouchableOpacity onPress={()=>{nav.navigate('Launches', {data: userContext.launches.upcoming, title:"Upcoming Launches" })}}>
@@ -108,11 +106,9 @@ export default function Dashboard(props) {
                   })}
                 </View>
                 {/* <Text style={styles.sectionTitle}>Locations:</Text> */}
-                <StarshipDashboard />
-                <ISSDashboard  />
                 {/* <View style={[styles.buffer]}></View> */}
                 
-                <LiveChannels/>
+                {/* <LiveChannels/> */}
                 <View style={styles.bottomPadding}></View>
               </ScrollView>
           </View>
@@ -127,8 +123,7 @@ export default function Dashboard(props) {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      // paddingBottom : BOTTOM_BAR_HEIGHT,
-      // backgroundColor: 'white',
+      // backgroundColor: "white"
     },
     topBackground:{
       position: 'absolute',
@@ -157,7 +152,7 @@ const styles = StyleSheet.create({
       marginTop: 10,
       overflow: 'hidden',
 
-      elevation: 10,
+      // elevation: 10,
     },
     contentHeaderSection: {
       display: 'flex',

@@ -6,7 +6,7 @@ import { MaterialIcons } from 'react-native-vector-icons';
 
 import { UserContext } from '../data/UserContext';
 
-const versioncode = "0.5.1";
+const versioncode = "0.6.0";
 
 export default function Settings(props){
     let userContext = React.useContext(UserContext);

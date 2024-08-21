@@ -1,5 +1,6 @@
 import { useFonts } from "expo-font";
 import { SpaceGrotesk_500Medium } from "@expo-google-fonts/space-grotesk";
+import { IBMPlexSans_400Regular, IBMPlexSans_500Medium, IBMPlexSans_600SemiBold } from '@expo-google-fonts/ibm-plex-sans'
 
 import { AppState, Dimensions, Platform, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View, Animated, Alert } from "react-native";
 import React, { useState, useRef, useEffect, useContext } from "react";
@@ -24,6 +25,9 @@ import * as colors from "./components/styles";
 import { useSharedValue } from "react-native-reanimated";
 import { UserContext } from "./components/data/UserContext";
 import Locations from "./components/pages/More";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Home from "./components/pages/Home";
 
 
 const titleOffset = 300
@@ -33,7 +37,8 @@ export default function App(props) {
   let userContext = useContext(UserContext);
   let appState = useRef(AppState.currentState);
   let [launchData, setLaunchData]= useState(null)
-  let currentPage = useRef(0);
+
+  let [currentPage, setCurrentPage] = useState(0);
   let menuBarRef = useRef(null);
 
   let lastReload = useRef(0);
@@ -187,7 +192,8 @@ export default function App(props) {
 
   // Checks if font is loaded, if the font is not loaded yet, just show a loading screen
   const [fontsLoaded] = useFonts({
-    SpaceGrotesk_500Medium,
+    IBMPlexSans_500Medium,
+    IBMPlexSans_600SemiBold
   });
   if (!fontsLoaded || userContext == null) {
     return <Loading />;
@@ -196,40 +202,11 @@ export default function App(props) {
   // Page Change Handling
   // Use to change current page when button pressed
   function setPage(page){
-    if (pagerRef.current != null){
-      pagerRef.current.setPage(page);
-    }
+    setCurrentPage(page);
+    // if (pagerRef.current != null){
+    //   pagerRef.current.setPage(page);
+    // }
   }
-
-  // Called when the page is scrolling
-  // Use to handle animations while page is scrolling (e.g. bottom sliding animation)
-  const onPageScrollStateChanged = (state) => {
-    // Handle page scroll state changes (e.g., idle, settling, dragging)
-    // Example: Log the state change
-    // console.log('Page scroll state:', state);
-    // Can be 
-  };
-
-  const onPageScroll = (state) => {
-    // Handle page scroll state changes (e.g., idle, settling, dragging)
-    // Example: Log the state change
-    // console.log('Page scroll state:', state["nativeEvent"]);
-    pageScrollState.value = (state["nativeEvent"]["offset"]+state["nativeEvent"]["position"]) * -150 + titleOffset;
-    // Can be 
-  }
-  // Called when the page is changed
-  const onPageSelected = (event) => {
-    // Handle page selection
-    const { position } = event.nativeEvent;
-
-    // console.log('Page changed to:', position);
-    currentPage.current = position;
-
-    if (menuBarRef.current != null){
-      menuBarRef.current.updatePage();
-    }
-
-  };
 
   // Returns current page
   function CurrentPage(){
@@ -240,35 +217,64 @@ export default function App(props) {
       nav: props.navigation,
       setPage: setPage,
     };
-    return (
-      <PagerView 
-        style={styles.pagerView} 
-        initialPage={currentPage.current} 
-        orientation="horizontal" 
-        ref={pagerRef} 
-        onPageScrollStateChanged={onPageScrollStateChanged}
-        onPageScroll={onPageScroll}
-        onPageSelected={onPageSelected}
-      >
-        <ForYou data={data}/>
-        <Dashboard data={data}/>
-        <Launches data={data}/>
-        <News data={data}/>
-        {/* <Locations data={data}/> */}
-        <Settings />
-      </PagerView>
-    )
+
+    if (currentPage == 0){
+      return <Dashboard data={data}/>
+    }
+    else if (currentPage == 1) {
+      return <Launches data={data}/>
+    }
+    else if (currentPage == 2){
+      return <News data={data}/>
+    }
+    else if (currentPage == 3){
+      return <Settings/>
+    }
+
+    // return (
+    //   <PagerView 
+    //     style={styles.pagerView} 
+    //     initialPage={currentPage.current} 
+    //     orientation="horizontal" 
+    //     ref={pagerRef} 
+    //     onPageScrollStateChanged={onPageScrollStateChanged}
+    //     onPageScroll={onPageScroll}
+    //     onPageSelected={onPageSelected}
+    //   >
+    //     <ForYou data={data}/>
+    //     <Dashboard data={data}/>
+    //     <Launches data={data}/>
+    //     <News data={data}/>
+    //     <Settings />
+    //   </PagerView>
+    // )
     
   }
 
+  const Tab = createBottomTabNavigator();
+
+  let data = {
+    reloadData: reloadData,
+    nav: props.navigation,
+    setPage: setPage,
+  };
   // Main App View
   return (
     <GestureHandlerRootView>
       <View style={styles.container}>
         <StatusBar style="light" />
-        <TitleBar scrollState={pageScrollState}/>
-        <CurrentPage/>
-        <MenuBar page={currentPage} setPage={setPage} ref={menuBarRef} />
+        <Tab.Navigator 
+          tabBar={props => <MenuBar {...props}/>}
+          screenOptions={{
+            // tabBarShowLabel:false,
+            headerShown: false,
+          }}
+        >
+          <Tab.Screen name="Home" children={()=><Home data={data}/>} />
+          <Tab.Screen name="Launches" children={()=><Launches data={data}/>}/>
+          <Tab.Screen name="News" children={()=><News data={data}/>}/>
+          <Tab.Screen name="Settings" children={()=><Settings/>}/>
+        </Tab.Navigator>
         <View pointerEvents='none' style={styles.reloadingDataIndicator}>
           <Animated.Text style={[styles.reloadingDataText, {opacity: refreshOpacity}]} >Refreshing Data...</Animated.Text>
         </View>

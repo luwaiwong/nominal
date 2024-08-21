@@ -136,7 +136,11 @@ export function StarshipDashboard(){
 export default function StarshipPage(props) {
     const userContext = useContext(UserContext);
     const data = userContext.starship;
-    const previousLaunches = [...data.previous.launches].reverse();
+    const previousLaunches = [...data.previous.launches].sort((a,b) => {
+      let dateA = new Date(a.date).getTime();
+      let dateB = new Date(b.date).getTime();
+      return dateB - dateA;
+    });
     const previousEvents = [...data.previous.events].reverse();
     // console.log(data.previous.events[0].name)
 

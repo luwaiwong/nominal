@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useImperativeHandle, useRef, useState } from 'react'; 
-import { View, Text , StyleSheet, Dimensions, Animated, ViewBase} from 'react-native'; 
+import { View, Text , StyleSheet, Dimensions, Animated, ViewBase, Pressable, KeyboardAvoidingView, Platform} from 'react-native'; 
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons'; 
 import { BlurView } from 'expo-blur';
 
@@ -9,30 +9,148 @@ import {COLORS, FONT, BOTTOM_BAR_HEIGHT} from '../styles';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { UserContext } from '../data/UserContext';
 
+const MenuBar = ({ state, descriptors, navigation}: any) => {
+    const userContext = useContext(UserContext);
+    
+    const bottomAnim = useRef(new Animated.Value(10)).current;
+
+    // useEffect(()=>{
+    //     if (page.current == 0) hideMenu();
+    //     else showMenu();
+    // }, [page.current]);
+
+    useEffect(()=>{
+        if (userContext != null){
+            userContext.showMenu = showMenu;
+            userContext.hideMenu = hideMenu;
+        }
+        
+    }, [userContext]);
 
 
-// THIS IS A MESS. I'M SORRY. I'M NOT SORRY.
+    const showMenu = ()=>{
+        Animated.spring(bottomAnim, {
+            toValue: 0,
+            friction: 10,
+            useNativeDriver: false,
+        }).start();
+    }
+
+    const hideMenu = ()=>{
+        Animated.spring(bottomAnim, {
+            toValue: -80,
+            friction: 10,
+            useNativeDriver: false,
+        }).start();
+    }
+
+    return (
+        <Animated.View style={[styles.menuBar]}>
+            {
+                state.routes.map((route: any , index: number) => {
+                    const { options } = descriptors[route.key];
+                    const label =
+                    options.tabBarLabel !== undefined
+                        ? options.tabBarLabel
+                        : options.title !== undefined
+                        ? options.title
+                        : route.name;
+
+                    const isFocused = state.index === index;
+
+                    const onPress = () => {
+                        const event = navigation.emit({
+                            type: 'tabPress',
+                            target: route.key,
+                        });
+
+                        if (!isFocused && !event.defaultPrevented) {
+                            navigation.navigate(route.name);
+                        }
+                    };
+                    
+                    if (label == "Home"){
+                        return <MenuButton icon="home" setPage={onPress}  active={isFocused} />
+                    }
+                    if (label == "Launches"){
+                        return <MenuButton icon="rocket-launch" setPage={onPress}  active={isFocused} />
+                    }
+                    if (label == "News"){
+                        return <MenuButtonCommunity icon="newspaper-variant" setPage={onPress}  active={isFocused} />
+                    }
+                    if (label == "Settings"){
+                        return <MenuButton icon="settings" setPage={onPress}  active={isFocused} />
+                    }
+                    return (
+                    <View key = {index}>
+                        <Pressable
+                        onPress = {onPress}
+                        style = {{backgroundColor: isFocused?"#030D16": "#182028", borderRadius: 20, }}>
+                        <View style = {{justifyContent: 'center', alignItems: 'center', flex: 1, padding: 15}}>
+                            <Text>{label}</Text>
+                        </View>
+                        </Pressable>
+                    </View>
+                    );
+                })
+            }   
+        
+        </Animated.View>
+    );
+}
+function MenuButton({icon, setPage, active}){
+    function onPressed(){
+        setPage();
+    }
+    let tap = Gesture.Tap();
+    tap.onFinalize(()=>onPressed());
+    
+    return (
+        <GestureDetector gesture={tap}>
+            <View style={active?styles.buttonContainerActive:styles.buttonContainer}>
+                <MaterialIcons name={icon} style={active?styles.buttonIconActive:styles.buttonIcon} />
+            </View>
+        </GestureDetector>
+    );
+
+}
+
+
+function MenuButtonCommunity({icon, setPage,active}){
+    function onPressed(){
+        setPage();
+    }
+    let tap = Gesture.Tap();
+    tap.onFinalize(()=>onPressed());
+    
+    return (
+        <GestureDetector gesture={tap}>
+            <View style={active?styles.buttonContainerActive:styles.buttonContainer}>
+                <MaterialCommunityIcons name={icon} style={active?styles.buttonIconActive:styles.buttonIcon} />
+            </View>
+        </GestureDetector>
+    );
+
+}
+
+
+
 
 const styles = StyleSheet.create({
     menuBar: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        
-        
-        // backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-        // padding: 4,
+        flexDirection: 'row',
+        justifyContent:"space-around",
+        alignContent: "center",
 
-
-        width: Dimensions.get('window').width,
+        position: 'absolute',
+        width: "100%",
         height: BOTTOM_BAR_HEIGHT-10,
-        position: "absolute",
-        // bottom: BOTTOM_BAR_HEIGHT,
-        // left: 10,
-        // paddingHorizontal: 10,
 
-        zIndex: 5000,
+        bottom: 0,
+        backgroundColor: COLORS.BACKGROUND,
+        // borderRadius: 10,
+        // marginHorizontal: 5,
+
     },
     blurViewContainer: {
         display: "flex",
@@ -129,108 +247,4 @@ const styles = StyleSheet.create({
         marginBottom: 4,
     },
 });
-
-const MenuBar = React.forwardRef((props: any, ref: any)=> {
-    const userContext = useContext(UserContext);
-    const setPage = props.setPage;
-    const page = props.page;
-
-    const bottomAnim = useRef(new Animated.Value(-80)).current;
-
-    // This is done so I can force a rerender of the menu bar from the parent
-    const [f, forceRerender] = React.useState(0);
-    useImperativeHandle(ref, ()=>({
-        updatePage(){
-            forceRerender((x)=>x+1);
-        }
-    }));
-    
-    useEffect(()=>{
-        if (page.current == 0) hideMenu();
-        else showMenu();
-    }, [page.current]);
-
-    useEffect(()=>{
-        if (userContext != null){
-            userContext.showMenu = showMenu;
-            userContext.hideMenu = hideMenu;
-        }
-        
-    }, [userContext]);
-
-
-    const showMenu = ()=>{
-        Animated.spring(bottomAnim, {
-            toValue: 0,
-            friction: 10,
-            useNativeDriver: false,
-        }).start();
-    }
-
-    const hideMenu = ()=>{
-        Animated.spring(bottomAnim, {
-            toValue: -80,
-            friction: 10,
-            useNativeDriver: false,
-        }).start();
-    }
-
-    if (page.current == -1) return null;
-    if (setPage == null) return null;
-
-    return (
-        <Animated.View style={[styles.menuBar, {bottom: bottomAnim}]}>
-            <BlurView intensity={0}  tint='dark' experimentalBlurMethod='dimezisBlurView' style={styles.blurViewContainer} >           
-                {/* <MenuButton icon="settings" setPage={()=>setPage(0)} label="settings" active={page.current==0} />
-                <MenuButton icon="rocket-launch" setPage={()=>setPage(1)} label="launches" active={page.current == 1} />
-                <MenuButton icon="home" setPage={()=>setPage(2)} label="for you" active={page.current == 2} />
-                <MenuButtonCommunity icon="newspaper-variant" setPage={()=>setPage(4)} label="news" active={page.current == 4 } /> */}
-            </BlurView>
-            <View style={styles.menuContainer}>
-                
-                <MenuButton icon="home" setPage={()=>setPage(1)}  active={page.current == 1} />
-                <MenuButton icon="rocket-launch" setPage={()=>setPage(2)}active={page.current == 2} />
-                <MenuButtonCommunity icon="newspaper-variant" setPage={()=>setPage(3)}active={page.current == 3} />
-                {/* <MenuButtonCommunity icon="space-station" setPage={()=>setPage(3)} label="dashboard" active={page.current == 3} /> */}
-                <MenuButton icon="settings" setPage={()=>setPage(4)}  active={page.current==4} />
-            </View>
-        </Animated.View>
-    );
-    
-function MenuButton({icon, setPage, active}){
-    function onPressed(){
-        setPage();
-    }
-    let tap = Gesture.Tap();
-    tap.onFinalize(()=>onPressed());
-    
-    return (
-        <GestureDetector gesture={tap}>
-            <View style={active?styles.buttonContainerActive:styles.buttonContainer}>
-                <MaterialIcons name={icon} style={active?styles.buttonIconActive:styles.buttonIcon} />
-            </View>
-        </GestureDetector>
-    );
-
-}
-
-
-function MenuButtonCommunity({icon, setPage,active}){
-    function onPressed(){
-        setPage();
-    }
-    let tap = Gesture.Tap();
-    tap.onFinalize(()=>onPressed());
-    
-    return (
-        <GestureDetector gesture={tap}>
-            <View style={active?styles.buttonContainerActive:styles.buttonContainer}>
-                <MaterialCommunityIcons name={icon} style={active?styles.buttonIconActive:styles.buttonIcon} />
-            </View>
-        </GestureDetector>
-    );
-
-}
-
-})
 export default MenuBar

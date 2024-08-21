@@ -92,9 +92,6 @@ export class UserData {
       launchProviders: [],
     };
 
-    // FRONTEND STATE
-    this.immersive = false;
-
     this.apiCallTimes = 0;
     console.log("Creating User Data");
 
@@ -220,6 +217,12 @@ export class UserData {
 
     console.log("Returning ISS Cache");
     return this.iss;
+  }
+
+  async getLaunches() {
+    if (this.gettingupcominglaunches) {
+      (await this.gettingupcominglaunches) == false;
+    }
   }
   // Returns all required data
   async getData() {

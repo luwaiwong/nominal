@@ -11,6 +11,8 @@ import { UserContext } from "../data/UserContext";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import ArticleDescriptive from "../styled/ArticleDescriptive";
 import Loading from "../styled/Loading";
+import { StarshipDashboard } from "./subpages/Locations/StarshipPage";
+import { ISSDashboard } from "./subpages/Locations/ISSPage";
 const NEWS_API_URL = "https://api.spaceflightnewsapi.net/v4/";
 
 export default function News(props){
@@ -45,6 +47,7 @@ export default function News(props){
 
     return (<>
         <View style={styles.container}>
+            <Text style={styles.title}>News</Text>
             <ScrollView 
                 refreshControl={
                   <RefreshControl refreshing={refreshing} onRefresh={()=>{refreshData()}
@@ -61,41 +64,13 @@ export default function News(props){
                             </View>
                         </View>
                     </TouchableOpacity>
-                    <View style={{height:10}}></View>
+                    {/* <View style={{height:10}}></View> */}
                     {news.map((item, index) => {return (<Article articleData={item} key={index}/>);})}
                     {/* <Article articleData={news[4]}></Article> */}
                 </View>
 
-
-                {upcomingEvents != undefined && upcomingEvents.length != 0 && 
-                <View style={styles.sectionContainer}>
-                    <TouchableOpacity onPress={() => {nav.navigate('Events', {data:upcomingEvents})}}>
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionTitle}>Upcoming Events</Text>
-                            <View style={styles.seeMoreSection}>
-                                <Text style={styles.seeMoreText}>See All</Text>
-                                <MaterialIcons name="arrow-forward-ios" style={styles.sectionIcon}/>
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                    {upcomingEvents != undefined && upcomingEvents.slice(0,2).map((item, index) => {return (<Event nav={nav} eventData={item} key={index}/>);})}        
-                </View>
-                }
-                {previousEvents != undefined && previousEvents.length != 0 && 
-                <View style={styles.sectionContainer}>
-                    <TouchableOpacity onPress={() => {nav.navigate('Events', {data:previousEvents})}}>
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionTitle}>Recent Events</Text>
-                            <View style={styles.seeMoreSection}>
-                                <Text style={styles.seeMoreText}>See All</Text>
-                                <MaterialIcons name="arrow-forward-ios" style={styles.sectionIcon}/>
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                    {previousEvents != undefined && previousEvents.slice(0,1).map((item, index) => {return (<Event nav={nav} eventData={item} key={index}/>);})}        
-                </View>
-                }
-
+                <StarshipDashboard/>
+                <ISSDashboard/>
                 {/* <Text style={styles.eventsTitle}>Events</Text>  */}
                 <View style={styles.bottomPadding}></View>
                     
@@ -110,11 +85,24 @@ const styles = StyleSheet.create({
         color: 'white',
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
-        marginTop: StatusBar.currentHeight + TOP_BAR_HEIGHT,
+        marginTop: StatusBar.currentHeight,
         height: Dimensions.get('window').height - StatusBar.currentHeight - TOP_BAR_HEIGHT ,
         width: '100%',
 
         zIndex: 100,
+    },
+    // Title
+    title:{
+        fontFamily: FONT,
+        fontSize: 24,
+        color: COLORS.FOREGROUND,
+        
+        width: "100%",
+        height: TOP_BAR_HEIGHT-10,
+        marginTop: 10,
+        textAlign: "center",
+        
+
     },
     // SECTION STUFF
     sectionContainer:{
@@ -124,34 +112,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
 
 
-        // backgroundColor: COLORS.BACKGROUND,
-        borderRadius: 15,
-        width: '100%',
-        marginTop: 10,
-        marginBottom: 10,
-        
-    },
-    eventsTitle:{
-        fontSize: 25,
-        color: COLORS.FOREGROUND,
-        fontFamily: FONT,
-        textAlign: 'center',
-        // marginBottom: 10,
-        marginLeft: 12,
-        marginTop: 10,
-    },
-    eventsContainer:{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-
-
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-        borderRadius: 15,
+        borderRadius: 10,
+
+        paddingTop: 2,
         marginTop: 10,
-        marginHorizontal    : 10,
-        marginBottom: 10,
+        // marginBottom: 10,
+        marginHorizontal: 10,
+        
         
     },
     // SECTION HEADERS
@@ -177,8 +145,9 @@ const styles = StyleSheet.create({
         color: COLORS.FOREGROUND,
         fontFamily: FONT,
         textAlign: 'right',
-        marginRight: 10,
+        marginRight: 5,
         alignContent: 'flex-end',
+        marginBottom: 1,
     },
     sectionIcon:{
         fontSize: 25,
@@ -196,7 +165,7 @@ const styles = StyleSheet.create({
         
     },
     bottomPadding:{
-        height: BOTTOM_BAR_HEIGHT-17,
+        height: BOTTOM_BAR_HEIGHT-10,
     },
     
 })

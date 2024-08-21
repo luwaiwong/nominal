@@ -9,18 +9,13 @@ import { GestureDetector, Gesture} from "react-native-gesture-handler";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-export default function Launch(data) {
+
+const Launch = React.memo((data: any) => {
   let nav = data.nav;
   let launch = data.data;  
   let userData = data.user;
   let [launchTime, setLaunchTime] = useState<any>(new Date(launch.net));
-  // let [pinned, setPinned] = useState<any>(userData.getPinned().includes(launchInfo.id));
-  // const togglePinned = () => {
-  //   let pinnedStatus = userData.togglePinned(launchInfo.id)
-  //   setPinned(pinnedStatus);
-
-  // };
-
+  
     // let status = "Upcoming Launch";
   let statusColor = 'rgba(0,0,0,0)';
   // Set Status for Time
@@ -37,52 +32,6 @@ export default function Launch(data) {
   }  
   
   const isPrecise = launch.net_precision != null && (launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second");
-
-  // ANIMATIONS
-  const scale = useRef(new Animated.Value(1)).current;
-  // Create an animation that scales the view to 1.2 times its original size when pressed
-  const animateIn = () => {
-    Animated.timing(scale, {
-      toValue: 0.95,
-      duration: 200,
-      useNativeDriver: true, // Add this to improve performance
-    }).start();
-  };
-
-  // Create an animation that scales the view back to its original size when released
-  const animateOut = () => {
-    Animated.timing(scale, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true, // Add this to improve performance
-    }).start();
-  };
-
-  const toggle = () => {
-    // togglePinned()
-    Animated.sequence([
-    Animated.timing(scale, {
-      toValue: 0.8,
-      duration: 150,
-      delay:100,
-      useNativeDriver: true, // Add this to improve performance
-    }),Animated.timing(scale, {
-      toValue: 1,
-      duration: 150,
-      delay:100,
-      useNativeDriver: true, // Add this to improve performance
-    })]).start()
-  }
-
-  // Gestures
-  const tap = Gesture.Tap();
-
-  tap.onTouchesDown(()=>animateIn());
-  tap.onTouchesUp(()=>animateOut());
-  tap.onTouchesMove(()=>animateIn());
-  tap.onTouchesCancelled(()=>animateOut());
-  // tap.onEnd(()=>toggle()); // UNCOMMENT TO RESTORE PINNED
-  tap.numberOfTaps(2);
   
   // Status name
   let status = launch.status.name;
@@ -92,7 +41,7 @@ export default function Launch(data) {
   // HTML
   return (
     <TouchableOpacity onPress={()=> nav.navigate("Launch", {data: launch})}>
-      <Animated.View style={[styles.background, {transform:[{scale}]}]}>
+      <Animated.View style={[styles.background]}>
         <View style={styles.bodySection}>
           <View style={styles.infoSection}>
             {launch.mission != null ? 
@@ -142,7 +91,9 @@ export default function Launch(data) {
     </TouchableOpacity>
   );
 
-}
+})
+
+export default Launch;
 
 function calculateTminus(launchTime: Date, status: string = "TBC"){
   let currentTime = new Date();
