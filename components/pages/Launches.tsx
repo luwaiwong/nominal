@@ -78,7 +78,7 @@ export default function Launches(props){
     return (
         <View style={styles.container}>
           <View style={styles.titleContainer}>
-                <Text style={styles.title}>Launches</Text>
+                <Text style={styles.title}>Missions</Text>
           </View>
           {/* Search Area */}
           <View style={styles.searchBar}>

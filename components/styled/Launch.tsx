@@ -183,13 +183,14 @@ titleText: {
     // flex: 1,
     fontSize: 20,
     color: colors.FOREGROUND,
-    alignItems: 'center',
-    justifyContent: 'center',
+    // backgroundColor: "white",
+    textAlignVertical: "top",
+    textAlign: "left",
     width: '100%',
     // height: 30,
     fontFamily: colors.FONT,
     // marginBottom: 5,
-    // marginTop: -5,
+    marginTop: -3,
 },
 // Info Section Stuff
 horizontalInfoContainer:{
