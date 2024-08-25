@@ -181,7 +181,7 @@ export default function ForYou(props) {
 
     
 
-    items = [...items,...upcoming,imageOfDay.current, {type: "news"}, ...previous, {type: "end"}]
+    items = [...items,...upcoming,imageOfDay.current, ...previous, {type: "end"}]
     // Add in order of time
     
     items = items.filter(notUndefined => notUndefined != undefined)
@@ -202,7 +202,7 @@ export default function ForYou(props) {
         return <ForYouNews data={userContext.news.slice(0,3)} key={index}/>
       }
       else if (item.type == "end"){
-        return <ForYouEnd data={userContext.news.slice(3,6)} key={index}/>
+        return <ForYouEnd data={userContext.news.slice(0,3)} key={index}/>
       }
       else {
         return <ForYouEvent data={item} key={index}/>
@@ -232,11 +232,11 @@ export default function ForYou(props) {
 
 
   };
+  // console.log(items.length)
 
   if (items.length == 0 || items == null){
     return <Loading/>
   }
-  // console.log(items.length)
   return(
       // <PagerView 
       //   style={styles.immersiveSection} 

@@ -171,7 +171,7 @@ export function ForYouEnd(props){
   <View style={styles.page}>
     <View style={styles.articleSection}>
         <View>
-          <Text style={styles.articleTitle}>That's all for now! </Text>    
+          <Text style={styles.articleTitle}>You're all caught up! </Text>    
           <Text style={styles.articleSubtitle}>Here are some more articles:</Text>  
           {/* <Text style={styles.bottomText}>Swipe right to view your dashboard</Text>      */}
         </View> 

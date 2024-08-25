@@ -143,8 +143,10 @@ const styles = StyleSheet.create({
         alignContent: "center",
 
         position: 'absolute',
-        width: "100%",
+        // width: "100%",
+        width: Dimensions.get("window").width,
         height: BOTTOM_BAR_HEIGHT-10,
+        
 
         bottom: 0,
         backgroundColor: COLORS.BACKGROUND,

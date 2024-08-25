@@ -10,14 +10,22 @@ import { UserContext } from '../data/UserContext';
 import { BottomSheetAndroid } from '@react-navigation/stack/lib/typescript/src/TransitionConfigs/TransitionPresets';
 import LaunchHighlight from '../styled/HighlightLaunch';
 import PagerView from 'react-native-pager-view';
+import { useSharedValue } from 'react-native-reanimated';
 
 export default function Launches(props){
     const userContext = useContext(UserContext);
 
-    // Animation Hooks
+    // Info Hooks
     const [launches, setLaunches] = useState({upcoming: [], previous: []})
     const [search, setSearch] = useState("")
+    const [tags, setTags] = useState("")
 
+    // Anim Hookd
+    let pageScrollState = useSharedValue(0)
+    let pagerRef = useRef(null)
+
+    //#region Getting Data
+    // Check if launch data has changed
     function checkLaunchData(){
       let hasLaunches = userContext != null && userContext.launches != null && userContext.launches.upcoming != undefined && userContext.launches.upcoming.length > 0
       if (hasLaunches)
@@ -68,6 +76,46 @@ export default function Launches(props){
     if (userContext.launches === undefined){
         return <Loading/>
     }
+    //#endregion
+
+    //#region Animations
+    function setPage(page){
+      if (pagerRef.current != null){
+        pagerRef.current.setPage(page);
+      }
+    }
+
+    // Called when the page is scrolling
+    // Use to handle animations while page is scrolling (e.g. bottom sliding animation)
+    const onPageScrollStateChanged = (state) => {
+      // Handle page scroll state changes (e.g., idle, settling, dragging)
+      // Example: Log the state change
+      // console.log('Page scroll state:', state);
+      // Can be 
+    };
+
+    const onPageScroll = (state) => {
+      // Handle page scroll state changes (e.g., idle, settling, dragging)
+      // Example: Log the state change
+      // console.log('Page scroll state:', state["nativeEvent"]);
+      pageScrollState.value = (state["nativeEvent"]["offset"]+state["nativeEvent"]["position"]) * -150;
+      // Can be 
+      // setCurrentPage(page);
+      // if (pagerRef.current != null){
+      //   pagerRef.current.setPage(page);
+      // }
+    }
+    // Called when the page is changed
+    const onPageSelected = (event) => {
+      // Handle page selection
+      const { position } = event.nativeEvent;
+
+      // console.log('Page changed to:', position);
+      // currentPage.current = position;
+
+    };
+
+    //#endregion
 
 
     // INFO
@@ -93,12 +141,28 @@ export default function Launches(props){
               // disableFullscreenUI={true}
             />
           </View>
+          <View style={styles.settingsContainer}>
+
+          </View>
+          <View style={styles.timeContainer}>
+            <Text style={[styles.timeText, {left:Dimensions.get("window").width/8}]}>
+              Upcoming
+              </Text>
+            <Text style={[styles.timeText, {right:Dimensions.get("window").width/8}]}>
+              Previous
+            </Text>
+            <View style={styles.timeIndicator}></View>
+          </View>
           {/* Content Section */}
           <View style={[styles.contentContainer]}>
             {/* Upcoming Section */}
             <PagerView 
               style={styles.contentSection}
               orientation="horizontal" 
+              ref={pagerRef}
+              onPageScrollStateChanged={onPageScrollStateChanged}
+              onPageScroll={onPageScroll}
+              onPageSelected={onPageSelected}
             >
               <FlatList
                   data={sortData()}
@@ -106,11 +170,10 @@ export default function Launches(props){
                   renderItem={({ item }) => <LaunchInfo data={item}  nav={nav}> </LaunchInfo>}
                   ListFooterComponent={<View style={styles.bottomPadding}></View>}
                   removeClippedSubviews={true}
-                  initialNumToRender={1}
+                  initialNumToRender={4}
                   // maxToRenderPerBatch={10}
                   windowSize={3}
                   >
-                  
               </FlatList>
               <FlatList
                   data={sortData(launches.previous)}
@@ -118,7 +181,7 @@ export default function Launches(props){
                   renderItem={({ item }) => <LaunchInfo data={item}  nav={nav}> </LaunchInfo>}
                   ListFooterComponent={<View style={styles.bottomPadding}></View>}
                   removeClippedSubviews={true}
-                  initialNumToRender={1}
+                  initialNumToRender={4}
                   // maxToRenderPerBatch={10}
                   windowSize={3}
                   >
@@ -218,5 +281,44 @@ const styles = StyleSheet.create({
     },
     bottomPadding:{
       height: BOTTOM_BAR_HEIGHT-10,
+    },
+    timeContainer:{
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: "space-between",
+
+
+      width: "100%",
+      height: 30,
+
+      // backgroundColor: COLORS.RED
+      marginBottom: 10,
+      
+
+
+    },
+    timeText:{
+      fontFamily: FONT,
+      color: COLORS.FOREGROUND,
+
+      textAlign: 'center',
+      position: 'absolute',
+      
+      // backgroundColor: COLORS.GREEN,
+      width: "25%",
+      top: 5,
+      
+
+    },
+    timeIndicator:{
+      position: "absolute",
+      width: Dimensions.get("window").width/2-10,
+      height: 30,
+
+      left: 10,
+      borderRadius: 10,
+
+      backgroundColor: COLORS.ACCENT,
+      zIndex: -1
     }
 });

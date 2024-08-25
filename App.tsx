@@ -266,8 +266,7 @@ export default function App(props) {
         <Tab.Navigator 
           tabBar={props => <MenuBar {...props}/>}
           screenOptions={{
-            // tabBarShowLabel:false,
-            headerShown: false,
+            headerShown:false, 
           }}
         >
           <Tab.Screen name="Home" children={()=><Home data={data}/>} />

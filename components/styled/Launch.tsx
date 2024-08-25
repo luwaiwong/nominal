@@ -50,19 +50,16 @@ const Launch = React.memo((data: any) => {
               <Text style={styles.titleText} numberOfLines={2}>{launch.mission.name} </Text>
               <Text style={styles.mediumText}>{launch.rocket.configuration.full_name}</Text>
               <Text style={styles.smallText} numberOfLines={1}>{launch.launch_provider.name}</Text>
+              <Text style={styles.smallText} numberOfLines={1}>{launch.launch_pad.location.name}</Text>
 
             </View>: 
             <View>
               <Text style={styles.titleText}>{launch.rocket.configuration.full_name}</Text>
               <Text style={styles.smallText} numberOfLines={2}>{launch.launch_provider.name}</Text>
+              <Text style={styles.smallText} numberOfLines={1}>{launch.launch_pad.location.name}</Text>
 
             </View>
             }
-            {/* <View style={styles.smallSpacer}></View> */}
-            
-            <View style={styles.smallSpacer}></View>
-            <Text style={styles.smallText} numberOfLines={1}>{launch.launch_pad.location.name}</Text>
-            
             <View style={styles.smallSpacer}></View>
             <View>
               {/* <Text style={styles.mediumText}>{DAYS[launchTime.getDay()]+" "+MONTHS[launchTime.getMonth()]+" "+launchTime.getDate()+ ", "+launchTime.getFullYear()}</Text> */}
@@ -181,7 +178,7 @@ text: {
 // Header Section Stuff
 titleText: {
     // flex: 1,
-    fontSize: 20,
+    fontSize: 19,
     color: colors.FOREGROUND,
     // backgroundColor: "white",
     textAlignVertical: "top",

@@ -1,3 +1,5 @@
+import { StyleSheet } from "react-native";
+
 // DARK MODE
 export const COLORS = {
   BACKGROUND: "#1e1e1e",
@@ -27,3 +29,10 @@ export const TIME_OPTIONS = {
 
 export const BOTTOM_BAR_HEIGHT = 65;
 export const TOP_BAR_HEIGHT = 50;
+
+export const main = StyleSheet.create({
+  flexHorizontal: {
+    display: "flex",
+    flexDirection: "column",
+  },
+});

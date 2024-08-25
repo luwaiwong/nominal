@@ -17,21 +17,24 @@ const NEWS_API_URL = "https://api.spaceflightnewsapi.net/v4/";
 
 export default function News(props){
     let userContext = useContext(UserContext);
-    let callingData = useRef(false);
-    let currentOffset = useRef(10);
     const [refreshing, setRefreshing] = useState(false)
+    let callingData = useRef(false);
+    let currentOffset = useRef(0);
+    const [data, setData] = useState([]);
+
+
+    let news = userContext.news.slice(0,4);
+
 
     // Check data loaded
     if (userContext == null || userContext.news == null){
         return <Loading/>
     }
 
-    let upcomingEvents = userContext.events.upcoming.filter((event)=>{return new Date(event.date).getTime() > new Date().getTime()});
-    let previousEvents = userContext.events.previous;
-    let news = userContext.news.slice(0,4);
-
     const nav = props.data.nav;
 
+    
+    
     async function refreshData(){
         setRefreshing(true)
         await props.data.reloadData().then((data)=> {
@@ -40,10 +43,89 @@ export default function News(props){
         })
     }
 
+    const refreshOpacity = useRef(new Animated.Value(0)).current
+
+    const startRefreshAnimation = () => {Animated.loop(
+        Animated.sequence([
+            Animated.timing(
+            refreshOpacity,
+            {
+                toValue: 1,
+                duration: 800,
+                useNativeDriver: true,
+                delay: 0,
+            }
+            ),
+            Animated.timing(
+            refreshOpacity,
+            {
+                toValue: 0,
+                duration: 800,
+                useNativeDriver: true,
+                delay: 0,
+            }
+            )
+        ])
+        ).start()
+    }
+
+    useEffect(() => {
+        // if (userContext != null && userContext.news != null){
+        //     setData(userContext.news)
+        // }
+        
+        getMoreData();
+    }, [])
 
     const onEndReached = () => {
-        // getMoreData();
+        console.log("End Reached")
+        getMoreData();
     }
+
+    async function getMoreData(){
+        console.log("Getting More Data")
+        if (callingData.current){
+            return
+        }
+
+        callingData.current = true;
+        startRefreshAnimation()
+        await fetch(NEWS_API_URL+"articles/?offset="+currentOffset.current).then((response) => {
+            // console.log(response)
+            return response.json()
+        }).then((articles) => {
+            if (articles == null){
+                console.log("Article data null")
+                callingData.current = false;
+                refreshOpacity.setValue(0)
+                return
+            }
+            setData([...data,...articles.results])
+            currentOffset.current = currentOffset.current + 10;
+            callingData.current = false;
+            refreshOpacity.setValue(0)
+        }).catch((error) => {
+            console.log("Error fetching article data", error)
+            callingData.current = false;
+            refreshOpacity.setValue(0)
+        })
+    }
+
+    //Endless News
+    return (
+    <View style={styles.container}>
+        <Text style={styles.title}>News</Text>
+        <FlatList
+            data={data}
+            keyExtractor={(item, index) => index.toString()}
+            // style={styles.list}
+            renderItem={({ item }) => <ArticleDescriptive articleData={item}></ArticleDescriptive>}
+            onEndReached={onEndReached}
+            onEndReachedThreshold={0.5}
+        >
+        </FlatList>
+    </View>
+    )
 
     return (<>
         <View style={styles.container}>
@@ -69,8 +151,8 @@ export default function News(props){
                     {/* <Article articleData={news[4]}></Article> */}
                 </View>
 
-                <StarshipDashboard/>
-                <ISSDashboard/>
+                {/* <StarshipDashboard/>
+                <ISSDashboard/> */}
                 {/* <Text style={styles.eventsTitle}>Events</Text>  */}
                 <View style={styles.bottomPadding}></View>
                     
