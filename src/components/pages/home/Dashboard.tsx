@@ -3,17 +3,17 @@ import React, { useContext } from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 
-import {COLORS, FONT, TOP_BAR_HEIGHT,BOTTOM_BAR_HEIGHT}from "../../styles";
+import {COLORS, FONT, TOP_BAR_HEIGHT,BOTTOM_BAR_HEIGHT}from "../../../constants/styles";
 import HighlightLaunch from "../../styled/HighlightLaunch";
 import LaunchInfo from "../../styled/LaunchSimple";
 import Loading from "../../styled/Loading";
 import Event from "../../styled/Event";
 import Article from "../../styled/Article";
-import LaunchCarousel from "./Components/LaunchCarousel";
+import LaunchCarousel from "./components/LaunchCarousel";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import LaunchHighlight from "../../styled/HighlightLaunch";
-import { UserContext } from "../../data/UserContext";
-import { useUserStore } from "../../../src/utils/UserStore";
+import { UserContext } from "../../../utils/UserContext";
+import { useUserStore } from "../../../utils/UserStore";
 
 
 export default function Dashboard(props) {
@@ -35,7 +35,7 @@ export default function Dashboard(props) {
   
 
   // Check if data is loaded
-  if (userContext.launches === undefined){
+  if (userContext === undefined){
     console.log("Launches Undefined")
     return <Loading/>
   }
