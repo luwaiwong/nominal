@@ -1,9 +1,9 @@
 import { StyleSheet, View, Text, FlatList, StatusBar, Pressable } from 'react-native';
 import { MaterialIcons } from 'react-native-vector-icons';
-import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
-import Launch from '../../../styled/Launch';
+import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
+import Launch from '../../styled/Launch';
 import { useContext, useState } from 'react';
-import { UserContext } from '../../../data/UserContext';
+import { UserContext } from '../../data/UserContext';
 
 export default function LaunchesPage(props) {
     let userContext = useContext(UserContext);

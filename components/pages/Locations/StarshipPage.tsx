@@ -1,16 +1,16 @@
 import { StyleSheet, View, Text, Image, FlatList, StatusBar, ScrollView, Dimensions, Linking, Animated, Alert } from 'react-native';
 import { MaterialIcons, MaterialCommunityIcons} from 'react-native-vector-icons';
-import { BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
-import Event from '../../../styled/Event';
+import { BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
+import Event from '../../styled/Event';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { UserContext } from '../../../data/UserContext';
-import LaunchSimple from '../../../styled/LaunchSimple';
+import { UserContext } from '../../data/UserContext';
+import LaunchSimple from '../../styled/LaunchSimple';
 import WebView from 'react-native-webview';
 import YoutubeIframe from 'react-native-youtube-iframe';
 import { Gesture, GestureDetector, TouchableOpacity } from 'react-native-gesture-handler';
-import Launch from '../../../styled/Launch';
-import LaunchHighlight from '../../../styled/HighlightLaunch';
-import StarbaseWeather from '../../../styled/starship/StarbaseWeather';
+import Launch from '../../styled/Launch';
+import LaunchHighlight from '../../styled/HighlightLaunch';
+import StarbaseWeather from '../../styled/starship/StarbaseWeather';
 
 export function StarshipDashboard(){
     const userContext = useContext(UserContext);

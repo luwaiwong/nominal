@@ -2,11 +2,11 @@ import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Pressable, FlatLi
 import {useRef, useEffect, useState, useContext } from "react";
 import PagerView from "react-native-pager-view";
 
-import { COLORS, FONT } from "../styles";
-import Loading from "../styled/Loading";
+import { COLORS, FONT } from "../../styles";
+import Loading from "../../styled/Loading";
 
-import {ForYouLaunch, ForYouEvent, ForYouEnd, ForYouImageOfDay, ForYouNews} from "../styled/ForYouItem";
-import { UserContext } from "../data/UserContext";
+import {ForYouLaunch, ForYouEvent, ForYouEnd, ForYouImageOfDay, ForYouNews} from "../../styled/ForYouItem";
+import { UserContext } from "../../data/UserContext";
 
 
 // OK I know this is not supposed to be shared, BUT anyone can get this key from the NASA API website
@@ -257,6 +257,7 @@ export default function ForYou(props) {
           data={items}
           renderItem={({item}) => item}
           initialScrollIndex={0}
+          disableIntervalMomentum={ true } 
           snapToInterval={Dimensions.get('window').height+StatusBar.currentHeight}
           snapToAlignment="start"
           decelerationRate="fast"

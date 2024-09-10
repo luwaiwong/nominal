@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, FlatList, StatusBar, Animated, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from 'react-native-vector-icons';
-import { COLORS, FONT, TOP_BAR_HEIGHT } from '../styles';
-import Launch from '../styled/Launch';
+import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
+import Launch from '../../styled/Launch';
 import PagerView from 'react-native-pager-view';
-import { UserContext } from '../data/UserContext';
+import { UserContext } from '../../data/UserContext';
 import { SpaceGrotesk_500Medium, useFonts } from '@expo-google-fonts/space-grotesk';
-import Loading from '../styled/Loading';
+import Loading from '../../styled/Loading';
 
 export default function FirstLoad(props) {
     const opacity = useRef(new Animated.Value(0)).current;

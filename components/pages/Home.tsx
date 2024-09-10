@@ -1,8 +1,8 @@
 import { Dimensions, StyleSheet, View } from "react-native";
-import Dashboard from "./Dashboard";
+import Dashboard from "./Home/Dashboard";
+import ForYou from "./Home/ForYou";
 import PagerView from "react-native-pager-view";
 import { COLORS } from "../styles";
-import ForYou from "./ForYou";
 import { useCallback, useEffect, useRef } from "react";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 

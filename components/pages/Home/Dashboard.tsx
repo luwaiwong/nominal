@@ -3,22 +3,16 @@ import React, { useContext } from "react";
 import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 
-import {COLORS, FONT, TOP_BAR_HEIGHT,BOTTOM_BAR_HEIGHT}from "../styles";
-import HighlightLaunch from "../styled/HighlightLaunch";
-import LaunchInfo from "../styled/LaunchSimple";
-import Loading from "../styled/Loading";
-import Event from "../styled/Event";
-import Article from "../styled/Article";
-import LaunchCarousel from "../styled/LaunchCarousel";
+import {COLORS, FONT, TOP_BAR_HEIGHT,BOTTOM_BAR_HEIGHT}from "../../styles";
+import HighlightLaunch from "../../styled/HighlightLaunch";
+import LaunchInfo from "../../styled/LaunchSimple";
+import Loading from "../../styled/Loading";
+import Event from "../../styled/Event";
+import Article from "../../styled/Article";
+import LaunchCarousel from "../../styled/LaunchCarousel";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { ISSDashboard } from "./subpages/Locations/ISSPage";
-import { StarshipDashboard } from "./subpages/Locations/StarshipPage";
-import LaunchHighlight from "../styled/HighlightLaunch";
-import { UserContext } from "../data/UserContext";
-
-import { WidgetPreview } from "react-native-android-widget";
-import { TestWidget } from "../widgets/TestWidget";
-import LiveChannels from "../styled/LiveChannels";
+import LaunchHighlight from "../../styled/HighlightLaunch";
+import { UserContext } from "../../data/UserContext";
 
 
 export default function Dashboard(props) {

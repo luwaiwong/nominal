@@ -16,8 +16,6 @@ import Loading from "./components/styled/Loading";
 // Pages
 import Settings from "./components/pages/Settings"
 import Launches from "./components/pages/Launches";
-import ForYou from "./components/pages/ForYou";
-import Dashboard from "./components/pages/Dashboard";
 import News from "./components/pages/News"
 
 
@@ -208,49 +206,6 @@ export default function App(props) {
     // }
   }
 
-  // Returns current page
-  function CurrentPage(){
-    // Data object fed into all pages
-    // Includes current state of app
-    let data = {
-      reloadData: reloadData,
-      nav: props.navigation,
-      setPage: setPage,
-    };
-
-    if (currentPage == 0){
-      return <Dashboard data={data}/>
-    }
-    else if (currentPage == 1) {
-      return <Launches data={data}/>
-    }
-    else if (currentPage == 2){
-      return <News data={data}/>
-    }
-    else if (currentPage == 3){
-      return <Settings/>
-    }
-
-    // return (
-    //   <PagerView 
-    //     style={styles.pagerView} 
-    //     initialPage={currentPage.current} 
-    //     orientation="horizontal" 
-    //     ref={pagerRef} 
-    //     onPageScrollStateChanged={onPageScrollStateChanged}
-    //     onPageScroll={onPageScroll}
-    //     onPageSelected={onPageSelected}
-    //   >
-    //     <ForYou data={data}/>
-    //     <Dashboard data={data}/>
-    //     <Launches data={data}/>
-    //     <News data={data}/>
-    //     <Settings />
-    //   </PagerView>
-    // )
-    
-  }
-
   const Tab = createBottomTabNavigator();
 
   let data = {
@@ -264,15 +219,16 @@ export default function App(props) {
       <View style={styles.container}>
         <StatusBar style="light" />
         <Tab.Navigator 
-          tabBar={props => <MenuBar {...props}/>}
+          // tabBar={props => <MenuBar {...props}/>}
+          tabBar={props=> <></>}
           screenOptions={{
             headerShown:false, 
           }}
         >
           <Tab.Screen name="Home" children={()=><Home data={data}/>} />
-          <Tab.Screen name="Launches" children={()=><Launches data={data}/>}/>
+          {/* <Tab.Screen name="Launches" children={()=><Launches data={data}/>}/>
           <Tab.Screen name="News" children={()=><News data={data}/>}/>
-          <Tab.Screen name="Settings" children={()=><Settings/>}/>
+          <Tab.Screen name="Settings" children={()=><Settings/>}/> */}
         </Tab.Navigator>
         <View pointerEvents='none' style={styles.reloadingDataIndicator}>
           <Animated.Text style={[styles.reloadingDataText, {opacity: refreshOpacity}]} >Refreshing Data...</Animated.Text>

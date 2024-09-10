@@ -1,7 +1,7 @@
 import { StyleSheet, View, Text, FlatList, StatusBar } from 'react-native';
 import { MaterialIcons } from 'react-native-vector-icons';
-import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
-import Event from '../../../styled/Event';
+import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
+import Event from '../../styled/Event';
 
 export default function EventsPage(props) {
     const data = props.route.params.data;

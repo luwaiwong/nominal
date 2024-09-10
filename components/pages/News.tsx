@@ -11,8 +11,6 @@ import { UserContext } from "../data/UserContext";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import ArticleDescriptive from "../styled/ArticleDescriptive";
 import Loading from "../styled/Loading";
-import { StarshipDashboard } from "./subpages/Locations/StarshipPage";
-import { ISSDashboard } from "./subpages/Locations/ISSPage";
 const NEWS_API_URL = "https://api.spaceflightnewsapi.net/v4/";
 
 export default function News(props){

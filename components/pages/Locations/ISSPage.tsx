@@ -1,14 +1,14 @@
 import { StyleSheet, View, Text, Image, FlatList, StatusBar, Dimensions, ScrollView, Linking, Alert } from 'react-native';
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
-import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
-import Event from '../../../styled/Event';
+import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
+import Event from '../../styled/Event';
 import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../../../data/UserContext';
-import LaunchSimple from '../../../styled/LaunchSimple';
+import { UserContext } from '../../data/UserContext';
+import LaunchSimple from '../../styled/LaunchSimple';
 import { WebView } from 'react-native-webview';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import YoutubeIframe from 'react-native-youtube-iframe';
-import { processIndividualLaunchData, processLaunchData } from '../../../data/APIHandler';
+import { processIndividualLaunchData, processLaunchData } from '../../data/APIHandler';
 
 const highDefStream= "P9C25Un7xaM"
 const lowDefStream= "VdFK-xs_r-4"

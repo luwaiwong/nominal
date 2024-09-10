@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
 import { StyleSheet, View, Text, FlatList, StatusBar, Image, ScrollView, Pressable, Linking, TouchableOpacity} from 'react-native';
 import { MaterialIcons } from 'react-native-vector-icons';
-import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
-import Launch from '../../../styled/Launch';
-import TMinus from '../../../styled/TMinus';
-import LaunchSimple from '../../../styled/LaunchSimple';
-import { processLaunchData } from '../../../data/APIHandler';
-import { UserContext } from '../../../data/UserContext';
+import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
+import Launch from '../../styled/Launch';
+import TMinus from '../../styled/TMinus';
+import LaunchSimple from '../../styled/LaunchSimple';
+import { processLaunchData } from '../../data/APIHandler';
+import { UserContext } from '../../data/UserContext';
 import { BlurView } from 'expo-blur';
 
 import {MaterialCommunityIcons} from 'react-native-vector-icons';

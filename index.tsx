@@ -7,19 +7,19 @@ import * as Device from 'expo-device';
 import { Platform } from "react-native";
 
 import Index from "./App";
-import LaunchesPage from "./components/pages/subpages/Launches/LaunchesPage";
-import EventsPage from "./components/pages/subpages/Events/EventsPages";
+import LaunchesPage from "./components/pages/Launches/LaunchesPage";
+import EventsPage from "./components/pages/Events/EventsPages";
 import NewsPage from "./components/pages/subpages/NewsPages";
-import LaunchPage from "./components/pages/subpages/Launches/LaunchPage";
-import EventPage from "./components/pages/subpages/Events/EventPage";
+import LaunchPage from "./components/pages/Launches/LaunchPage";
+import EventPage from "./components/pages/Events/EventPage";
 
 import {createUserContext, UserContext} from "./components/data/UserContext";
 
 import { COLORS } from "./components/styles";
 import { useEffect } from "react";
-import FirstLoad from "./components/pages/FirstLoad";
-import ISSPage, { ISSDashboard } from "./components/pages/subpages/Locations/ISSPage";
-import StarshipPage from "./components/pages/subpages/Locations/StarshipPage";
+import FirstLoad from "./components/pages/subpages/FirstLoad";
+import ISSPage, { ISSDashboard } from "./components/pages/Locations/ISSPage";
+import StarshipPage from "./components/pages/Locations/StarshipPage";
 import { WidgetPreview } from "react-native-android-widget";
 
 
@@ -88,7 +88,7 @@ async function registerForPushNotificationsAsync() {
   return token;
 }
 
-export default function index(props) {
+function setNotifications(){
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(
     undefined
   );
@@ -116,6 +116,10 @@ export default function index(props) {
         Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
+}
+
+export default function index(props) {
+  setNotifications();
 
   // SET USER CONTEXT
   let user = useRef(null);
@@ -219,12 +223,6 @@ export default function index(props) {
           </Stack.Navigator>
         </NavigationContainer>
       </UserContext.Provider>
-      {/* <Button
-        title="Press to schedule a notification"
-        onPress={async () => {
-          await schedulePushNotification();
-        }}
-      /> */}
     </View>
     );
 

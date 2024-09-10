@@ -3,10 +3,10 @@ import { StyleSheet, View, Text, FlatList, StatusBar, Image, ScrollView, Pressab
 import { MaterialIcons } from 'react-native-vector-icons';
 
 import {MaterialCommunityIcons} from 'react-native-vector-icons';
-import { UserContext } from '../../../data/UserContext';
-import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../../styles';
-import Launch from '../../../styled/Launch';
-import TMinus from '../../../styled/TMinus';
+import { UserContext } from '../../data/UserContext';
+import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
+import Launch from '../../styled/Launch';
+import TMinus from '../../styled/TMinus';
 
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "January"];
