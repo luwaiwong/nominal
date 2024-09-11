@@ -8,18 +8,16 @@ import { StatusBar } from "expo-status-bar";
 import PagerView from "react-native-pager-view";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-// Components\
-import TitleBar from "src/components/styled/Titlebar";
-import MenuBar from "src/components/styled/MenuBar";
-import Loading from "src/components/styled/Loading";
+// Components
+import Loading from "src/components/Loading";
 
 
 
-import * as colors from "src/constants/styles";
+import * as colors from "src/styles";
 import { useSharedValue } from "react-native-reanimated";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Home from "src/components/pages/Home";
+import Home from "src/pages/Home";
 
 
 const titleOffset = 300
@@ -84,29 +82,6 @@ export default function App(props) {
     }
   }, [])
 
-
-  // Function to fetch data
-  async function fetchData(userContext) {
-    lastReload.current = Date.now();
-    console.log("Fetching Data");
-    await userContext.getData().then((data)=> {
-      console.log("Returning Data")
-      if (data == null){
-        console.log("Data is null")
-        return true;
-      }
-
-      if (JSON.stringify(data) == JSON.stringify(launchData)){
-        console.log("Data is the same, don't update")
-        return true;
-      }
-
-      setLaunchData(data);
-    }).catch((error)=>{
-      Alert.alert("Error getting data: "+ error);
-      return false;
-    })
-  }
 
   // Reload function called with pull down reload gesture
   async function reloadData(isPageLoad=false){

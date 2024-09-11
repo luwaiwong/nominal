@@ -1,10 +1,19 @@
 const LAUNCH_DEV_API_URL = "https://lldev.thespacedevs.com/2.2.0/";
 const LAUNCH_PROD_API_URL = "https://ll.thespacedevs.com/2.2.0/";
-const LAUNCH_API_URL = LAUNCH_PROD_API_URL;
+const LAUNCH_API_URL = LAUNCH_DEV_API_URL;
 
 const NEWS_API_URL = "https://api.spaceflightnewsapi.net/v4/";
 
+const NASA_API_KEY = "yIeGdYwNALets4ochBIhfAHIuiijMnaObY6leMA7";
+const NASA_DEMO_KEY = "DEMO_KEY";
+const APOD_API_KEY = NASA_API_KEY;
+
+const DEBUG = false;
+
+
+
 export async function fetchLaunches(type: string, limit: number, offset: number){
+    console.log("Fetching "+limit+" "+type+" Launches with an offset of "+offset)
     return await fetch(LAUNCH_API_URL+"launch/"+type+"/?limit="+limit+"&offset="+offset+"&hide_recent_previous=true")
     .then((response) => {
         return response.json();
@@ -16,9 +25,10 @@ export async function fetchLaunches(type: string, limit: number, offset: number)
         console.log("Error fetching launch data:", error);
         return {}
     })
-
 }
-export async function getUpcomingLaunches(){
+
+export async function fetchUpcomingLaunches(){
+    console.log("Fetching Upcoming Launches")
     return await fetch(LAUNCH_API_URL+"launch/upcoming/?hide_recent_previous=true")
     .then((response) => {
         return response.json();
@@ -28,8 +38,8 @@ export async function getUpcomingLaunches(){
     })
 }
 
-export async function getPreviousLaunches(){
-
+export async function fetchPreviousLaunches(){
+    console.log("Fetching Previous Launches")
     return await fetch(LAUNCH_API_URL+"launch/previous/")
     .then((response) => {
         return response.json();
@@ -39,8 +49,8 @@ export async function getPreviousLaunches(){
     })
 }
 
-export async function getNews(){
-    
+export async function fetchNews(){
+    console.log("Fetching Articles")
     return await fetch(NEWS_API_URL+"articles")
     .then((response) => {
         return response.json();
@@ -54,7 +64,8 @@ export async function getNews(){
     })
 }
 
-export async function getEvents(){
+export async function fetchUpcomingEvents(){
+    console.log("Fetching Upcoming Events")
     return await fetch(LAUNCH_API_URL+"event/upcoming")
     .then((response) => {
         return response.json();
@@ -65,7 +76,8 @@ export async function getEvents(){
 
 }
 
-export async function getPreviousEvents(){
+export async function fetchPreviousEvents(){
+    console.log("Fetching Previous Events")
     return await fetch(LAUNCH_API_URL+"event/previous")
     .then((response) => {
         return response.json();
@@ -74,16 +86,6 @@ export async function getPreviousEvents(){
         return data;
     })
 
-}
-
-export async function getRocketFamilies(){
-    return await fetch(LAUNCH_API_URL+"launcher/")
-    .then((response) => {
-        return response.json();
-    })
-    .then((data) => {
-        return data;
-    })
 }
 
 export async function fetchStarshipDashboard(){
@@ -108,6 +110,27 @@ export async function fetchISSData(){
     })
     .then((data) => {
         return data;
+    })
+}
+
+export async function FetchImageOfDay(){
+    await fetch("https://api.nasa.gov/planetary/apod?api_key="+APOD_API_KEY)
+    .then((response) => {
+        return response.json();
+    })
+    .then((data) => {
+      if (data.url == null) {
+        console.log("Error fetching image of the day", data)
+      } else {
+
+        if (data.media_type == "video"){
+          return;
+        }
+        data.type = "image";
+        return data
+      }
+    }).catch((error) => {
+        console.log("Error fetching image of the day:", error);
     })
 }
 

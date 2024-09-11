@@ -25,8 +25,8 @@ type Action = {
 };
 
 export const useUserStore = create<State & Action>((set) => ({
-    upcomingLaunches: [],
-    previousLaunches: [],
-    setUpcomingLaunches: (data) => set(() => ({upcomingLaunches: data})),
-    setPreviousLaunches: (data) => set(() => ({previousLaunches: data})),
-  }))
+  upcomingLaunches: [],
+  previousLaunches: [],
+  setUpcomingLaunches: (data) => set(() => ({upcomingLaunches: data})),
+  setPreviousLaunches: (data) => set(() => ({previousLaunches: data})),
+}))

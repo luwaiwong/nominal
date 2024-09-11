@@ -9,28 +9,31 @@ import { WidgetPreview } from "react-native-android-widget";
 
 
 import Index from "./App";
-import LaunchesPage from "src/components/pages/Launches";
-import LaunchPage from "src/components/pages/launches/LaunchPage";
-import Launches from "src/components/pages/Launches";
-import EventPage from "src/components/pages/events/EventPage";
-import EventsPage from "src/components/pages/events/EventsPages";
-import NewsPage from "src/components/pages/subpages/NewsPages";
-import Events from "src/components/pages/Events";
+import LaunchesPage from "src/pages/Launches";
+import LaunchPage from "src/pages/launches/LaunchPage";
+import Launches from "src/pages/Launches";
+import EventPage from "src/pages/events/EventPage";
+import EventsPage from "src/pages/events/EventsPages";
+import NewsPage from "src/pages/subpages/NewsPages";
+import Events from "src/pages/Events";
 
-import { COLORS } from "src/constants/styles";
+import { COLORS } from "src/styles";
 import { useEffect } from "react";
-import FirstLoad from "src/components/pages/subpages/FirstLoad";
-import ISSPage from "src/components/pages/locations/ISSPage";
-import StarshipPage from "src/components/pages/locations/StarshipPage";
+import FirstLoad from "src/pages/subpages/FirstLoad";
+import ISSPage from "src/pages/locations/ISSPage";
+import StarshipPage from "src/pages/locations/StarshipPage";
 
 import { registerWidgetTaskHandler } from 'react-native-android-widget';
-import { WidgetTaskHandler } from "src/components/widgets/WidgetTaskHandler";
+import { WidgetTaskHandler } from "src/widgets/WidgetTaskHandler";
 import { registerRootComponent } from "expo";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+// Query Handler
+const queryClient = new QueryClient()
 
 // Register componet
 registerRootComponent(index);
 registerWidgetTaskHandler(WidgetTaskHandler);
-
 
 const Stack = createStackNavigator();
 
@@ -94,7 +97,7 @@ function setNotifications(){
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
   useEffect(() => {
-    registerForPushNotificationsAsync().then(token => console.log(token));
+    registerForPushNotificationsAsync().then(token => console.log("token:",token));
 
     if (Platform.OS === 'android') {
       Notifications.getNotificationChannelsAsync().then(value => setChannels(value ?? []));
@@ -104,7 +107,7 @@ function setNotifications(){
     });
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
+      // console.log(response);
     });
 
     return () => {
@@ -118,6 +121,7 @@ function setNotifications(){
 
 export default function index(props) {
   setNotifications();
+
 
 
   const Theme = {
@@ -134,6 +138,7 @@ export default function index(props) {
 
   return (
     <View style={{flex:1, backgroundColor:COLORS.BACKGROUND}}>
+      <QueryClientProvider client={queryClient}>
         <NavigationContainer theme={Theme} >
           <Stack.Navigator
             screenOptions={{
@@ -206,6 +211,7 @@ export default function index(props) {
             ></Stack.Screen>
           </Stack.Navigator>
         </NavigationContainer>
+      </QueryClientProvider>
     </View>
     );
 

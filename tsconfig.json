@@ -5,7 +5,7 @@
       "src/*": ["./src/*"],
       "assets/*": ["./src/assets/*"],
       "components/*": ["./src/components/*"],
-      "pages/*": ["./src/components/pages/*"],
+      "pages/*": ["src/pages/*"],
       "constants/*": ["./src/constants/*"],
       "utils/*": ["./src/utils/*"],
     }
