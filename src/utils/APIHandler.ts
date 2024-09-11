@@ -19,6 +19,7 @@ export async function fetchLaunches(type: string, limit: number, offset: number)
         return response.json();
     })
     .then((data) => {
+        if (DEBUG) console.log("LAUNCH DATA:", data.results)
         return processLaunchData(data.results);
     })
     .catch((error) => {
@@ -34,6 +35,7 @@ export async function fetchUpcomingLaunches(){
         return response.json();
     })
     .then((data) => {
+        if (DEBUG) console.log("UPCOMING DATA:", data.results)
         return processLaunchData(data.results);
     })
 }
@@ -45,6 +47,7 @@ export async function fetchPreviousLaunches(){
         return response.json();
     })
     .then((data) => {
+        if (DEBUG) console.log("PREVIOUS DATA:", data.results)
         return processLaunchData(data.results);
     })
 }

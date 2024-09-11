@@ -1,11 +1,85 @@
+import React, { useRef, useState, useContext, useEffect } from "react";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
+import { Platform } from "react-native";
+
+/* Notification handling using expo-notifications
+  This file provides functions for others to use to handle scheduling notifications
+*/
 
 //#region NOTIFICATIONS
-async function schedulePushNotification(title, description, time) {
+// Register Notifications
+export function setNotifications(){
+  const [notification, setNotification] = useState<Notifications.Notification | undefined>(
+    undefined
+  );
+  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>([]);
+  const notificationListener = useRef<Notifications.Subscription>();
+  const responseListener = useRef<Notifications.Subscription>();
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(token => console.log("token:",token));
+
+    if (Platform.OS === 'android') {
+      Notifications.getNotificationChannelsAsync().then(value => setChannels(value ?? []));
+    }
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      // console.log(response);
+    });
+
+    return () => {
+      notificationListener.current &&
+        Notifications.removeNotificationSubscription(notificationListener.current);
+      responseListener.current &&
+        Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+}
+
+export async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      // alert('Failed to get push token for push notification!');
+      return;
+    }
+    // Learn more about projectId:
+    // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
+    // EAS projectId is used here.
+  } else {
+    console.log("Must use physical device for Push Notifications")
+    // alert('Must use physical device for Push Notifications');
+  }
+
+  return token;
+}
+
+
+// Setting Notifications
+async function schedulePushNotification(title, description, time: Date) {
   try {
     // Check if time is a valid Date object
-    if (!(time instanceof Date) || isNaN(time)) {
+    if (!(time instanceof Date)) {
       console.error("Invalid date provided for scheduling notification");
       return;
     }
@@ -90,17 +164,16 @@ export async function scheduleNotifications(settings, launches, events) {
     // Schedule 24 hour
     if (settings.notif24hbefore && timeDiff > 1000 * 60 * 60 * 24) {
       notifs += 1;
-      schedulePushNotification(
-        launch.mission.name + " Launch Expected Tomorrow",
-        launch.rocket.configuration.full_name +
-          " launch scheduled tomorrow at " +
-          launchTime.toLocaleTimeString(
+      let time = launchTime.toLocaleTimeString(
             [],
             {
               hour: "2-digit",
-            } + ". Open the app for more details."
-          ),
+            })
+      schedulePushNotification(
+        launch.mission.name + " Launch Expected Tomorrow",
+        launch.rocket.configuration.full_name +" launch scheduled tomorrow at " + time + ". Open the app for more details.",
         new Date(launchTime.getTime() - 1000 * 60 * 60 * 24)
+      
       );
     }
 

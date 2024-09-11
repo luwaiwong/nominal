@@ -9,13 +9,15 @@ import TMinus from "src/components/TMinus";
 import Article from "src/components/Article";
 import ArticleDescriptive from "src/components/ArticleDescriptive";
 import { UserContext } from "src/utils/UserContext";
+import { useUserStore } from "src/utils/UserStore";
 // import { BlurView } from "@react-native-community/blur";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export const ForYouLaunch = React.memo((data:any) => {
-  const userContext = useContext(UserContext);
+
+  const nav = useUserStore(state=>state.nav)
   let launchInfo = data.data;  
   let [launchTime, setLaunchTime] = useState<any>(new Date(launchInfo.net));
 
@@ -41,7 +43,7 @@ export const ForYouLaunch = React.memo((data:any) => {
   }
 
   return (
-    <Pressable onPress={()=>userContext.nav.navigate("Launch", {data: launchInfo})}>
+    <Pressable onPress={()=>nav.navigate("Launch", {data: launchInfo})}>
       <View style={styles.page}>
         <Image style={styles.image} source={{uri: launchInfo.image}} />
         <View style={styles.contentContainer}>
@@ -83,7 +85,7 @@ export const ForYouLaunch = React.memo((data:any) => {
 })
 
 export function ForYouEvent(data) {
-  const userContext = useContext(UserContext);
+  const nav = useUserStore(state=>state.nav)
   const eventData = data.data;
   const date = new Date(eventData.date);
   let name = "";
@@ -104,7 +106,7 @@ export function ForYouEvent(data) {
   let [descriptionOpen, setDescriptionOpen] = useState(false);
 
   return (
-  <Pressable onPress={()=>userContext.nav.navigate("Event", {data: eventData})}>
+  <Pressable onPress={()=>nav.navigate("Event", {data: eventData})}>
       
   <View style={styles.page}>
     <Image style={styles.image} source={{uri: eventData.feature_image}} />

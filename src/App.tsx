@@ -18,23 +18,23 @@ import { useSharedValue } from "react-native-reanimated";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "src/pages/Home";
+import { useUserStore } from "./utils/UserStore";
+import * as Query from "./utils/QueryHandler";
 
 
 const titleOffset = 300
 
 export default function App(props) {
   let appState = useRef(AppState.currentState);
-  let [launchData, setLaunchData]= useState(null)
-
   let [currentPage, setCurrentPage] = useState(0);
-  let menuBarRef = useRef(null);
-
-  let lastReload = useRef(0);
-  
-  const pagerRef = useRef(null);
-  const pageScrollState = useSharedValue(titleOffset);
 
   const refreshOpacity = useRef(new Animated.Value(0)).current
+
+  // API CALLS
+  const setNav = useUserStore(state=>state.setNav)
+  Query.useUpcoming10LaunchesQuery()
+  Query.usePrevious10LaunchesQuery()
+  
 
   const startRefreshAnimation = () => {Animated.loop(
       Animated.sequence([
@@ -59,6 +59,11 @@ export default function App(props) {
       ])
     ).start()
   }
+
+  useEffect(()=>{
+    setNav(props.navigation)
+
+  }, [])
 
   // Subscribe and check app state
   useEffect(()=>{
@@ -100,9 +105,6 @@ export default function App(props) {
   // Use to change current page when button pressed
   function setPage(page){
     setCurrentPage(page);
-    // if (pagerRef.current != null){
-    //   pagerRef.current.setPage(page);
-    // }
   }
 
   const Tab = createBottomTabNavigator();
@@ -124,7 +126,7 @@ export default function App(props) {
             headerShown:false, 
           }}
         >
-          <Tab.Screen name="Home" children={()=><Home data={data}/>} />
+          <Tab.Screen name="Home" children={()=><Home/>} />
           {/* <Tab.Screen name="Launches" children={()=><Launches data={data}/>}/>
           <Tab.Screen name="News" children={()=><News data={data}/>}/>
           <Tab.Screen name="Settings" children={()=><Settings/>}/> */}

@@ -27,10 +27,8 @@ export default function Home(props){
 
     const onPageScroll = (state) => {
       // Handle page scroll state changes (e.g., idle, settling, dragging)
-      // Example: Log the state change
-      // console.log('Page scroll state:', state["nativeEvent"]);
+      // Used for title slide animation
       pageScrollState.value = (state["nativeEvent"]["offset"]+state["nativeEvent"]["position"]) * -150 + titleOffset;
-      // Can be 
     }
 
     return (

@@ -3,12 +3,10 @@ import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { View, Button} from "react-native";
 import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
-import { Platform } from "react-native";
 import { WidgetPreview } from "react-native-android-widget";
 
 
-import Index from "./App";
+import App from "./App";
 import LaunchesPage from "src/pages/Launches";
 import LaunchPage from "src/pages/launches/LaunchPage";
 import Launches from "src/pages/Launches";
@@ -27,16 +25,21 @@ import { registerWidgetTaskHandler } from 'react-native-android-widget';
 import { WidgetTaskHandler } from "src/widgets/WidgetTaskHandler";
 import { registerRootComponent } from "expo";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryHandler } from "./utils/QueryHandler";
+import { setNotifications } from "./utils/NotificationHandler";
 
-// Query Handler
-const queryClient = new QueryClient()
 
 // Register componet
 registerRootComponent(index);
 registerWidgetTaskHandler(WidgetTaskHandler);
 
+// Create stack navigator for navigation
 const Stack = createStackNavigator();
 
+// Create Query Handler for API
+const queryClient = QueryHandler
+
+// Set notifications
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -45,85 +48,12 @@ Notifications.setNotificationHandler({
   }),
 });
 
-async function schedulePushNotification() {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "You've got mail! 📬",
-      body: "Here is the notification body",
-    },
-    trigger: null,
-  })
-}
-
-async function registerForPushNotificationsAsync() {
-  let token;
-
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-
-  if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      // alert('Failed to get push token for push notification!');
-      return;
-    }
-    // Learn more about projectId:
-    // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-    // EAS projectId is used here.
-    
-  } else {
-    // alert('Must use physical device for Push Notifications');
-  }
-
-  return token;
-}
-
-function setNotifications(){
-  const [notification, setNotification] = useState<Notifications.Notification | undefined>(
-    undefined
-  );
-  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>([]);
-  const notificationListener = useRef<Notifications.Subscription>();
-  const responseListener = useRef<Notifications.Subscription>();
-  useEffect(() => {
-    registerForPushNotificationsAsync().then(token => console.log("token:",token));
-
-    if (Platform.OS === 'android') {
-      Notifications.getNotificationChannelsAsync().then(value => setChannels(value ?? []));
-    }
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
-    });
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      // console.log(response);
-    });
-
-    return () => {
-      notificationListener.current &&
-        Notifications.removeNotificationSubscription(notificationListener.current);
-      responseListener.current &&
-        Notifications.removeNotificationSubscription(responseListener.current);
-    };
-  }, []);
-}
 
 export default function index(props) {
+  // Register for notifications
   setNotifications();
 
-
-
+  // Theme setup for navigation container
   const Theme = {
     dark: true,
     colors: {
@@ -136,6 +66,7 @@ export default function index(props) {
     },
   }
 
+  // Navigation setup
   return (
     <View style={{flex:1, backgroundColor:COLORS.BACKGROUND}}>
       <QueryClientProvider client={queryClient}>
@@ -161,7 +92,7 @@ export default function index(props) {
             >
             <Stack.Screen 
               name="Index" 
-              component={Index}
+              component={App}
             >
             </Stack.Screen>
             <Stack.Screen 

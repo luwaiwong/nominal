@@ -26,19 +26,12 @@ export default function ForYou(props) {
   const upcomingLaunches = useUserStore((state)=>state.upcomingLaunches)
   const setUpcomingLaunches = useUserStore((state)=>state.setUpcomingLaunches)
   
-  const upcomingLaunchesQuery = useQuery({
-    queryKey: ['upcomingLaunches'],
-    queryFn: async () => {
-      const data = await fetchUpcomingLaunches();
-      setUpcomingLaunches(data)
-      return data;
-    }
-  });
 
 
   let imageOfDay = useRef(null);
   let timer = useRef(0);  
   let fetching = useRef(false);
+
 
   useEffect(()=>{
     setItems(upcomingLaunches)

@@ -14,11 +14,19 @@ import { UserContext } from "../../utils/UserContext";
 import { useUserStore } from "../../utils/UserStore";
 
 import {COLORS, FONT, TOP_BAR_HEIGHT,BOTTOM_BAR_HEIGHT}from "../../styles";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUpcomingLaunches } from "src/utils/APIHandler";
+import { useUpcomingLaunchesQuery } from "src/utils/QueryHandler";
 
 
 export default function Dashboard(props) {
+  const nav = useUserStore((state)=>state.nav)
   const upcomingLaunches = useUserStore((state)=>state.upcomingLaunches)
-  const userContext = useContext(UserContext);
+
+
+  useEffect(()=>{
+
+  },[upcomingLaunches])
 
   const [refreshing, setRefreshing] = useState(false)
   async function refreshData(){
@@ -41,7 +49,7 @@ export default function Dashboard(props) {
   // calculate upcoming filtered
   upcomingFiltered = upcomingLaunches.slice(0, 3);
   let highlights = []
-  if (upcomingLaunches.length > 0) highlights=[upcomingLaunches.slice(0, 1)]
+  if (upcomingLaunches.length > 0) highlights=[...upcomingLaunches.slice(0, 1)]
     
   function Content(){
     return (
@@ -62,8 +70,9 @@ export default function Dashboard(props) {
                 {/* Highlight Launch */}
                 {highlights[0] != undefined &&
                 <View style={{marginHorizontal: 10, marginBottom: 10}}>
-                  {/* <LaunchHighlight data={highlights[0]} nav={null}  /> */}
-                </View> }
+                  <LaunchHighlight data={highlights[0]} nav={nav}  />
+                </View> 
+                }
 
                 <View style={{marginTop: -10}}></View>
 
@@ -71,7 +80,7 @@ export default function Dashboard(props) {
                 {/* <LaunchCarousel content={recentlyLaunched} type="launch" nav={nav} /> */}
                 {/* Upcoming Launches */}
                 <View style={[styles.contentSection]}>
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={()=> {}}>
                     <View style={styles.contentHeaderSection} >
                         <Text style={styles.contentHeaderText} >Upcoming Launches</Text>
                         <View style={styles.seeMoreSection}>

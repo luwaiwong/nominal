@@ -13,8 +13,7 @@ const MONTHS = ["January", "February", "March", "April", "May", "June", "July", 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function LaunchPage(props) {
-    // console.log("Launch Page");
-    const userContext = useContext(UserContext);
+
     const launch = props.route.params.data;
     const launchTime = new Date(launch.net);
     const timeDiff = launchTime.getTime() - Date.now();
@@ -197,7 +196,7 @@ export default function LaunchPage(props) {
                 )
                 }
                 {
-                    userContext.settings.devmode && <View style={styles.section}>
+                    false && <View style={styles.section}>
                     <Text style={styles.subtitle}>Developer Info</Text>
 
                     {hasMission && <Text style={styles.test}>webcast: {JSON.stringify(launch.webcast_live)},  vid_urls: {JSON.stringify(launch.mission.vid_urls)}</Text>}
