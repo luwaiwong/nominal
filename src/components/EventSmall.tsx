@@ -13,7 +13,7 @@ export default function EventSmall(props){
 
     if (eventData == undefined) return null;
 
-    const [aspectRatio, setAspectRatio] = useState(1.2);
+    const [aspectRatio, setAspectRatio] = useState(2);
     const isPrecise = eventData.date_precision != null && (eventData.date_precision.name === "Hour" || eventData.date_precision.name === "Minute" || eventData.date_precision.name === "Day"|| eventData.date_precision.name === "Second");
 
 
@@ -60,29 +60,33 @@ export default function EventSmall(props){
         <TouchableOpacity onPress={()=>{ nav.navigate("Event", {data: eventData})}}>
             <Animated.View style={[styles.container, {transform:[{scale}]}]}>
                 <View style={styles.left}>
-                    <Text numberOfLines={4} style={styles.title}>{eventData.name}</Text>
-                    {eventData.type.name != null && <Text style={styles.sourceLeft}>{eventData.location}</Text>}
-                    <Text style={styles.sourceLeft} numberOfLines={1}>{eventData.type.name}</Text>
+                    <View>
+                        <Text numberOfLines={2} style={styles.title}>{eventData.name}</Text>
+                        {eventData.type.name != null && <Text style={styles.sourceLeft}>{eventData.location}</Text>}
+                    </View>
                     {/* Show time and date */}
-                    {
-                        isPrecise?
-                        <Text style={styles.sourceRight}>{new Date(eventData.date).toLocaleString([], {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                            weekday: 'short',
-                        })}</Text> :
-                        <Text style={styles.sourceRight}>NET {new Date(eventData.date).toLocaleString([], {
-                            month: 'long',
-                            day: 'numeric',
-                            year: 'numeric',
-                        })}</Text>
-                    }
+                    <View>
+                        <Text style={styles.sourceLeft} numberOfLines={1}>{eventData.type.name}</Text>
+                        {
+                            isPrecise?
+                            <Text style={styles.sourceRight}>{new Date(eventData.date).toLocaleString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                                weekday: 'short',
+                            })}</Text> :
+                            <Text style={styles.sourceRight}>NET {new Date(eventData.date).toLocaleString([], {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric',
+                            })}</Text>
+                        }
+                    </View>
                 </View>
                 <View style={styles.right}>
-                    <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: eventData.feature_image}} />        
+                    <Image style={[styles.image]} source={{uri: eventData.feature_image}} />        
                 </View>
             </Animated.View>
         </TouchableOpacity>
@@ -91,7 +95,6 @@ export default function EventSmall(props){
 
 const styles = StyleSheet.create({
     container:{
-        display: "flex",
         flexDirection: "row",
 
         justifyContent: 'space-between',
@@ -106,18 +109,19 @@ const styles = StyleSheet.create({
         marginBottom: 0,
     },
     left:{
-        display: "flex",
+        width: "60%",
         flexDirection: "column",
         alignItems: "flex-start",
+        justifyContent: 'space-between',
         padding: 5,
-        flex: 2,
+        height: 120,
+        // backgroundColor: COLORS.FOREGROUND,
     },
     right:{
-        flex: 1,
-        width: 140,
+        width: "40%",
         display: "flex",
-        flexDirection: "column",
-        justifyContent: "flex-start",
+        flexDirection: "row",
+        justifyContent: "flex-end",
         
         // backgroundColor: COLORS.FOREGROUND,
         // width: "100%",
@@ -132,7 +136,8 @@ const styles = StyleSheet.create({
         overflow: "hidden",
     },
     image:{
-        width: 140,
+        // width: 180,
+        width: '100%',
         height: 120,
         resizeMode: "cover",
         // aspectRatio: 1,
@@ -160,16 +165,11 @@ const styles = StyleSheet.create({
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
         textAlign: "left",
-        marginRight: 2,
-        flex: 1,
     },
     sourceRight:{
         fontSize: 13,
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
-        textAlign: "right",
-        marginRight: 2,
-        flex: 1,
     },
     
 });

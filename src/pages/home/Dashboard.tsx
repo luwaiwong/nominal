@@ -40,9 +40,7 @@ export default function Dashboard(props) {
   if (upcomingLaunches.length > 0) highlights=[...upcomingLaunches.slice(0, 1)]
 
 
-  useEffect(()=>{
 
-  },[upcomingLaunches])
 
   const [refreshing, setRefreshing] = useState(false)
   async function refreshData(){
@@ -53,12 +51,7 @@ export default function Dashboard(props) {
     })
   }
   
-  
 
-  // Check if data is loaded
-  if (upcomingLaunches === null){
-    return <Loading/>
-  }
 
     
   function Content(){
@@ -66,7 +59,7 @@ export default function Dashboard(props) {
           <View style={styles.container}>
               {/* Padding for title bar */}
               <View style={styles.topBackground} />
-              <View style={styles.topPadding}/>
+              {/* <View style={styles.topPadding}/> */}
               
               {/* Scolling Area */}
               <ScrollView 
@@ -76,9 +69,10 @@ export default function Dashboard(props) {
                   } colors={[COLORS.FOREGROUND]} progressBackgroundColor={COLORS.BACKGROUND_HIGHLIGHT}/>
                 }
               >
+                <View style={styles.topPadding}/>
                 <View style={{height: 10}}/>
                 {/* Highlight Launch */}
-                {highlights[0] != undefined ?
+                {highlights != undefined && highlights[0] != undefined ?
                   <View style={{marginHorizontal: 10, marginBottom: 10}}>
                     <LaunchHighlight data={highlights[0]} nav={nav}  />
                   </View> :
@@ -125,7 +119,7 @@ const styles = StyleSheet.create({
       top: 0,
       height: TOP_BAR_HEIGHT+StatusBar.currentHeight,
       width: "100%",
-
+      backgroundColor: COLORS.BACKGROUND,
 
       zIndex: 100,
 
@@ -151,15 +145,15 @@ const styles = StyleSheet.create({
       height: 300, 
       marginLeft: 10,
       backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-      marginBottom: 20,
+      marginBottom: 10,
       borderRadius: 15,
     },
     loadingCarousel:{
       width: Dimensions.get('window').width-20, 
-      height: 180, 
+      height: 200, 
       backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-      // marginTop: 10,
-      marginBottom: 10,
+      marginTop: 10,
+      // marginBottom: 10,
       marginLeft: 10,
       borderRadius: 15,
     },
@@ -167,8 +161,8 @@ const styles = StyleSheet.create({
       width: Dimensions.get('window').width-20, 
       height: 400, 
       backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-      // marginTop: 10,
-      marginBottom: 10,
+      marginTop: 10,
+      // marginBottom: 10,
       marginLeft: 10,
       borderRadius: 15,
     }
