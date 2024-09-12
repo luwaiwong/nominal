@@ -2,19 +2,23 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import { StyleSheet, View, Text, Animated, ScrollView, StatusBar, Dimensions, FlatList, Pressable, TextInput } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { MaterialIcons } from 'react-native-vector-icons';
-
-import LaunchInfo from 'src/components/Launch';
-import Loading from 'src/components/Loading';
-import {BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT} from '../styles';
-import { UserContext } from "src/utils/UserContext"
 import PagerView from 'react-native-pager-view';
 import { useSharedValue } from 'react-native-reanimated';
 
+import { useUserStore } from 'src/utils/UserStore';
+import { HideMenuBarOnScroll, HideMenuBarOnScrollFlatList } from 'src/utils/Helpers';
+import {BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT} from '../styles';
+
+import LaunchInfo from 'src/components/Launch';
+import Loading from 'src/components/Loading';
+
 export default function Launches(props){
-    const userContext = useContext(UserContext);
 
     // Info Hooks
-    const [launches, setLaunches] = useState({upcoming: [], previous: []})
+    const nav = useUserStore(state=>state.nav)
+    const setMenuBarShown = useUserStore(state=>state.nav)
+    const upcomingLaunches = useUserStore(state=>state.upcomingLaunches)
+    const previousLaunches = useUserStore(state=>state.previousLaunches)
     const [search, setSearch] = useState("")
     const [tags, setTags] = useState("")
 
@@ -23,25 +27,14 @@ export default function Launches(props){
     let pagerRef = useRef(null)
 
     //#region Getting Data
-    // Check if launch data has changed
-    function checkLaunchData(){
-      let hasLaunches = userContext != null && userContext.launches != null && userContext.launches.upcoming != undefined && userContext.launches.upcoming.length > 0
-      if (hasLaunches)
-      {
-        let newlaunches = {upcoming: userContext.launches.upcoming, previous: userContext.launches.previous}
-        // Check same
-        if (JSON.stringify(launches) != JSON.stringify(newlaunches)){
-          setLaunches(newlaunches)
-        }
+    function sortData(data){
+      let result = []
+      if (data.length != 0 && data != null && data != undefined){
+        result = data.filter(item => sortItem(item));
       }
+      return result
     }
 
-    function sortData(data = launches.upcoming){
-      if (data.length != 0 && data != null && data != undefined){
-        data = data.filter(item => sortItem(item));
-      }
-      return data
-    }
     function sortItem(item){
       if (item.name.toLowerCase().includes(search.toLowerCase()))
       {
@@ -60,20 +53,6 @@ export default function Launches(props){
 
     }
 
-    // Check if data is updated every 5 seconds, if so update stuff
-    useEffect(()=>{
-      const intervalId = setInterval(() => {
-        checkLaunchData()
-      }, 2000); // 1000 milliseconds = 1 second
-
-      // Clear interval on re-render to avoid memory leaks
-      return () => clearInterval(intervalId);
-    }, [])
-
-    // Check if data is loaded
-    if (userContext.launches === undefined){
-        return <Loading/>
-    }
     //#endregion
 
     //#region Animations
@@ -115,12 +94,6 @@ export default function Launches(props){
 
     //#endregion
 
-
-    // INFO
-    const nav = userContext.nav; 
-
-    
-
     return (
         <View style={styles.container}>
           <View style={styles.titleContainer}>
@@ -160,28 +133,25 @@ export default function Launches(props){
               onPageSelected={onPageSelected}
             >
               <FlatList
-                  data={sortData()}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item }) => <LaunchInfo data={item}  nav={nav}> </LaunchInfo>}
-                  ListFooterComponent={<View style={styles.bottomPadding}></View>}
-                  removeClippedSubviews={true}
-                  initialNumToRender={4}
-                  // maxToRenderPerBatch={10}
-                  windowSize={3}
-                  >
-              </FlatList>
+                data={sortData(upcomingLaunches)}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => <LaunchInfo data={item}  nav={nav}> </LaunchInfo>}
+                removeClippedSubviews={true}
+                initialNumToRender={4}
+                windowSize={3}
+                onScroll={(event)=>HideMenuBarOnScrollFlatList(event,setMenuBarShown)}
+                ListFooterComponent={<View style={styles.bottomPadding}></View>}
+              />
               <FlatList
-                  data={sortData(launches.previous)}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item }) => <LaunchInfo data={item}  nav={nav}> </LaunchInfo>}
-                  ListFooterComponent={<View style={styles.bottomPadding}></View>}
-                  removeClippedSubviews={true}
-                  initialNumToRender={4}
-                  // maxToRenderPerBatch={10}
-                  windowSize={3}
-                  >
-                  
-              </FlatList>
+                data={sortData(previousLaunches)}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => <LaunchInfo data={item}  nav={nav}> </LaunchInfo>}
+                removeClippedSubviews={true}
+                initialNumToRender={4}
+                windowSize={3}
+                onScroll={(event)=>HideMenuBarOnScrollFlatList(event,setMenuBarShown)}
+                ListFooterComponent={<View style={styles.bottomPadding}></View>}
+              />
             </PagerView>
           </View>
         </View>

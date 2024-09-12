@@ -15,14 +15,20 @@ import { useUserStore } from "../../utils/UserStore";
 
 import {COLORS, FONT, TOP_BAR_HEIGHT,BOTTOM_BAR_HEIGHT}from "../../styles";
 import { EventItemList, LaunchItemList } from "./components/ItemListSection";
+import { HideMenuBarOnScroll } from "src/utils/Helpers";
 
+var currentOffset = 0;
 
 export default function Dashboard(props) {
   const nav = useUserStore((state)=>state.nav)
+  const setMenuBarShown = useUserStore(state=>state.setMenuBarShown)
   const upcomingLaunches = useUserStore((state)=>state.upcomingLaunches)
   const previousLaunches = useUserStore((state)=>state.previousLaunches)
   const upcomingEvents = useUserStore((state)=>state.upcomingEvents)
   const previousEvents = useUserStore((state)=>state.previousEvents)
+
+  console.log(upcomingLaunches.length)
+
 
   // All data
   let upcomingLaunchFiltered = []
@@ -63,6 +69,7 @@ export default function Dashboard(props) {
               
               {/* Scolling Area */}
               <ScrollView 
+                onScroll={(event) => {HideMenuBarOnScroll(event, setMenuBarShown)}}
                 // Refresh Control
                 refreshControl={
                   <RefreshControl refreshing={refreshing} onRefresh={()=>{refreshData()}

@@ -29,7 +29,7 @@ export async function fetchLaunches(type: string, limit: number, offset: number)
 }
 
 export async function fetchUpcomingLaunches(){
-    console.log("Fetching Upcoming Launches")
+    console.log("Fetching Upcoming 10 Launches")
     return await fetch(LAUNCH_API_URL+"launch/upcoming/?hide_recent_previous=true")
     .then((response) => {
         return response.json();
@@ -45,7 +45,7 @@ export async function fetchUpcomingLaunches(){
 }
 
 export async function fetchPreviousLaunches(){
-    console.log("Fetching Previous Launches")
+    console.log("Fetching Previous 10 Launches")
     return await fetch(LAUNCH_API_URL+"launch/previous/")
     .then((response) => {
         return response.json();
@@ -76,7 +76,7 @@ export async function fetchNews(){
 }
 
 export async function fetchUpcomingEvents(){
-    console.log("Fetching Upcoming Events")
+    console.log("Fetching Upcoming 10 Events")
     return await fetch(LAUNCH_API_URL+"event/upcoming")
     .then((response) => {
         return response.json();

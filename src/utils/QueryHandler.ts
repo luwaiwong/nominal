@@ -57,7 +57,6 @@ export function useLaunchesQuery(type: string, limit: number, offset:number){
   const query = useQuery({
     queryKey: ["limit:"+limit+"offset:"+offset+"type:"+type+'Launches'],
     queryFn: async () => {
-      console.log("Querying")
       const data = await API.fetchLaunches(type, limit, offset);
 
       if (type == 'upcoming'){

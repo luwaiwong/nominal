@@ -11,25 +11,16 @@ import { UserContext } from "src/utils/UserContext";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import ArticleDescriptive from "src/components/ArticleDescriptive";
 import Loading from "src/components/Loading";
+import { useUserStore } from "src/utils/UserStore";
 const NEWS_API_URL = "https://api.spaceflightnewsapi.net/v4/";
 
 export default function News(props){
-    let userContext = useContext(UserContext);
+    let nav = useUserStore(state=>state.nav)
     const [refreshing, setRefreshing] = useState(false)
     let callingData = useRef(false);
     let currentOffset = useRef(0);
     const [data, setData] = useState([]);
 
-
-    let news = userContext.news.slice(0,4);
-
-
-    // Check data loaded
-    if (userContext == null || userContext.news == null){
-        return <Loading/>
-    }
-
-    const nav = props.data.nav;
 
     
     
@@ -124,39 +115,6 @@ export default function News(props){
         </FlatList>
     </View>
     )
-
-    return (<>
-        <View style={styles.container}>
-            <Text style={styles.title}>News</Text>
-            <ScrollView 
-                refreshControl={
-                  <RefreshControl refreshing={refreshing} onRefresh={()=>{refreshData()}
-                  } colors={[COLORS.FOREGROUND]} progressBackgroundColor={COLORS.BACKGROUND_HIGHLIGHT}/>
-                }>
-                
-                <View style={styles.sectionContainer}>
-                    <TouchableOpacity onPress={() => {nav.navigate('All News', {data:userContext.news})}}>
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionTitle}>Articles</Text>
-                            <View style={styles.seeMoreSection}>
-                                <Text style={styles.seeMoreText}>Read More</Text>
-                                <MaterialIcons name="arrow-forward-ios" style={styles.sectionIcon}/>
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                    {/* <View style={{height:10}}></View> */}
-                    {news.map((item, index) => {return (<Article articleData={item} key={index}/>);})}
-                    {/* <Article articleData={news[4]}></Article> */}
-                </View>
-
-                {/* <StarshipDashboard/>
-                <ISSDashboard/> */}
-                {/* <Text style={styles.eventsTitle}>Events</Text>  */}
-                <View style={styles.bottomPadding}></View>
-                    
-            </ScrollView>
-        </View>
-    </>)
 }
 
 const styles = StyleSheet.create({

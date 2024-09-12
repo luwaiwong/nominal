@@ -7,14 +7,16 @@ import { useCallback, useEffect, useRef } from "react";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { useSharedValue } from "react-native-reanimated";
 import TitleBar from "src/components/Titlebar";
+import { useUserStore } from "src/utils/UserStore";
 
 const titleOffset = 75;
 
-const FOR_YOU_ENABLED = false;
+const FOR_YOU_ENABLED = true;
 
 export default function Home(props){
     const pagerRef = useRef(null)
     const pageScrollState = useSharedValue(titleOffset);
+    const setMenuBarShown = useUserStore(state=> state.setMenuBarShown)
     
     useFocusEffect(
         useCallback(() => {
@@ -33,6 +35,14 @@ export default function Home(props){
       pageScrollState.value = (state["nativeEvent"]["offset"]+state["nativeEvent"]["position"]) * -150 + titleOffset;
     }
 
+    const onPageSelected = (state) => {
+      if (state.nativeEvent.position == 0){
+        setMenuBarShown(false)
+      } else {
+        setMenuBarShown(true)
+      }
+    }
+
     if (FOR_YOU_ENABLED){
         return (
           <> 
@@ -42,6 +52,7 @@ export default function Home(props){
                   orientation="horizontal" 
                   ref={pagerRef}
                   onPageScroll={onPageScroll}
+                  onPageSelected={onPageSelected}
               >
                   <ForYou />
                   <Dashboard />

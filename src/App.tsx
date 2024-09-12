@@ -20,6 +20,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "src/pages/Home";
 import { useUserStore } from "./utils/UserStore";
 import * as Query from "./utils/QueryHandler";
+import News from "./pages/News";
+import Settings from "./pages/Settings";
+import MenuBar from "./components/MenuBar";
+import Launches from "./pages/Launches";
 
 
 const titleOffset = 300
@@ -34,7 +38,9 @@ export default function App(props) {
   const setNav = useUserStore(state=>state.setNav)
   Query.useUpcoming10LaunchesQuery()
   Query.usePrevious10LaunchesQuery()
+  Query.useLaunchesQuery('upcoming',100,0)
   Query.useUpcomingEventsQuery();
+
   
 
   const startRefreshAnimation = () => {Animated.loop(
@@ -121,16 +127,16 @@ export default function App(props) {
       <View style={styles.container}>
         <StatusBar style="light" />
         <Tab.Navigator 
-          // tabBar={props => <MenuBar {...props}/>}
-          tabBar={props=> <></>}
+          tabBar={props => <MenuBar {...props}/>}
+          // tabBar={props=> <></>}
           screenOptions={{
             headerShown:false, 
           }}
         >
           <Tab.Screen name="Home" children={()=><Home/>} />
-          {/* <Tab.Screen name="Launches" children={()=><Launches data={data}/>}/>
-          <Tab.Screen name="News" children={()=><News data={data}/>}/>
-          <Tab.Screen name="Settings" children={()=><Settings/>}/> */}
+          <Tab.Screen name="Launches" children={()=><Launches/>}/>
+          <Tab.Screen name="News" children={()=><News/>}/>
+          <Tab.Screen name="Settings" children={()=><Settings/>}/>
         </Tab.Navigator>
         <View pointerEvents='none' style={styles.reloadingDataIndicator}>
           <Animated.Text style={[styles.reloadingDataText, {opacity: refreshOpacity}]} >Refreshing Data...</Animated.Text>

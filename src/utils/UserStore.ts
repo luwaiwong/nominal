@@ -16,6 +16,7 @@ const twomin = 1000 * 60 * 2;
 */
 type State = {
   nav: any,
+  menuBarShown: boolean,
   upcomingLaunches: [],
   previousLaunches: [],
   upcomingEvents: [],
@@ -24,6 +25,7 @@ type State = {
 
 type Action = {
   setNav: (data: State["nav"]) => void,
+  setMenuBarShown: (data: State["menuBarShown"]) => void,
   setUpcomingLaunches: (data: State["upcomingLaunches"]) => void,
   setPreviousLaunches: (data: State["previousLaunches"]) => void,
   setUpcomingEvents: (data: State["upcomingEvents"]) => void,
@@ -32,12 +34,14 @@ type Action = {
 
 export const useUserStore = create<State & Action>((set) => ({
   nav: null,
+  menuBarShown: true,
   upcomingLaunches: [],
   previousLaunches: [],
   upcomingEvents: [],
   previousEvents: [],
   nasaIOD: [],
 
+  setMenuBarShown: (data) => set(()=>({menuBarShown: data})),
   setNav: (data) => set(()=>({nav: data})),
   setUpcomingLaunches: (data) => set(() => ({upcomingLaunches: data})),
   setPreviousLaunches: (data) => set(() => ({previousLaunches: data})),

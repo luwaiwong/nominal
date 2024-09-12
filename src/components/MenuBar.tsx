@@ -8,24 +8,13 @@ import { BlurView } from 'expo-blur';
 import {COLORS, FONT, BOTTOM_BAR_HEIGHT} from 'src/styles';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { UserContext } from "src/utils/UserContext"
+import { useUserStore } from 'src/utils/UserStore';
 
 const MenuBar = ({ state, descriptors, navigation}: any) => {
-    const userContext = useContext(UserContext);
     
     const bottomAnim = useRef(new Animated.Value(10)).current;
 
-    // useEffect(()=>{
-    //     if (page.current == 0) hideMenu();
-    //     else showMenu();
-    // }, [page.current]);
-
-    useEffect(()=>{
-        if (userContext != null){
-            userContext.showMenu = showMenu;
-            userContext.hideMenu = hideMenu;
-        }
-        
-    }, [userContext]);
+    const menuBarShown = useUserStore(state=>state.menuBarShown);
 
 
     const showMenu = ()=>{
@@ -44,8 +33,15 @@ const MenuBar = ({ state, descriptors, navigation}: any) => {
         }).start();
     }
 
+    if (menuBarShown){
+        showMenu();
+    } else {
+        hideMenu();
+    }
+
+
     return (
-        <Animated.View style={[styles.menuBar]}>
+        <Animated.View style={[styles.menuBar, {bottom: bottomAnim}]}>
             {
                 state.routes.map((route: any , index: number) => {
                     const { options } = descriptors[route.key];
@@ -70,16 +66,16 @@ const MenuBar = ({ state, descriptors, navigation}: any) => {
                     };
                     
                     if (label == "Home"){
-                        return <MenuButton icon="home" setPage={onPress}  active={isFocused} />
+                        return <MenuButton key={index} icon="home" setPage={onPress}  active={isFocused} />
                     }
                     if (label == "Launches"){
-                        return <MenuButton icon="rocket-launch" setPage={onPress}  active={isFocused} />
+                        return <MenuButton key={index} icon="rocket-launch" setPage={onPress}  active={isFocused} />
                     }
                     if (label == "News"){
-                        return <MenuButtonCommunity icon="newspaper-variant" setPage={onPress}  active={isFocused} />
+                        return <MenuButtonCommunity key={index} icon="newspaper-variant" setPage={onPress}  active={isFocused} />
                     }
                     if (label == "Settings"){
-                        return <MenuButton icon="settings" setPage={onPress}  active={isFocused} />
+                        return <MenuButton key={index} icon="settings" setPage={onPress}  active={isFocused} />
                     }
                     return (
                     <View key = {index}>
