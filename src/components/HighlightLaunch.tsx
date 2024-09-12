@@ -9,7 +9,7 @@ import { UserContext } from "src/utils/UserContext";
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-export default function LaunchHighlight(props) {
+export default function Highlight(props) {
     const userContext = useContext(UserContext);
     const data = props.data;
     const isNext = props.isNext;

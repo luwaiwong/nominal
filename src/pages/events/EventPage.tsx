@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, FlatList, StatusBar, Image, ScrollView, Pressab
 import { MaterialIcons } from 'react-native-vector-icons';
 import { COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
 import TMinus from 'src/components/TMinus';
-import LaunchSimple from 'src/components/LaunchSimple';
+import LaunchSimple from 'src/components/LaunchSmall';
 import { processLaunchData } from "src/utils/APIHandler";
 import { UserContext } from "src/utils/UserContext"
 import { BlurView } from 'expo-blur';

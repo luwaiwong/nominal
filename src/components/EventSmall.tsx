@@ -7,17 +7,17 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { COLORS, FONT, TIME_OPTIONS } from "src/styles";
 import { useUserStore } from "src/utils/UserStore";
 
-export default function Event(props){
+export default function EventSmall(props){
     const nav = useUserStore(state=>state.nav)
     const eventData = props.data;
 
     if (eventData == undefined) return null;
 
-    const [aspectRatio, setAspectRatio] = useState(1);
+    const [aspectRatio, setAspectRatio] = useState(1.2);
     const isPrecise = eventData.date_precision != null && (eventData.date_precision.name === "Hour" || eventData.date_precision.name === "Minute" || eventData.date_precision.name === "Day"|| eventData.date_precision.name === "Second");
 
 
-    Image.getSize(eventData.feature_image, (width, height) => {setAspectRatio(width/height);})
+    // Image.getSize(eventData.feature_image, (width, height) => {setAspectRatio(width/height);})
 
     let url = eventData.url;
 
@@ -59,32 +59,30 @@ export default function Event(props){
     return (
         <TouchableOpacity onPress={()=>{ nav.navigate("Event", {data: eventData})}}>
             <Animated.View style={[styles.container, {transform:[{scale}]}]}>
-                <View style={styles.top}>
-                    <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: eventData.feature_image}} />        
-                </View>
-                <View style={styles.bottom}>
+                <View style={styles.left}>
                     <Text numberOfLines={4} style={styles.title}>{eventData.name}</Text>
                     {eventData.type.name != null && <Text style={styles.sourceLeft}>{eventData.location}</Text>}
-                    <View style={styles.horizontalContainer}>
-                        <Text style={styles.sourceLeft} numberOfLines={1}>{eventData.type.name}</Text>
-                        {/* Show time and date */}
-                        {
-                            isPrecise?
-                            <Text style={styles.sourceRight}>{new Date(eventData.date).toLocaleString([], {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                month: 'short',
-                                day: 'numeric',
-                                year: 'numeric',
-                                weekday: 'short',
-                            })}</Text> :
-                            <Text style={styles.sourceRight}>NET {new Date(eventData.date).toLocaleString([], {
-                                month: 'long',
-                                day: 'numeric',
-                                year: 'numeric',
-                            })}</Text>
-                        }
-                    </View>
+                    <Text style={styles.sourceLeft} numberOfLines={1}>{eventData.type.name}</Text>
+                    {/* Show time and date */}
+                    {
+                        isPrecise?
+                        <Text style={styles.sourceRight}>{new Date(eventData.date).toLocaleString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                            weekday: 'short',
+                        })}</Text> :
+                        <Text style={styles.sourceRight}>NET {new Date(eventData.date).toLocaleString([], {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric',
+                        })}</Text>
+                    }
+                </View>
+                <View style={styles.right}>
+                    <Image style={[styles.image,{aspectRatio: aspectRatio}]} source={{uri: eventData.feature_image}} />        
                 </View>
             </Animated.View>
         </TouchableOpacity>
@@ -94,11 +92,12 @@ export default function Event(props){
 const styles = StyleSheet.create({
     container:{
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "row",
 
         justifyContent: 'space-between',
         overflow: "hidden",
 
+        height: 130,
         // padding: 5,
         paddingBottom: 3,
         backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
@@ -106,20 +105,22 @@ const styles = StyleSheet.create({
         margin: 10,
         marginBottom: 0,
     },
-    bottom:{
+    left:{
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
-        width: "100%",
         padding: 5,
+        flex: 2,
     },
-    top:{
+    right:{
+        flex: 1,
+        width: 140,
         display: "flex",
         flexDirection: "column",
         justifyContent: "flex-start",
         
         // backgroundColor: COLORS.FOREGROUND,
-        width: "100%",
+        // width: "100%",
 
     },
     horizontalContainer:{
@@ -131,9 +132,10 @@ const styles = StyleSheet.create({
         overflow: "hidden",
     },
     image:{
-        width: "100%",
-        resizeMode: "contain",
-        aspectRatio: 1,
+        width: 140,
+        height: 120,
+        resizeMode: "cover",
+        // aspectRatio: 1,
         borderRadius: 10,
         // backgroundColor: COLORS.BACKGROUND,
     },

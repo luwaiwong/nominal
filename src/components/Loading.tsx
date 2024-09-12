@@ -61,7 +61,7 @@ export default function Loading() {
 }
 
 export function LoadingView(props: {style?}) {
-    const lowestOpacity = 0.1
+    const lowestOpacity = 0.5
     const opacity = useRef(new Animated.Value(lowestOpacity)).current;
     useEffect(() => {
         Animated.loop(

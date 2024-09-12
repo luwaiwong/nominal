@@ -8,39 +8,34 @@ import { UserContext } from "src/utils/UserContext";
 import * as colors from "src/styles";
 import { COLORS } from "src/styles";
 import { GestureDetector, Gesture} from "react-native-gesture-handler";
+import { useUserStore } from "src/utils/UserStore";
 
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-export default function LaunchSimple(data: {data: any}) {
-  let userContext = useContext(UserContext)
+export default function LaunchSmall(data: {data: any}) {
+  const nav = useUserStore(state=>state.nav);
+
   let launch = data.data;  
   let [launchTime, setLaunchTime] = useState<any>(new Date(launch.net));
 
   const isPrecise = launch.net_precision != null && (launch.net_precision.name === "Hour" || launch.net_precision.name === "Minute" || launch.net_precision.name === "Day"|| launch.net_precision.name === "Second");
-  // let [pinned, setPinned] = useState<any>(userData.getPinned().includes(launchInfo.id));
-  // const togglePinned = () => {
-  //   let pinnedStatus = userData.togglePinned(launchInfo.id)
-  //   setPinned(pinnedStatus);
 
-  // };
-
-  
-    // let status = "Upcoming Launch";
-    let statusColor = 'rgba(0,0,0,0)';
-    // Set Status for Time
-    if (launchTime.getTime() < Date.now()) {
-        // status = "Launched";
-    }
-    // Check Status for Launch
-    if (launch.status.id === 4) {
-        // status = "Failed Launch";
-        statusColor = COLORS.RED;
-    }   else if (launch.status.id === 7) {
-        // status = "Partial Failure";
-        statusColor = COLORS.YELLOW;
-    }  
+  // let status = "Upcoming Launch";
+  let statusColor = 'rgba(0,0,0,0)';
+  // Set Status for Time
+  if (launchTime.getTime() < Date.now()) {
+      // status = "Launched";
+  }
+  // Check Status for Launch
+  if (launch.status.id === 4) {
+      // status = "Failed Launch";
+      statusColor = COLORS.RED;
+  }   else if (launch.status.id === 7) {
+      // status = "Partial Failure";
+      statusColor = COLORS.YELLOW;
+  }  
 
   // ANIMATIONS
   const scale = useRef(new Animated.Value(1)).current;
@@ -105,7 +100,7 @@ export default function LaunchSimple(data: {data: any}) {
   // HTML
   return (
       // <GestureDetector gesture={Gesture.Exclusive(doubletap, singletap)} >
-      <TouchableOpacity onPress={()=> userContext.nav.navigate("Launch", {data: launch})}>
+      <TouchableOpacity onPress={()=> nav.navigate("Launch", {data: launch})}>
           <Animated.View style={[styles.background, {transform:[{scale}]}]} collapsable={false}>
             {/* Header, Holds the title and t -  countdown */}
             {/* Body, Holds the launch info on left and image on right */}

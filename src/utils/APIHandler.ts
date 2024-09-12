@@ -24,7 +24,7 @@ export async function fetchLaunches(type: string, limit: number, offset: number)
     })
     .catch((error) => {
         console.log("Error fetching launch data:", error);
-        return {}
+        throw error
     })
 }
 
@@ -38,6 +38,10 @@ export async function fetchUpcomingLaunches(){
         if (DEBUG) console.log("UPCOMING DATA:", data.results)
         return processLaunchData(data.results);
     })
+    .catch((error) => {
+        console.log("Error fetching launch data:", error);
+        throw error
+    })
 }
 
 export async function fetchPreviousLaunches(){
@@ -49,6 +53,10 @@ export async function fetchPreviousLaunches(){
     .then((data) => {
         if (DEBUG) console.log("PREVIOUS DATA:", data.results)
         return processLaunchData(data.results);
+    })
+    .catch((error) => {
+        console.log("Error fetching launch data:", error);
+        throw error
     })
 }
 
@@ -63,7 +71,7 @@ export async function fetchNews(){
     })
     .catch((error) => {
         console.log("Error fetching news data:", error);
-        return {}
+        throw error
     })
 }
 
@@ -76,6 +84,10 @@ export async function fetchUpcomingEvents(){
     .then((data) => {
         return data;
     })
+    .catch((error) => {
+        console.log("Error fetching event data:", error);
+        throw error
+    })
 
 }
 
@@ -87,6 +99,10 @@ export async function fetchPreviousEvents(){
     })
     .then((data) => {
         return data;
+    })
+    .catch((error) => {
+        console.log("Error fetching event data:", error);
+        throw error
     })
 
 }
@@ -102,7 +118,7 @@ export async function fetchStarshipDashboard(){
         return data;
     }).catch((error) => {
         console.log("Error fetching starship data:", error);
-        return {}
+        throw error
     })
 }
 
@@ -134,6 +150,7 @@ export async function FetchImageOfDay(){
       }
     }).catch((error) => {
         console.log("Error fetching image of the day:", error);
+        throw error
     })
 }
 

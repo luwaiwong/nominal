@@ -4,7 +4,7 @@ import { BOTTOM_BAR_HEIGHT, COLORS, FONT, TOP_BAR_HEIGHT } from '../../styles';
 import Event from 'src/components/Event';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { UserContext } from "src/utils/UserContext";
-import LaunchSimple from 'src/components/LaunchSimple';
+import LaunchSimple from 'src/components/LaunchSmall';
 import WebView from 'react-native-webview';
 import YoutubeIframe from 'react-native-youtube-iframe';
 import { Gesture, GestureDetector, TouchableOpacity } from 'react-native-gesture-handler';

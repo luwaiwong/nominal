@@ -25,7 +25,6 @@ export function useUpcoming10LaunchesQuery(){
   const query = useQuery({
     queryKey: ['upcomingLaunches'],
     queryFn: async () => {
-      console.log("Querying")
       const data = await API.fetchUpcomingLaunches();
 
       if (upcomingLaunches.length <= 10) setUpcomingLaunches(data)
@@ -39,10 +38,9 @@ export function usePrevious10LaunchesQuery(){
   const previousLaunches = useUserStore((state)=>state.previousLaunches)
   const setPreviousLaunches = useUserStore((state)=>state.setPreviousLaunches)
   const query = useQuery({
-    queryKey: ['upcomingLaunches'],
+    queryKey: ['previousLaunches'],
     queryFn: async () => {
-      console.log("Querying")
-      const data = await API.fetchUpcomingLaunches();
+      const data = await API.fetchPreviousLaunches();
 
       if (previousLaunches.length <= 10) setPreviousLaunches(data)
       return data;
@@ -78,15 +76,29 @@ export function useLaunchesQuery(type: string, limit: number, offset:number){
   return query
 }
 
-export function useUpcomingEventsQuery(type: string, limit: number, offset:number){
+export function useUpcomingEventsQuery(){
   const setUpcomingEvents = useUserStore((state)=>state.setUpcomingEvents)
   const query = useQuery({
     queryKey: ['upcomingEvents'],
     queryFn: async () => {
-      console.log("Querying")
       const data = await API.fetchUpcomingEvents();
+      setUpcomingEvents(data.results)
+      return data;
+    }
+  });
 
-      setUpcomingEvents(data)
+  return query
+}
+
+export function usePreviousEventsQuery(){
+  const setPreviousEvents = useUserStore((state)=>state.setPreviousEvents)
+  const query = useQuery({
+    queryKey: ['upcomingEvents'],
+    queryFn: async () => {
+      console.log("Querying")
+      const data = await API.fetchPreviousEvents();
+
+      setPreviousEvents(data)
       return data;
     }
   });

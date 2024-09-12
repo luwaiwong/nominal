@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-import LaunchInfo from "src/components/LaunchSimple";
-import Loading from "src/components/Loading";
+import Launch from "src/components/LaunchSmall";
+import Loading, { LoadingView } from "src/components/Loading";
 import Event from "src/components/Event";
 import LaunchCarousel from "./components/LaunchCarousel";
 import LaunchHighlight from "src/components/HighlightLaunch";
@@ -14,14 +14,30 @@ import { UserContext } from "../../utils/UserContext";
 import { useUserStore } from "../../utils/UserStore";
 
 import {COLORS, FONT, TOP_BAR_HEIGHT,BOTTOM_BAR_HEIGHT}from "../../styles";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUpcomingLaunches } from "src/utils/APIHandler";
-import { useUpcomingLaunchesQuery } from "src/utils/QueryHandler";
+import { EventItemList, LaunchItemList } from "./components/ItemListSection";
 
 
 export default function Dashboard(props) {
   const nav = useUserStore((state)=>state.nav)
   const upcomingLaunches = useUserStore((state)=>state.upcomingLaunches)
+  const previousLaunches = useUserStore((state)=>state.previousLaunches)
+  const upcomingEvents = useUserStore((state)=>state.upcomingEvents)
+  const previousEvents = useUserStore((state)=>state.previousEvents)
+
+  // All data
+  let upcomingLaunchFiltered = []
+  let previousLaunchFiltered = []
+  let upcomingEventFiltered = []
+  let highlights = []
+
+  // Upcoming Filtered
+  upcomingLaunchFiltered = upcomingLaunches.slice(0, 3);
+  // Previous
+  previousLaunchFiltered = previousLaunches.slice(0,5)
+  // Event
+  upcomingEventFiltered = upcomingEvents.slice(0,3)
+  // Highlights
+  if (upcomingLaunches.length > 0) highlights=[...upcomingLaunches.slice(0, 1)]
 
 
   useEffect(()=>{
@@ -44,12 +60,6 @@ export default function Dashboard(props) {
     return <Loading/>
   }
 
-  // All data
-  let upcomingFiltered = null
-  // calculate upcoming filtered
-  upcomingFiltered = upcomingLaunches.slice(0, 3);
-  let highlights = []
-  if (upcomingLaunches.length > 0) highlights=[...upcomingLaunches.slice(0, 1)]
     
   function Content(){
     return (
@@ -68,42 +78,33 @@ export default function Dashboard(props) {
               >
                 <View style={{height: 10}}/>
                 {/* Highlight Launch */}
-                {highlights[0] != undefined &&
-                <View style={{marginHorizontal: 10, marginBottom: 10}}>
-                  <LaunchHighlight data={highlights[0]} nav={nav}  />
-                </View> 
+                {highlights[0] != undefined ?
+                  <View style={{marginHorizontal: 10, marginBottom: 10}}>
+                    <LaunchHighlight data={highlights[0]} nav={nav}  />
+                  </View> :
+                  <LoadingView style={styles.loadingHighlight}/>
                 }
 
                 <View style={{marginTop: -10}}></View>
 
+                { (previousLaunchFiltered != undefined && previousLaunchFiltered.length != 0) ?
+                  <LaunchCarousel content={previousLaunchFiltered} type="launch" nav={nav} /> :
+                  <LoadingView style={styles.loadingCarousel}/>
+                }
 
-                {/* <LaunchCarousel content={recentlyLaunched} type="launch" nav={nav} /> */}
                 {/* Upcoming Launches */}
-                <View style={[styles.contentSection]}>
-                  <TouchableOpacity onPress={()=> {}}>
-                    <View style={styles.contentHeaderSection} >
-                        <Text style={styles.contentHeaderText} >Upcoming Launches</Text>
-                        <View style={styles.seeMoreSection}>
-                          <Text style={styles.contentSeeMore} >See All </Text>
-                          <MaterialIcons 
-                          name="arrow-forward-ios" 
-                          style={styles.contentHeaderIcon} 
-                          />
-                        </View>
-                    </View>
-                  </TouchableOpacity>
-                  
-                  {upcomingFiltered.map((launch: any) => {
-                  return (
-                      <LaunchInfo key={launch.id} data={launch} />
-                  );
-                  })}
-                </View>
-                {/* <Text style={styles.sectionTitle}>Locations:</Text> */}
-                {/* <View style={[styles.buffer]}></View> */}
                 
-                {/* <LiveChannels/> */}
-                <View style={styles.bottomPadding}></View>
+                { (upcomingLaunchFiltered != undefined && upcomingLaunchFiltered.length != 0) ?
+                  <LaunchItemList data={upcomingLaunchFiltered} title="Upcoming Launches"/> :
+                  <LoadingView style={styles.loadingList}/>
+                }
+                
+                { (upcomingEventFiltered != undefined && upcomingEventFiltered.length != 0) ?
+                  <EventItemList data={upcomingEventFiltered} title="Upcoming Events" highlight={true}/>:
+                  <LoadingView style={styles.loadingList}/>
+                }
+                
+                {/* <View style={styles.bottomPadding}></View> */}
               </ScrollView>
           </View>
     );
@@ -137,24 +138,6 @@ const styles = StyleSheet.create({
       height: BOTTOM_BAR_HEIGHT-5,
       width: "100%",
     },
-    // Content Section
-    contentSection: {
-      display: 'flex',
-      backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-      borderRadius: 15,
-      marginHorizontal: 10,
-      marginTop: 10,
-      overflow: 'hidden',
-
-      // elevation: 10,
-    },
-    contentHeaderSection: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'flex-end',
-      justifyContent: 'space-between',
-      marginBottom: 5,
-    },
     sectionHeaderText:{
       fontSize: 25,
       color: COLORS.FOREGROUND,
@@ -162,141 +145,31 @@ const styles = StyleSheet.create({
       marginLeft: 10,
       marginTop: 5
     },
-    contentHeaderText: {
-      fontSize: 20,
-      color: COLORS.FOREGROUND,
-      fontFamily: FONT,
 
-
-      
-      marginLeft: 12,
-      marginTop: 5
-      // marginBottom: 5,
-    },
-    buffer:{
-      height: 10,
-    },
-    seeMoreSection:{
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'flex-end',
-      justifyContent: 'center',
-      marginRight: 12,
-    },
-    contentSeeMore: {
-      fontSize: 18,
-      color: COLORS.FOREGROUND,
-      fontFamily: FONT,
-      
-      // marginLeft: 12,
-      marginBottom: 2,
-      // marginRight: 12,
-    },
-    contentHeaderIcon: {
-      color: COLORS.FOREGROUND,
-      fontSize: 18,
-      marginTop: 8,
-      // marginLeft: 8,
-      marginBottom: 5,
-    },
-    contentHeaderIconHidden: {
-      color: COLORS.FOREGROUND,
-      fontSize: 28,
-      marginLeft: 8,
-      marginBottom: 8,
-      transform: [{ rotate: '90deg'}],
-    },
-    contentSeperator:{
-      width: '95%',
-      height: 3,
-      borderRadius: 100,
-
-      marginLeft: '2.5%',
-      marginBottom: 20,
-
+    loadingHighlight:{
+      width: Dimensions.get('window').width-20, 
+      height: 300, 
+      marginLeft: 10,
       backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+      marginBottom: 20,
+      borderRadius: 15,
     },
-
-    // Sections
-    newsHeaderSection:{
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-     marginHorizontal: 10,
+    loadingCarousel:{
+      width: Dimensions.get('window').width-20, 
+      height: 180, 
+      backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+      // marginTop: 10,
+      marginBottom: 10,
+      marginLeft: 10,
+      borderRadius: 15,
     },
-
-    sectionContainer:{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-
-
-        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-        borderRadius: 15,
-        // width: '100%',
-        marginTop: 10,
-        // marginBottom: 10,
-        marginHorizontal: 10,
-        
-    },
-    eventsTitle:{
-        fontSize: 22,
-        color: COLORS.FOREGROUND,
-        fontFamily: FONT,
-        textAlign: 'center',
-        // marginBottom: 10,
-        marginLeft: 12,
-        marginTop: 10,
-    },
-    eventsContainer:{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-
-
-        backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
-        borderRadius: 15,
-        marginTop: 10,
-        marginHorizontal    : 10,
-        marginBottom: 10,
-        
-    },
-    // SECTION HEADERS
-    sectionHeader:{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        justifyContent: 'space-between',
-        width: '100%',
-        paddingHorizontal: 3,
-        // marginBottom: 5,
-        marginTop: 5,
-    },
-    sectionTitle:{
-        fontSize: 24,
-        color: COLORS.FOREGROUND,
-        fontFamily: FONT,
-        textAlign: 'left',
-        // marginBottom: 10,
-        marginLeft: 20,
-        marginTop: 15,
-    },
-    seeMoreText:{
-        fontSize: 18,
-        color: COLORS.FOREGROUND,
-        fontFamily: FONT,
-        textAlign: 'right',
-        marginRight: 10,
-        alignContent: 'flex-end',
-    },
-    sectionIcon:{
-        fontSize: 25,
-        color: COLORS.FOREGROUND,
-        fontFamily: FONT,
-        textAlign: 'right',
-        marginRight: 10,
-    },
+    loadingList:{
+      width: Dimensions.get('window').width-20, 
+      height: 400, 
+      backgroundColor: COLORS.BACKGROUND_HIGHLIGHT,
+      // marginTop: 10,
+      marginBottom: 10,
+      marginLeft: 10,
+      borderRadius: 15,
+    }
 });

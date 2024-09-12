@@ -34,6 +34,7 @@ export default function App(props) {
   const setNav = useUserStore(state=>state.setNav)
   Query.useUpcoming10LaunchesQuery()
   Query.usePrevious10LaunchesQuery()
+  Query.useUpcomingEventsQuery();
   
 
   const startRefreshAnimation = () => {Animated.loop(

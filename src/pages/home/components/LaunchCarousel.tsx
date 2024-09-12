@@ -5,7 +5,7 @@ import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-nativ
 import PagerView from 'react-native-pager-view';
 
 import {COLORS, FONT, FOREGROUND}from "src/styles";
-import Launch from 'src/components/Launch';
+import Launch from 'src/components/LaunchSmall';
 import { UserContext } from 'src/utils/UserContext';
 
 const timerTickLength = 400;

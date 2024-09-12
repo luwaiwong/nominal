@@ -10,6 +10,8 @@ import TitleBar from "src/components/Titlebar";
 
 const titleOffset = 75;
 
+const FOR_YOU_ENABLED = false;
+
 export default function Home(props){
     const pagerRef = useRef(null)
     const pageScrollState = useSharedValue(titleOffset);
@@ -31,20 +33,31 @@ export default function Home(props){
       pageScrollState.value = (state["nativeEvent"]["offset"]+state["nativeEvent"]["position"]) * -150 + titleOffset;
     }
 
-    return (
-    <> 
-        <TitleBar scrollState={pageScrollState} titles={["For You", "Dashboard"]}/>
-        <PagerView
-            style={styles.pagerView}
-            orientation="horizontal" 
-            ref={pagerRef}
-            onPageScroll={onPageScroll}
-        >
-            <ForYou />
+    if (FOR_YOU_ENABLED){
+        return (
+          <> 
+              <TitleBar scrollState={pageScrollState} titles={["For You", "Dashboard"]}/>
+              <PagerView
+                  style={styles.pagerView}
+                  orientation="horizontal" 
+                  ref={pagerRef}
+                  onPageScroll={onPageScroll}
+              >
+                  <ForYou />
+                  <Dashboard />
+              </PagerView>
+          </>
+        )
+    }
+    else {
+      return (
+        <> 
+            <TitleBar scrollState={useSharedValue(0)} titles={["Dashboard"]}/>
             <Dashboard />
-        </PagerView>
-    </>
-   )
+        </>
+      )
+    }
+   
 }
 
 
