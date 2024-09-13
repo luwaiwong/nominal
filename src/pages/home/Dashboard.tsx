@@ -105,7 +105,7 @@ export default function Dashboard(props) {
                   <LoadingView style={styles.loadingList}/>
                 }
                 
-                {/* <View style={styles.bottomPadding}></View> */}
+                <View style={styles.bottomPadding}></View>
               </ScrollView>
           </View>
     );

@@ -15,7 +15,6 @@ const MONTHS = ["January", "February", "March", "April", "May", "June", "July", 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function EventPage(props) {
-    const userContext = useContext(UserContext);
     const event = props.route.params.data;
     const time = new Date(event.date);
     const isPrecise = event.date_precision != null && (event.date_precision.name === "Hour" || event.date_precision.name === "Minute" || event.date_precision.name === "Day"|| event.date_precision.name === "Second");
@@ -147,7 +146,7 @@ export default function EventPage(props) {
                 }
 
                 {
-                    userContext.settings.devmode &&
+                    false &&
                     <View style={styles.section}>
                         <Text style={styles.subtitle}>Developer Info</Text>
                         <Text style={styles.test}>webcast_live: {JSON.stringify(event.webcast_live)}, vid_urls: {JSON.stringify(event.vid_urls)}</Text>
