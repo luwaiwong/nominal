@@ -61,8 +61,8 @@ export default function EventSmall(props){
             <Animated.View style={[styles.container, {transform:[{scale}]}]}>
                 <View style={styles.left}>
                     <View>
-                        <Text numberOfLines={2} style={styles.title}>{eventData.name}</Text>
-                        {eventData.type.name != null && <Text style={styles.sourceLeft}>{eventData.location}</Text>}
+                        <Text numberOfLines={1} style={styles.title}>{eventData.name}</Text>
+                        {eventData.type.name != null && <Text style={styles.sourceLeft} numberOfLines={2}>{eventData.location}</Text>}
                     </View>
                     {/* Show time and date */}
                     <View>

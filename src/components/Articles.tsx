@@ -12,11 +12,9 @@ import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import ArticleDescriptive from "src/components/ArticleDescriptive";
 import Loading from "src/components/Loading";
 import { useUserStore } from "src/utils/UserStore";
-import Articles from "src/components/Articles";
-import LiveChannels from "src/components/LiveChannels";
 const NEWS_API_URL = "https://api.spaceflightnewsapi.net/v4/";
 
-export default function News(props){
+export default function Articles(props){
     let nav = useUserStore(state=>state.nav)
     const [refreshing, setRefreshing] = useState(false)
     let callingData = useRef(false);
@@ -104,11 +102,15 @@ export default function News(props){
 
     //Endless News
     return (
-    <View style={styles.container}>
-        <Text style={styles.title}>Discover</Text>
-        {/* <Articles/> */}
-        <LiveChannels/>
-    </View>
+        <FlatList
+            data={data}
+            keyExtractor={(item, index) => index.toString()}
+            // style={styles.list}
+            renderItem={({ item }) => <ArticleDescriptive articleData={item}></ArticleDescriptive>}
+            onEndReached={onEndReached}
+            onEndReachedThreshold={0.5}
+        >
+        </FlatList>
     )
 }
 

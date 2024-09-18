@@ -127,11 +127,14 @@ export default function App(props) {
       <View style={styles.container}>
         <StatusBar style="light" />
         <Tab.Navigator 
+          id={undefined}
           tabBar={props => <MenuBar {...props}/>}
           // tabBar={props=> <></>}
           screenOptions={{
             headerShown:false, 
+            animation: 'shift',
           }}
+          
         >
           <Tab.Screen name="Home" children={()=><Home/>} />
           <Tab.Screen name="Launches" children={()=><Launches/>}/>

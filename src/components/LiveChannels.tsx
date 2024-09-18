@@ -28,6 +28,7 @@ export default function LiveChannels() {
         }
 
         const canonicalURL = canonicalURLTag.getAttribute('href')
+        console.log(canonicalURL)
         const isStreaming = canonicalURL.includes('/watch?v=')
         if (isStreaming){
             // Fetch data from the live stream
@@ -62,8 +63,8 @@ export default function LiveChannels() {
 
         lives.current = []
         await fetchLiveChannel(NASASpaceFlight, "NASASpaceFlight");
-        await fetchLiveChannel(SpaceFlightNow, "SpaceFlightNow");
-        await fetchLiveChannel(NASA, "NASA");
+        // await fetchLiveChannel(SpaceFlightNow, "SpaceFlightNow");
+        // await fetchLiveChannel(NASA, "NASA");
         setLives(lives.current)
     }
     

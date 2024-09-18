@@ -1,4 +1,4 @@
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { QueryClient, useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import * as API from "./APIHandler";
 import { useUserStore } from "./UserStore";
 import { Alert } from "react-native";
@@ -99,6 +99,28 @@ export function usePreviousEventsQuery(){
 
       setPreviousEvents(data)
       return data;
+    }
+  });
+
+  return query
+}
+
+
+export function useNewsQuery(searchparams){
+  const query = useInfiniteQuery({
+    queryKey: ['news'+searchparams],
+    initialPageParam: null,
+    queryFn: async () => {
+      console.log("Querying")
+      const data = await API.fetchPreviousEvents();
+
+      return data;
+    },
+    getNextPageParam: async () => {
+
+    },
+    getPreviousPageParam: async () =>{
+
     }
   });
 

@@ -27,8 +27,6 @@ export default function Dashboard(props) {
   const upcomingEvents = useUserStore((state)=>state.upcomingEvents)
   const previousEvents = useUserStore((state)=>state.previousEvents)
 
-  console.log(upcomingLaunches.length)
-
 
   // All data
   let upcomingLaunchFiltered = []

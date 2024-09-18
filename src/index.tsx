@@ -1,6 +1,6 @@
 import React, { useRef, useState, useContext } from "react";
-import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Button} from "react-native";
 import * as Notifications from 'expo-notifications';
 import { WidgetPreview } from "react-native-android-widget";
@@ -14,12 +14,12 @@ import EventPage from "src/pages/events/EventPage";
 import EventsPage from "src/pages/events/EventsPages";
 import NewsPage from "src/pages/subpages/NewsPages";
 import Events from "src/pages/Events";
-
-import { COLORS } from "src/styles";
-import { useEffect } from "react";
 import FirstLoad from "src/pages/subpages/FirstLoad";
 import ISSPage from "src/pages/locations/ISSPage";
 import StarshipPage from "src/pages/locations/StarshipPage";
+
+import { COLORS } from "src/styles";
+import { useEffect } from "react";
 
 import { registerWidgetTaskHandler } from 'react-native-android-widget';
 import { WidgetTaskHandler } from "src/widgets/WidgetTaskHandler";
@@ -34,7 +34,7 @@ registerRootComponent(index);
 registerWidgetTaskHandler(WidgetTaskHandler);
 
 // Create stack navigator for navigation
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 // Create Query Handler for API
 const queryClient = QueryHandler
@@ -63,31 +63,28 @@ export default function index(props) {
       text: COLORS.TEXT,
       border: COLORS.BORDER,
       notification: COLORS.BACKGROUND,
+      
     },
+    fonts: {
+      regular: null,
+      medium: null,
+      bold: null,
+      heavy: null,
+    }
+    
   }
 
   // Navigation setup
   return (
     <View style={{flex:1, backgroundColor:COLORS.BACKGROUND}}>
       <QueryClientProvider client={queryClient}>
-        <NavigationContainer theme={Theme} >
+        <NavigationContainer theme={Theme}>
           <Stack.Navigator
+            id={undefined}  
             screenOptions={{
               headerShown:false, 
               presentation: 'modal',
-              cardOverlay: () => (
-                <View
-                  style={{
-                  flex: 1,
-                  backgroundColor: 'rgba('+COLORS.BACKGROUND_RGB+'0.5)',
-                  // opacity: 0
-                  // backgroundColor: COLORS.BACKGROUND,
-                }}
-              />),
-              transitionSpec:{
-                open: {animation: 'timing', config: {duration: 150, delay: 0}},
-                close: {animation: 'timing', config: {duration: 150, delay: 0}},
-              }
+              
             }}
             >
             <Stack.Screen 
@@ -126,7 +123,6 @@ export default function index(props) {
             <Stack.Screen
               name = "First Load"
               component = {FirstLoad}
-              options={{transitionSpec: {open: {animation: 'timing', config: {duration: 0, delay: 0}}, close: {animation: 'timing', config: {duration: 0, delay: 0}},}}}
             ></Stack.Screen>
             <Stack.Screen
               name = "ISS"

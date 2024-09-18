@@ -41,12 +41,12 @@ export default function ArticleDescriptive(props:{articleData:any}){
 
                     </View>
 
-                    <Text style={styles.time}>{articleDate}</Text>
+                    <Text style={styles.source}>{articleData.news_site}</Text>
                 </View>
                 <View style={styles.right}>
                     {!hasgif &&  <Image style={[styles.image,{aspectRatio: 1}]} source={{uri: articleData.image_url}} /> }
                            
-                    <Text style={styles.source}>{articleData.news_site}</Text>
+                    <Text style={styles.time}>{articleDate}</Text>
 
                 </View>
             </View>
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: FONT,
         color: COLORS.FOREGROUND,
-        textAlign: "right",
+        textAlign: "left",
         marginRight: 2,
         marginTop: 5,
     },
@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
         color: COLORS.FOREGROUND,
         marginRight: 2,
         marginTop: 5,
+        textAlign: "right",
     },
     bottomLine:{
         

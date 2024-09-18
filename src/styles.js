@@ -14,6 +14,7 @@ export const COLORS = {
   YELLOW: "#FFDA61",
   RED: "#F75D55",
 };
+
 export const BACKGROUND = "#1e1e1e";
 export const BACKGROUND_HIGHLIGHT = "#252627";
 export const FOREGROUND = "#D8DEE9";

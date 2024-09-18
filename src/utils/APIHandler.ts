@@ -8,7 +8,7 @@ const NASA_API_KEY = "yIeGdYwNALets4ochBIhfAHIuiijMnaObY6leMA7";
 const NASA_DEMO_KEY = "DEMO_KEY";
 const APOD_API_KEY = NASA_API_KEY;
 
-const DEBUG = false;
+const DEBUG = true;
 
 
 
@@ -59,22 +59,6 @@ export async function fetchPreviousLaunches(){
         throw error
     })
 }
-
-export async function fetchNews(){
-    console.log("Fetching Articles")
-    return await fetch(NEWS_API_URL+"articles")
-    .then((response) => {
-        return response.json();
-    })
-    .then((data) => {
-        return data;
-    })
-    .catch((error) => {
-        console.log("Error fetching news data:", error);
-        throw error
-    })
-}
-
 export async function fetchUpcomingEvents(){
     console.log("Fetching Upcoming 10 Events")
     return await fetch(LAUNCH_API_URL+"event/upcoming")
@@ -104,7 +88,23 @@ export async function fetchPreviousEvents(){
         console.log("Error fetching event data:", error);
         throw error
     })
+}
 
+export async function fetchNews(offset: number = 0, search: string = ""){
+    const searchString = search != ""?"search="+search:"";
+    await fetch(NEWS_API_URL+"articles/?offset="+offset+searchString).then((response) => {
+        // console.log(response)
+        return response.json()
+    }).then((articles) => {
+        if (articles == null){
+            console.log("Article data null")
+            return
+        }
+        return articles
+    }).catch((error) => {
+        console.log("Error fetching article data", error)
+        throw error
+    })
 }
 
 export async function fetchStarshipDashboard(){
@@ -132,7 +132,7 @@ export async function fetchISSData(){
     })
 }
 
-export async function FetchImageOfDay(){
+export async function fetchImageOfDay(){
     await fetch("https://api.nasa.gov/planetary/apod?api_key="+APOD_API_KEY)
     .then((response) => {
         return response.json();
