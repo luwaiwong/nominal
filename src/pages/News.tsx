@@ -18,95 +18,11 @@ const NEWS_API_URL = "https://api.spaceflightnewsapi.net/v4/";
 
 export default function News(props){
     let nav = useUserStore(state=>state.nav)
-    const [refreshing, setRefreshing] = useState(false)
-    let callingData = useRef(false);
-    let currentOffset = useRef(0);
-    const [data, setData] = useState([]);
-
-
-    
-    
-    async function refreshData(){
-        setRefreshing(true)
-        await props.data.reloadData().then((data)=> {
-        console.log("Finishing Refresh")
-        setRefreshing(false)
-        })
-    }
-
-    const refreshOpacity = useRef(new Animated.Value(0)).current
-
-    const startRefreshAnimation = () => {Animated.loop(
-        Animated.sequence([
-            Animated.timing(
-            refreshOpacity,
-            {
-                toValue: 1,
-                duration: 800,
-                useNativeDriver: true,
-                delay: 0,
-            }
-            ),
-            Animated.timing(
-            refreshOpacity,
-            {
-                toValue: 0,
-                duration: 800,
-                useNativeDriver: true,
-                delay: 0,
-            }
-            )
-        ])
-        ).start()
-    }
-
-    useEffect(() => {
-        // if (userContext != null && userContext.news != null){
-        //     setData(userContext.news)
-        // }
-        
-        getMoreData();
-    }, [])
-
-    const onEndReached = () => {
-        console.log("End Reached")
-        getMoreData();
-    }
-
-    async function getMoreData(){
-        console.log("Getting More Data")
-        if (callingData.current){
-            return
-        }
-
-        callingData.current = true;
-        startRefreshAnimation()
-        await fetch(NEWS_API_URL+"articles/?offset="+currentOffset.current).then((response) => {
-            // console.log(response)
-            return response.json()
-        }).then((articles) => {
-            if (articles == null){
-                console.log("Article data null")
-                callingData.current = false;
-                refreshOpacity.setValue(0)
-                return
-            }
-            setData([...data,...articles.results])
-            currentOffset.current = currentOffset.current + 10;
-            callingData.current = false;
-            refreshOpacity.setValue(0)
-        }).catch((error) => {
-            console.log("Error fetching article data", error)
-            callingData.current = false;
-            refreshOpacity.setValue(0)
-        })
-    }
 
     //Endless News
     return (
     <View style={styles.container}>
-        <Text style={styles.title}>Discover</Text>
-        {/* <Articles/> */}
+        <Text style={styles.title}>News</Text>
         <LiveChannels/>
     </View>
     )

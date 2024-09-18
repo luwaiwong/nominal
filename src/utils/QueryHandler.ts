@@ -106,13 +106,13 @@ export function usePreviousEventsQuery(){
 }
 
 
-export function useNewsQuery(searchparams){
+export function useNewsQuery(searchparams: string =""){
   const query = useInfiniteQuery({
     queryKey: ['news'+searchparams],
     initialPageParam: null,
     queryFn: async () => {
       console.log("Querying")
-      const data = await API.fetchPreviousEvents();
+      const data = await API.fetchNews();
 
       return data;
     },
